@@ -1,0 +1,43 @@
+    <header class="header" *ngIf="isShowHeader">
+      <div class="container flex flex-between">
+        <!-- Logo -->
+        <a routerLink="/" class="logo">
+          <img src="img/logo.png" alt="Smart Invite" class="logo-img" />
+          <span class="logo-text hide-mobile">Smart Invite</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="nav hide-mobile">
+          @if(!isAuthenticated) {
+            <a routerLink="/" class="nav-link">Accueil</a>
+            <a href="#features" class="nav-link">Fonctionnalités</a>
+            <a href="#" class="nav-link">Tarifs</a>
+            <a href="#" class="nav-link">À propos</a>
+            <button class="btn btn-primary" (click)="navigateToLogin()">Connexion</button>
+          }@else {
+              <p>Bienvenue, {{ currentUser?.name }}!</p>
+              <button *ngIf="isAuthenticated" class="btns btns-primary" (click)="logout()">Déconnexion</button>
+          }
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn show-mobile" (click)="toggleMobileMenu()">
+          <span *ngIf="!mobileMenuOpen()">☰</span>
+          <span *ngIf="mobileMenuOpen()">✕</span>
+        </button>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <nav class="mobile-nav show-mobile" *ngIf="mobileMenuOpen()">
+        @if(!isAuthenticated){
+          <a routerLink="/" class="mobile-nav-link" (click)="mobileMenuOpen.set(false)">Accueil</a>
+          <a href="#features" class="mobile-nav-link" (click)="mobileMenuOpen.set(false)">Fonctionnalités</a>
+          <a href="#" class="mobile-nav-link">Tarifs</a>
+          <a href="#" class="mobile-nav-link">À propos</a>
+          <button class="btn btn-primary" style="width: 100%;">Connexion</button>
+        }@if(isAuthenticated){
+          <p class="mobile-nav-link">Bienvenue, {{ currentUser?.name }}!</p>
+          <button class="btns btns-primary" style="width: 100%;" (click)="logout()">Déconnexion</button>
+        }
+      </nav>
+    </header>

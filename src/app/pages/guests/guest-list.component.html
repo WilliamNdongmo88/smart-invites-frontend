@@ -1,0 +1,209 @@
+ <div class="guest-list">
+    <!-- Header -->
+    <div class="guest-list-header">
+    <div class="container">
+        <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+        <div class="header-content">
+        <div>
+            <h1>Gestion des invités</h1>
+            <p>{{ eventTitle }} - {{ totalGuests }} invités</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-primary" (click)="inviteNewGuests()">
+            ✉️ Inviter de nouveaux invités
+            </button>
+            <button class="btn btn-outline" (click)="exportGuests()">
+            📥 Exporter
+            </button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="container py-12">
+    <!-- Search and Filter -->
+    <div class="search-filter-section">
+        <div class="search-box">
+        <input
+            type="text"
+            placeholder="Rechercher par nom, email ou téléphone..."
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="filterGuests()"
+            class="search-input"
+        />
+        <span class="search-icon">🔍</span>
+        </div>
+
+        <div class="filter-buttons">
+        <!-- (click)="setFilterStatus(status)" -->
+        <button
+            *ngFor="let status of ['all', 'confirmed', 'pending', 'declined']"
+            [class.active]="filterStatus() === status"
+            
+            class="filter-btn"
+        >
+            {{ getFilterLabel(status) }}
+            <span class="count">{{ getStatusCount(status) }}</span>
+        </button>
+        </div>
+    </div>
+
+    <!-- Guests Grid View -->
+    <div class="guests-grid">
+        <div *ngFor="let guest of filteredGuests" class="guest-card" [class]="'status-' + guest.status">
+        <!-- Card Header -->
+        <div class="card-header">
+            <div class="guest-avatar">
+            {{ guest.name.charAt(0).toUpperCase() }}
+            </div>
+            <div class="guest-status">
+            <span class="status-badge" [class]="'status-' + guest.status">
+                {{ getStatusIcon(guest.status) }} {{ getStatusLabel(guest.status) }}
+            </span>
+            </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+            <h3>{{ guest.name }}</h3>
+            <p class="guest-email">{{ guest.email }}</p>
+
+            <div class="guest-info">
+            <div class="info-item" *ngIf="guest.phone">
+                <span class="label">📱</span>
+                <span class="value">{{ guest.phone }}</span>
+            </div>
+
+            <div class="info-item" *ngIf="guest.dietaryRestrictions">
+                <span class="label">🍽️</span>
+                <span class="value">{{ guest.dietaryRestrictions }}</span>
+            </div>
+
+            <div class="info-item" *ngIf="guest.plusOne">
+                <span class="label">👥</span>
+                <span class="value">+1 autorisé</span>
+            </div>
+
+            <div class="info-item" *ngIf="guest.responseDate">
+                <span class="label">📅</span>
+                <span class="value">{{ formatDate(guest.responseDate) }}</span>
+            </div>
+            </div>
+
+            <!-- QR Code Badge -->
+            <div class="qr-badge" *ngIf="guest.qrCodeGenerated">
+            <span class="qr-icon">📱</span>
+            <span class="qr-text">QR Code généré</span>
+            </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="card-footer">
+            <button
+            class="btn-action view"
+            (click)="viewGuestDetails(guest)"
+            title="Voir les détails"
+            >
+            👁️ Détails
+            </button>
+            <button
+            class="btn-action edit"
+            (click)="editGuest(guest)"
+            title="Éditer"
+            >
+            ✏️ Éditer
+            </button>
+            <button
+            class="btn-action delete"
+            (click)="deleteGuest(guest)"
+            title="Supprimer"
+            >
+            🗑️ Supprimer
+            </button>
+        </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredGuests.length === 0" class="empty-state">
+        <div class="empty-icon">👥</div>
+        <h3>Aucun invité trouvé</h3>
+        <p>Essayez de modifier vos filtres ou invitez de nouveaux invités</p>
+        <button class="btn btn-primary" (click)="inviteNewGuests()">
+        ✉️ Inviter des invités
+        </button>
+    </div>
+
+    <!-- Stats Footer -->
+    <div class="stats-footer">
+        <div class="stat">
+        <span class="label">Total</span>
+        <span class="value">{{ totalGuests }}</span>
+        </div>
+        <div class="stat confirmed">
+        <span class="label">Confirmés</span>
+        <span class="value">{{ confirmedCount }}</span>
+        </div>
+        <div class="stat pending">
+        <span class="label">En attente</span>
+        <span class="value">{{ pendingCount }}</span>
+        </div>
+        <div class="stat declined">
+        <span class="label">Refusés</span>
+        <span class="value">{{ declinedCount }}</span>
+        </div>
+    </div>
+    </div>
+
+    <!-- Guest Detail Modal -->
+    <div *ngIf="selectedGuest() as guest" class="modal-overlay" (click)="closeGuestDetails()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="modal-close" (click)="closeGuestDetails()">✕</button>
+
+        <div class="modal-body">
+        <!-- Guest Avatar and Name -->
+        <div class="modal-header">
+            <div class="large-avatar">
+            {{ guest.name.charAt(0).toUpperCase() }}
+            </div>
+            <div>
+            <h2>{{ guest.name }}</h2>
+            <p class="email">{{ guest.email }}</p>
+            </div>
+        </div>
+
+        <!-- Status Badge -->
+        <div class="status-section">
+            <span class="status-badge large" [class]="'status-' + guest.status">
+            {{ getStatusIcon(guest.status) }} {{ getStatusLabel(guest.status) }}
+            </span>
+        </div>
+
+        <!-- QR Code Section -->
+        <div class="qr-section" *ngIf="guest.qrCodeGenerated; else noQr">
+            <h3>Code QR</h3>
+            <div class="qr-code-container">
+            <img [src]="guest.qrCodeUrl" alt="QR Code" class="qr-code-image" />
+            <p class="qr-description">Scannez ce code pour accéder à l'invitation</p>
+            </div>
+            <button class="btn btn-outline" (click)="downloadQRCode()">📥 Télécharger le QR Code</button>
+        </div>
+
+        <ng-template #noQr>
+            <div class="no-qr-section">
+            <div class="no-qr-icon">📱</div>
+            <p>Aucun code QR généré pour cet invité</p>
+            <button class="btn btn-primary" (click)="generateQRCode()">✨ Générer un QR Code</button>
+            </div>
+        </ng-template>
+
+        <!-- Actions -->
+        <div class="modal-actions">
+            <button class="btn btn-outline" (click)="closeGuestDetails()">Fermer</button>
+            <button class="btn btn-primary" (click)="editGuestFromModal()">✏️ Éditer</button>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>

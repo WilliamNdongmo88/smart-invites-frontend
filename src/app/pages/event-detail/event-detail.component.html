@@ -1,0 +1,198 @@
+<div class="event-detail">
+    <!-- Header -->
+    <div class="event-header">
+        <div class="container">
+            <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+            <div class="header-content">
+            <div>
+                <h1>{{ event.title }}</h1>
+                <p>Gestion des invitations et des invités</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" (click)="shareEvent()">🔗 Partager</button>
+                <button class="btn btn-outline" (click)="editEvent()">✏️ Éditer</button>
+                <button class="btn btn-outline btn-danger" (click)="deleteEvent()">🗑️ Supprimer</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="container py-12">
+    <div class="grid grid-main">
+        <!-- Left column - Event details and guests -->
+        <div class="left-column">
+        <!-- Event Info Card -->
+        <div class="card">
+            <h2>Détails de l'événement</h2>
+
+            <div class="details-grid">
+            <div class="detail-item">
+                <p class="detail-label">📅 Date et heure</p>
+                <p class="detail-value-date">{{ formatDate(event.date) }}</p>
+                <p class="detail-value-date">{{ event.time }}</p>
+            </div>
+
+            <div class="detail-item">
+                <p class="detail-label">📍 Lieu</p>
+                <p class="detail-value-location">{{ event.location }}</p>
+            </div>
+            </div>
+
+            <div class="detail-full">
+            <p class="detail-label">Description</p>
+            <p class="detail-value">{{ event.description }}</p>
+            </div>
+
+            <div class="divider-gold"></div>
+
+            <button class="btn btn-primary" style="width: 100%;" (click)="sendInvitations()">
+            ✉️ Envoyer les invitations
+            </button>
+        </div>
+
+        <!-- Guests List -->
+        <div class="card mt-8">
+            <h2>Invités ({{ filteredGuests.length }})</h2>
+
+            <!-- Search and Filter -->
+            <div class="search-filter">
+            <div class="search-box">
+                <input
+                type="text"
+                placeholder="Rechercher par nom ou email..."
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="filterGuests()"
+                />
+            </div>
+
+            <div class="filter-buttons">
+                <button (click)="setFilterStatus('all')">Tous</button>
+                <button (click)="setFilterStatus('confirmed')">Confirmés</button>
+                <button (click)="setFilterStatus('pending')">En attente</button>
+                <button (click)="setFilterStatus('declined')">Refusés</button>
+            </div>
+            </div>
+
+            <!-- Guests Table -->
+            <div class="guests-table">
+            <table>
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Statut</th>
+                    <th>Restrictions</th>
+                    <th>+1</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let guest of filteredGuests" [class]="'status-' + guest.status">
+                    <td>{{ guest.name }}</td>
+                    <td class="email">{{ guest.email }}</td>
+                    <td>
+                    <span class="status-badge" [class]="'status-' + guest.status">
+                        {{ getStatusIcon(guest.status) }} {{ getStatusLabel(guest.status) }}
+                    </span>
+                    </td>
+                    <td class="restrictions">{{ guest.dietaryRestrictions || '-' }}</td>
+                    <td class="center">{{ guest.plusOne ? '✓' : '-' }}</td>
+                    <td class="actions">
+                    <button class="btn-small" (click)="editGuest(guest)">Éditer</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div *ngIf="filteredGuests.length === 0" class="no-guests">
+                <p>Aucun invité trouvé</p>
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Right column - Stats -->
+        <div class="right-column">
+        <!-- Quick Stats -->
+        <div class="card">
+            <h3>Résumé</h3>
+
+            <div class="stats-list">
+            <div class="stat-item">
+                <p class="stat-label">Total</p>
+                <p class="stat-value">{{ event.totalGuests }}</p>
+                <div class="progress-bar">
+                <div class="progress-fill" style="width: 100%"></div>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <p class="stat-label confirmed">✓ Confirmés</p>
+                <p class="stat-value">{{ event.confirmedGuests }}</p>
+                <div class="progress-bar">
+                <div class="progress-fill confirmed" [style.width.%]="getPercentage(event.confirmedGuests)"></div>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <p class="stat-label pending">⏳ En attente</p>
+                <p class="stat-value">{{ event.pendingGuests }}</p>
+                <div class="progress-bar">
+                <div class="progress-fill pending" [style.width.%]="getPercentage(event.pendingGuests)"></div>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <p class="stat-label declined">✕ Refusés</p>
+                <p class="stat-value">{{ event.declinedGuests }}</p>
+                <div class="progress-bar">
+                <div class="progress-fill declined" [style.width.%]="getPercentage(event.declinedGuests)"></div>
+                </div>
+            </div>
+            </div>
+
+            <div class="divider-gold"></div>
+
+            <div class="response-rate">
+            <p class="label">Taux de réponse</p>
+            <p class="value">{{ getResponseRate() }}%</p>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="card mt-6">
+            <h3>Actions</h3>
+            <div class="actions-list">
+            <button class="btn btn-primary" style="width: 100%;" (click)="sendReminder()">
+                ✉️ Envoyer rappel
+            </button>
+            <button class="btn btn-outline" style="width: 100%;" (click)="exportList()">
+                📥 Exporter liste
+            </button>
+            <button class="btn btn-outline" style="width: 100%;" (click)="shareLink()">
+                🔗 Partager lien
+            </button>
+            </div>
+        </div>
+
+        <!-- Export Options -->
+        <div class="card mt-6">
+            <h3>Exporter</h3>
+            <p class="export-desc">Téléchargez vos données dans différents formats</p>
+            <div class="export-buttons">
+            <button class="btn btn-outline" style="width: 100%;" (click)="exportCSV()">
+                📊 Exporter en CSV
+            </button>
+            <button class="btn btn-outline" style="width: 100%;" (click)="exportPDF()">
+                📄 Exporter en PDF
+            </button>
+            <button class="btn btn-outline" style="width: 100%;" (click)="exportExcel()">
+                📈 Exporter en Excel
+            </button>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>

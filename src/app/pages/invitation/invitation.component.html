@@ -1,0 +1,161 @@
+    <div class="invitation" *ngIf="!submitted(); else successTemplate">
+      <!-- Header -->
+      <div class="invitation-header">
+        <div class="container">
+          <h1 class="text-elegant">Sophie & Pierre</h1>
+          <p>Vous êtes cordialement invité</p>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div class="container py-12">
+        <div class="invitation-card card">
+          <!-- Image -->
+          <div class="invitation-image">
+            <img 
+              [src]="url" 
+              alt="QR Code généré"
+              class="qr-image"
+            />
+          </div>
+
+          <!-- Content -->
+          <div class="invitation-content">
+            <!-- Greeting -->
+            <div class="greeting">
+              <p>Cher(e) Jean Dupont,</p>
+              <h2>Mariage de Sophie et Pierre</h2>
+            </div>
+
+            <!-- Description -->
+            <p class="description">
+              Nous avons le plaisir de vous inviter à célébrer notre mariage. Ce sera une journée inoubliable 
+              remplie de joie, d'amour et de moments précieux en compagnie de nos proches.
+            </p>
+
+            <!-- Event Details -->
+            <div class="event-details">
+              <h3>Détails de l'événement</h3>
+              <div class="details-grid">
+                <div class="detail-item">
+                  <span class="detail-icon">📅</span>
+                  <div>
+                    <p class="detail-label">Date et heure</p>
+                    <p class="detail-value">{{ formatDate('2025-06-15') }}</p>
+                    <p class="detail-value">18:00</p>
+                  </div>
+                </div>
+
+                <div class="detail-item">
+                  <span class="detail-icon">📍</span>
+                  <div>
+                    <p class="detail-label">Lieu</p>
+                    <p class="detail-value">Château de Versailles, Île-de-France</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Response Section -->
+            <div class="response-section">
+              <h3>Votre réponse</h3>
+
+              <!-- Response buttons -->
+              <div class="response-buttons">
+                <button
+                  class="response-btn confirmed"
+                  [class.active]="response() === 'confirmed'"
+                  (click)="response.set('confirmed')"
+                >
+                  <span class="icon">✓</span>
+                  <div>
+                    <p class="btn-title">Je confirme ma présence</p>
+                    <p class="btn-subtitle">Avec plaisir !</p>
+                  </div>
+                </button>
+
+                <button
+                  class="response-btn declined"
+                  [class.active]="response() === 'declined'"
+                  (click)="response.set('declined')"
+                >
+                  <span class="icon">✕</span>
+                  <div>
+                    <p class="btn-title">Je ne peux pas venir</p>
+                    <p class="btn-subtitle">Mes excuses</p>
+                  </div>
+                </button>
+              </div>
+
+              <!-- Additional info -->
+              <div *ngIf="response() === 'confirmed'" class="additional-info">
+                <div class="form-group">
+                  <label>Restrictions alimentaires (optionnel)</label>
+                  <textarea
+                    [(ngModel)]="dietaryRestrictions"
+                    placeholder="Ex: Végétarien, Sans gluten, Allergies..."
+                    rows="3"
+                  ></textarea>
+                </div>
+
+                <label class="checkbox-label">
+                  <input type="checkbox" [(ngModel)]="plusOne" />
+                  <span>Je souhaite amener un accompagnant (+1)</span>
+                </label>
+              </div>
+
+              <!-- Submit button -->
+              <button
+                class="btn btn-primary submit-btn"
+                [disabled]="!response()"
+                (click)="submitResponse()"
+              >
+                ❤️ Confirmer ma réponse
+              </button>
+
+              <!-- Footer message -->
+              <div class="invitation-footer">
+                <p>Nous attendons votre réponse avant le <strong>15 mai 2025</strong></p>
+                <p class="footer-contact">
+                  Pour toute question, contactez-nous à
+                  <a href="mailto:contact@example.com">contactexample.com</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trust message -->
+        <div class="trust-message">
+          <p>Vos données sont sécurisées et ne seront jamais partagées</p>
+          <div class="trust-icons">
+            <span>🔒 Chiffré</span>
+            <span>•</span>
+            <span>✓ Sécurisé</span>
+            <span>•</span>
+            <span>🔐 Privé</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #successTemplate>
+      <div class="success-page">
+        <div class="container">
+          <div class="success-card card">
+            <div class="success-icon">✓</div>
+            <h1>Merci !</h1>
+            <p>Votre réponse a été enregistrée avec succès.</p>
+            
+            <div class="success-response">
+              <p class="label">Votre réponse</p>
+              <p class="value">
+                {{ response() === 'confirmed' ? '✓ Confirmé' : '✕ Refusé' }}
+              </p>
+            </div>
+
+            <p class="success-message">Les organisateurs ont reçu votre réponse. À bientôt !</p>
+          </div>
+        </div>
+      </div>
+    </ng-template>

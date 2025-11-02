@@ -1,0 +1,127 @@
+@use "sass:color";
+
+.header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #E0E0E0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+      
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    .logo-img {
+      height: 70px;
+      width: 70px;
+    }
+
+    .logo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #D4AF37;
+      margin-left: -30px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .nav-link {
+      color: #1A1A1A;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      
+      &:hover {
+        color: #D4AF37;
+      }
+    }
+
+    .mobile-menu-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .mobile-nav {
+      border-top: 1px solid #E0E0E0;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mobile-nav-link {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #1A1A1A;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: background-color 0.3s ease;
+      
+      &:hover {
+        background-color: #F5F5F5;
+      }
+    }
+
+    .container {
+      padding: 1rem;
+      height: 70px;
+    }
+
+// Boutons
+.btns {
+  padding: 0.5rem 1rem;
+  border-radius: 0.8rem;
+  font-weight: 500;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 2px solid #d4af37;
+
+  &.btns-primary {
+    background-color: white;
+    color: #d4af37;
+
+    &:hover {
+      background-color: color.adjust(#f5f5f5, $lightness: -10%);
+      box-shadow: 0 4px 12px rgba(#d4af37, 0.3);
+    }
+  }
+
+  &.btn-outline {
+    background-color: transparent;
+    color: #d4af37;
+    border: 2px solid #d4af37;
+
+    &:hover {
+      background-color: rgba(#d4af37, 0.1);
+    }
+  }
+
+  &.btn-secondary {
+    background-color: #f5f5f5;
+    color: #333;
+
+    &:hover {
+      background-color: color.adjust(#f5f5f5, $lightness: -10%);
+    }
+  }
+}

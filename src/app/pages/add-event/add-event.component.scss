@@ -1,0 +1,256 @@
+    .add-event {
+      min-height: 100vh;
+      background-color: #FFFFFF;
+    }
+
+    .add-event-header {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
+      border-bottom: 1px solid #E0E0E0;
+      padding: 2rem 0;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #D4AF37;
+      text-decoration: none;
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: darken(#D4AF37, 10%);
+      }
+    }
+
+    .add-event-header h1 {
+      margin-bottom: 0.5rem;
+    }
+
+    .add-event-header p {
+      color: #666666;
+    }
+
+    .form-wrapper {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 1;
+    }
+
+    .step span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background-color: #F5F5F5;
+      color: #666666;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .step.active span {
+      background-color: #D4AF37;
+      color: #1A1A1A;
+    }
+
+    .step.completed span {
+      background-color: #22C55E;
+      color: #FFFFFF;
+    }
+
+    .step p {
+      font-size: 0.75rem;
+      color: #666666;
+      text-align: center;
+    }
+
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background-color: #E0E0E0;
+      margin: 0 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .step-line.completed {
+      background-color: #D4AF37;
+    }
+
+    .step-content {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .step-content h2 {
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #1A1A1A;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #E0E0E0;
+      border-radius: 0.5rem;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #D4AF37;
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+      }
+
+      &::placeholder {
+        color: #999999;
+      }
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .input-with-icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .currency {
+      position: absolute;
+      left: 1rem;
+      color: #D4AF37;
+      font-weight: 600;
+    }
+
+    .input-with-icon input {
+      padding-left: 2rem;
+    }
+
+    .form-hint {
+      font-size: 0.75rem;
+      color: #999999;
+      margin-top: 0.25rem;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      color: #1A1A1A;
+      font-size: 0.875rem;
+
+      input {
+        cursor: pointer;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .form-actions .btn {
+      flex: 1;
+    }
+
+    .confirmation-card {
+      background-color: #F5F5F5;
+      border: 1px solid #E0E0E0;
+      border-radius: 0.75rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .confirmation-card h3 {
+      margin-bottom: 1.5rem;
+    }
+
+    .confirmation-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #E0E0E0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    .confirmation-item .label {
+      font-weight: 600;
+      color: #1A1A1A;
+    }
+
+    .confirmation-item .value {
+      color: #666666;
+      text-align: right;
+    }
+
+    @media (max-width: 768px) {
+      .step-indicator {
+        margin-bottom: 2rem;
+      }
+
+      .step p {
+        display: none;
+      }
+
+      .step-line {
+        margin: 0 0.5rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .confirmation-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .confirmation-item .value {
+        text-align: left;
+      }
+    }

@@ -1,59 +1,155 @@
-# SmartInvite
+# Smart Invite - Wedding Invitation Management Platform
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.18.
+Une application moderne et élégante pour gérer les invitations de mariage, construite avec **Angular 19** et un design sophistiqué inspiré par le thème doré.
 
-## Development server
+## 🎨 Design & Thème
 
-To start a local development server, run:
+- **Palette de couleurs** : Or doré (#D4AF37), blanc pur, noir élégant
+- **Typographie** : Cormorant Garamond (titres), Lato (corps)
+- **Style** : Minimaliste, élégant avec transitions fluides
+- **Inspiration** : Image de mariage avec boucles dorées et silhouettes élégantes
+
+## 📋 Fonctionnalités
+
+### Pages Principales
+
+1. **Page d'accueil** - Présentation élégante avec :
+   - Hero section avec appel à l'action
+   - Section de fonctionnalités (6 cartes)
+   - Guide "Comment ça marche"
+   - Section d'appel à l'action finale
+   - Pied de page complet
+
+2. **Tableau de bord** - Gestion des événements :
+   - Vue d'ensemble avec statistiques (événements, invités, confirmations)
+   - Liste des événements avec détails
+   - Taux de réponse en temps réel
+   - Actions rapides (inviter, éditer)
+
+3. **Page d'invitation** - Interface de réponse :
+   - Affichage élégant de l'invitation
+   - Détails de l'événement
+   - Boutons de réponse (confirmer/refuser)
+   - Champs pour restrictions alimentaires et +1
+   - Page de confirmation de réponse
+
+4. **Header/Navigation** - Navigation responsive :
+   - Logo personnalisé
+   - Menu de navigation
+   - Menu mobile adaptatif
+   - Liens de connexion
+
+## 🚀 Installation et Démarrage
+
+### Prérequis
+- Node.js 18+ 
+- npm ou yarn
+
+### Installation
 
 ```bash
+# Installer les dépendances
+npm install
+
+# Démarrer le serveur de développement
 ng serve
+
+# Accéder à l'application
+# http://localhost:4200
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Build pour la production
 
 ```bash
-ng generate component component-name
+ng build --configuration production
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 📁 Structure du Projet
 
-```bash
-ng generate --help
+```
+smart-invite-angular/
+├── src/
+│   ├── app/
+│   │   ├── components/
+│   │   │   └── header/
+│   │   │       └── header.component.ts
+│   │   ├── pages/
+│   │   │   ├── home/
+│   │   │   │   └── home.component.ts
+│   │   │   ├── dashboard/
+│   │   │   │   └── dashboard.component.ts
+│   │   │   └── invitation/
+│   │   │       └── invitation.component.ts
+│   │   ├── app.component.ts
+│   │   ├── app.routes.ts
+│   │   └── app.config.ts
+│   ├── styles.scss          # Styles globaux avec thème doré
+│   ├── index.html
+│   └── main.ts
+├── public/
+│   ├── favicon.ico
+│   ├── logo.png            # Logo Smart Invite
+│   └── wedding-theme.jpg   # Image de thème mariage
+├── angular.json
+├── package.json
+└── tsconfig.json
 ```
 
-## Building
+## 🎯 Routes
 
-To build the project run:
+- `/` - Page d'accueil
+- `/dashboard` - Tableau de bord
+- `/invitations/:token` - Page de réponse aux invitations
 
-```bash
-ng build
+## 🛠️ Technologies Utilisées
+
+- **Angular 19** - Framework frontend
+- **TypeScript** - Langage de programmation
+- **SCSS** - Préprocesseur CSS
+- **Standalone Components** - Architecture moderne d'Angular
+- **Signals** - Gestion d'état réactive
+
+## 🎨 Personnalisation
+
+### Modifier les couleurs
+
+Éditez les variables SCSS dans `src/styles.scss` :
+
+```scss
+$primary-gold: #D4AF37;
+$light-gold: #F4E4C1;
+$dark-bg: #1A1A1A;
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Modifier les polices
 
-## Running unit tests
+Les polices sont importées depuis Google Fonts dans `src/styles.scss` :
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
+```scss
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Lato:wght@300;400;500;700&display=swap');
 ```
 
-## Running end-to-end tests
+## 📱 Responsive Design
 
-For end-to-end (e2e) testing, run:
+L'application est entièrement responsive et fonctionne sur :
+- Desktop (1024px+)
+- Tablet (768px - 1023px)
+- Mobile (< 768px)
 
-```bash
-ng e2e
-```
+## 🔒 Sécurité
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- Données sécurisées et chiffrées
+- Pas de partage de données personnelles
+- Validation des formulaires côté client
 
-## Additional Resources
+## 📝 Licence
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Tous droits réservés © 2025 Smart Invite
+
+## 👥 Support
+
+Pour toute question ou support, contactez-nous à contact@example.com
+
+---
+
+**Créé avec ❤️ pour les couples heureux** 💍

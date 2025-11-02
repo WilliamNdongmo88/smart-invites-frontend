@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'smart-invite' title`, () => {
+  it(`should have the 'smart-invite-angular' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('smart-invite');
+    expect(app.title).toEqual('smart-invite-angular');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, smart-invite');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, smart-invite-angular');
   });
 });

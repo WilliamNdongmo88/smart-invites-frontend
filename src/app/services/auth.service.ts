@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../environment/environment';
 export interface User {
   id: number;
@@ -29,12 +29,22 @@ export interface AuthResponse {
   user: User;
 }
 
+interface CustomJwtPayload {
+  sub: string;
+  role: string;
+  email?: string;
+  exp?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private apiUrl: string | undefined;
   private isProd = environment.production;
+
+  //Pour décoder le token
+  private user: CustomJwtPayload | null = null;
 
   // Etat de connexion global
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
@@ -49,15 +59,29 @@ export class AuthService {
     } else {
       this.apiUrl = environment.apiUrlDev+'/auth';
     }
+    //Rechargement des infos du user dès l’initialisation du service
     this.loadUserFromStorage();
   }
 
   private loadUserFromStorage(): void {
     const token = this.getToken();
     const user = localStorage.getItem('currentUser');
-    
+    // console.log('[loadUserFromStorage] token : ', token);
     if (token && user) {
+      this.decodeToken(token); 
       this.currentUserSubject.next(JSON.parse(user));
+    }
+  }
+  private decodeToken(token: string): CustomJwtPayload {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      this.user = payload;
+      console.log('[decodeToken] this.user', this.user)
+      return payload;
+    } catch (e) {
+      console.error('Erreur décodage token', e);
+      this.user = null;
+      return null as any;
     }
   }
 
@@ -74,16 +98,24 @@ export class AuthService {
   }
 
   login(request: LoginRequest): Observable<AuthResponse> {
-    console.log('### request :: ', request);
+    // console.log('### request :: ', request);
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
       tap(response => {
+        // console.log('###[login] response :: ', response);
         this.handleAuthResponse(response);
-        this.isAuthenticatedSubject.next(true); // notifie le composant (Header)
+        this.loadUserFromStorage();
       }),
       catchError(this.handleError)
     );
   }
 
+  getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('accessToken');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
 
   sendResetEmail(data: any): Observable<any> {
     console.log("data : ", data);
@@ -103,6 +135,9 @@ export class AuthService {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
+    this.user=null // Pour forcer valid a false
+    this.isAuthenticatedSubject.next(false);// notifie le composant (Header)
+    console.log("---Déconnection---");
   }
 
   getCurrentUser(): User | null {
@@ -113,13 +148,42 @@ export class AuthService {
     return localStorage.getItem('accessToken');
   }
 
-  isAuthenticated(): boolean {
-    return !!this.getToken();
+  getUser(){
+    return this.user;
+  }
+
+  isAuthenticated(): Observable<boolean> {
+    console.log("user::", this.user);
+    const valid = !!this.user && !this.isTokenExpired();
+
+    if (valid) {
+      this.isAuthenticatedSubject.next(true);
+      return of(true);
+    }
+
+    return this.refreshToken().pipe(
+      map(() => {
+        const refreshedValid = !!this.user && !this.isTokenExpired();
+        this.isAuthenticatedSubject.next(refreshedValid);
+        return refreshedValid;
+      }),
+      catchError(() => {
+        this.isAuthenticatedSubject.next(false);
+        return of(false);
+      })
+    );
+  }
+
+  public isTokenExpired(): boolean {
+    if (!this.user?.exp) return true;
+    const now = Math.floor(Date.now() / 1000);
+    return this.user.exp < now;
   }
 
   private handleAuthResponse(response: AuthResponse): void {
-    console.log("response :: ", response);
+    // console.log("[handleAuthResponse] response :: ", response);
     localStorage.setItem('accessToken', response.accessToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
     localStorage.setItem('currentUser', JSON.stringify(response.user));
     this.currentUserSubject.next(response.user);
   }
@@ -128,6 +192,30 @@ export class AuthService {
     return !!localStorage.getItem('accessToken');
   }
 
+  refreshToken(): Observable<any> {
+    console.log('[AuthService] Tentative de rafraîchissement du token');
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (refreshToken) {
+      return this.http.post<any>(this.apiUrl  + '/refresh-token', { refreshToken }).pipe(
+        tap(response => {
+          // Mettre à jour le token et le refresh token dans le localStorage
+          localStorage.setItem('accessToken', response.accessToken);
+          localStorage.setItem('refreshToken', response.refreshToken);
+          this.user = this.decodeToken(response.accessToken);
+        }),
+        map(() => true),
+        catchError(error => {
+          console.error('[AuthService] Échec du rafraîchissement du token:', error);
+          this.logout();
+          return throwError(() => error);
+        })
+      );
+    } else {
+      console.warn('[AuthService] Aucun refresh token disponible, impossible de rafraîchir le token');
+      this.logout();
+      return throwError(() => new Error('No refresh token available'));
+    }
+  }
 
   /**
    * Centralized error handling

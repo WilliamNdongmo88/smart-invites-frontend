@@ -19,12 +19,20 @@ export class QrCodeService {
     }
   }
 
+  getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('accessToken');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
   viewQrCode(id: number): Observable<any> {
     const userToken = localStorage.getItem('accessToken'); // JWT stocké
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${userToken}`
-    });
-
+    // const headers = new HttpHeaders({
+    //   Authorization: `Bearer ${userToken}`
+    // });
+    const headers = this.getAuthHeaders();
     return this.http.get(`${this.apiUrl}/invitation/qrcode/view/${id}`, { headers });
   }
 }

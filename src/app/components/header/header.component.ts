@@ -24,10 +24,10 @@ export class HeaderComponent implements OnInit {
   mobileMenuOpen = signal(false);
 
   ngOnInit() {
-    // 👀 On écoute l’état d’authentification
+    // On écoute l’état d’authentification
     this.authSub = this.authService.isAuthenticated$.subscribe(status => {
       this.isAuthenticated = status;
-      console.log('Header rafraîchi. Connecté =', status);
+      console.log('Header rafraîchi - Connecté =', status);
     });
     this.authService.currentUser$.subscribe(user => {
       console.log("---user---: ", user)

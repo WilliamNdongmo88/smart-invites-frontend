@@ -100,20 +100,21 @@ export class DashboardComponent {
   }
 
   getTotalGuests(): number {
-    return this.events.reduce((sum, e) => sum + e.totalGuests, 0);
+    return this.events.reduce((sum, e) => sum + Number(e.totalGuests), 0);
   }
 
   getTotalConfirmed(): number {
-    return this.events.reduce((sum, e) => sum + e.confirmedGuests, 0);
+    return this.events.reduce((sum, e) => sum + Number(e.confirmedGuests), 0);
   }
 
   getTotalPending(): number {
-    return this.events.reduce((sum, e) => sum + e.pendingGuests, 0);
+    console.log("TOTAL pendingGuests:: ",this.events.reduce((sum, e) => sum + Number(e.pendingGuests), 0));
+    return this.events.reduce((sum, e) => sum + Number(e.pendingGuests), 0);
   }
 
   getResponseRate(event: Event): number {
     const responded = event.confirmedGuests + event.declinedGuests;
-    return Math.round((responded / event.totalGuests) * 100);
+    return Math.round((responded / Number(event.totalGuests)) * 100);
   }
 
   formatDate(date: string): string {

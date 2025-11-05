@@ -14,15 +14,15 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   canActivate(): Observable<boolean>  {
-    console.log('AuthGuard: Checking authentication :', this.authService.isAuthenticated());
-    console.log('AuthGuard: isTokenExpired :', this.authService.isTokenExpired());
+    console.log('[Guard]: Checking authentication :', this.authService.isAuthenticated());
+    console.log('[Guard]: isTokenExpired :', this.authService.isTokenExpired());
     return this.authService.isAuthenticated().pipe(
       map(authenticated => {
         if (authenticated) {//&& this.authService.isAdminOrManager()
-          console.log('AdminGuard: Authentifié et Admin/Manager');
+          console.log('[Guard]: Authentifié et Admin');
           return true;
         } else {
-          console.log('AdminGuard: Non authentifié ou pas Admin/Manager, redirection vers accueil');
+          console.log('[Guard]: Non authentifié ou pas Admin, redirection vers accueil');
           this.router.navigate(['/']);
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
@@ -30,7 +30,7 @@ export class AuthGuard implements CanActivate {
         }
       }),
       catchError(() => {
-        console.log('AdminGuard: Erreur d\'authentification, redirection vers /');
+        console.log('[Guard]: Erreur d\'authentification, redirection vers /');
         this.router.navigate(['/']);
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");

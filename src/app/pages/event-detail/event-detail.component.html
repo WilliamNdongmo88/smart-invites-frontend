@@ -18,7 +18,7 @@
     </div>
 
     <!-- Main content -->
-    <div class="container py-12">
+    <div class="container py-12 c-mgtop">
     <div class="grid grid-main">
         <!-- Left column - Event details and guests -->
         <div class="left-column">
@@ -53,25 +53,33 @@
 
         <!-- Guests List -->
         <div class="card mt-8">
-            <h2>Invités ({{ filteredGuests.length }})</h2>
+            <h2 class="clickable-title"(click)="navigateToInvitePage()">
+                Invités ({{ filteredGuests.length }})
+            </h2>
 
             <!-- Search and Filter -->
             <div class="search-filter">
-            <div class="search-box">
-                <input
-                type="text"
-                placeholder="Rechercher par nom ou email..."
-                [(ngModel)]="searchTerm"
-                (ngModelChange)="filterGuests()"
-                />
-            </div>
+                <div class="search-box">
+                    <input
+                    type="text"
+                    placeholder="Rechercher par nom ou email..."
+                    [(ngModel)]="searchTerm"
+                    (ngModelChange)="filterGuests()"
+                    />
+                </div>
 
-            <div class="filter-buttons">
-                <button (click)="setFilterStatus('all')">Tous</button>
-                <button (click)="setFilterStatus('confirmed')">Confirmés</button>
-                <button (click)="setFilterStatus('pending')">En attente</button>
-                <button (click)="setFilterStatus('declined')">Refusés</button>
-            </div>
+                <div class="filter-buttons">
+                    <button
+                        *ngFor="let filter of filters"
+                        [class.active]="filterStatus() === filter.value"
+                        class="filter-btn"
+                        (click)="setFilterStatus(filter.value)">
+                        {{ getFilterLabel(filter.value) }}
+                        <!-- <span class="count">
+                            {{ getStatusCount(filter.value) }}
+                        </span> -->
+                    </button>
+                </div>
             </div>
 
             <!-- Guests Table -->

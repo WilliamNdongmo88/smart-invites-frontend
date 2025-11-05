@@ -1,73 +1,69 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environment/environment';
 
 export interface Event {
-  id: number;
+  event_id: number;
   organizerId: number;
   title: string;
   description: string;
-  eventDate: string;
-  eventLocation: string;
-  maxGuests: number;
+  event_date: string;
+  event_location: string;
+  max_guests: number;
   status: string;
+  confirmed_count: number;
+  pending_count: number;
+  declined_count: number;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateEventRequest {
+  organizerId?: number;
   title: string;
   description: string;
   eventDate: string;
   eventLocation: string;
   maxGuests: number;
+  hasPlusOne: boolean;
+  footRestriction: boolean;
+  status: string;
 }
 
-/**
- * Event Service
- * Handles event management operations
- */
 @Injectable({
   providedIn: 'root'
 })
 export class EventService {
-  private apiUrl = `${environment.apiUrl}/events`;
+  private apiUrl: string | undefined;
+  private isProd = environment.production;
 
-  constructor(private http: HttpClient) { }
-
-  /**
-   * Get all events for current user
-   */
-  getEvents(organizerId: number): Observable<Event[]> {
-    return this.http.get<Event[]>(`${this.apiUrl}/user/${organizerId}`);
+  constructor(private http: HttpClient) { 
+    if (this.isProd) {
+      this.apiUrl = environment.apiUrlProd;
+    } else {
+      this.apiUrl = environment.apiUrlDev;
+    }
   }
 
-  /**
-   * Get event by ID
-   */
-  getEventById(eventId: number): Observable<Event> {
-    return this.http.get<Event>(`${this.apiUrl}/${eventId}`);
+  getEvents(organizerId: number): Observable<{ events: Event[] }> {
+    return this.http.get<{ events: Event[] }>(`${this.apiUrl}/event/organizer/${organizerId}`);
   }
 
-  /**
-   * Create new event
-   */
-  createEvent(request: CreateEventRequest): Observable<Event> {
+  getEventById(eventId: number): Observable<{ event: Event[] }> {
+    console.log("eventId :: ",eventId);
+    return this.http.get<{ event: Event[] }>(`${this.apiUrl}/event/${eventId}`);
+  }
+
+  createEvent(request: CreateEventRequest): Observable<any> {
     console.log('Creating event with data:', request);
-    return this.http.post<Event>(this.apiUrl, request);
+    return this.http.post<any>(`${this.apiUrl}/event/create-event`, request);
   }
 
-  /**
-   * Update event
-   */
   updateEvent(eventId: number, request: Partial<CreateEventRequest>): Observable<Event> {
     return this.http.put<Event>(`${this.apiUrl}/${eventId}`, request);
   }
 
-  /**
-   * Update event status
-   */
   updateEventStatus(eventId: number, status: string): Observable<Event> {
     return this.http.patch<Event>(
       `${this.apiUrl}/${eventId}/status`,

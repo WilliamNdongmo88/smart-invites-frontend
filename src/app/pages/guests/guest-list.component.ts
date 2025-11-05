@@ -1,7 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
+import { User } from '../../services/auth.service';
+import { GuestService } from '../../services/guest.service';
+import { CommunicationService } from '../../services/share.service';
 
 interface Guest {
   id: string;
@@ -16,6 +19,8 @@ interface Guest {
   qrCodeUrl?: string;
 }
 
+type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined';
+
 @Component({
   selector: 'app-guest-list',
   standalone: true,
@@ -23,95 +28,55 @@ interface Guest {
   templateUrl: `guest-list.component.html`,
   styleUrl: 'guest-list.component.scss',
 })
-export class GuestListComponent {
-  eventTitle = 'Mariage de Sophie et Pierre';
+export class GuestListComponent implements OnInit{
   searchTerm = '';
-  filterStatus = signal<'all' | 'confirmed' | 'pending' | 'declined'>('all');
+  // filterStatus = signal<'all' | 'confirmed' | 'pending' | 'declined'>('all');
   selectedGuest = signal<Guest | null>(null);
   filteredGuests: Guest[] = [];
+  eventId: number | undefined;
+  guestId: number | undefined;
+  currentUser: User | null = null;
+  errorMessage: string = '';
+  eventTitle: string = '';
+
+  filterStatus = signal<FilterStatus>('all');
+  filters: { label: string; value: FilterStatus }[] = [
+    { label: 'Tous', value: 'all' },
+    { label: 'Confirmés', value: 'confirmed' },
+    { label: 'En attente', value: 'pending' },
+    { label: 'Refusés', value: 'declined' },
+  ];
 
   guests: Guest[] = [
-    {
-      id: '1',
-      name: 'Jean Dupont',
-      email: 'jean.dupont@email.com',
-      phone: '+33 6 12 34 56 78',
-      status: 'confirmed',
-      dietaryRestrictions: 'Végétarien',
-      plusOne: true,
-      responseDate: '2025-01-10',
-      qrCodeGenerated: true,
-      qrCodeUrl: 'https://storage.googleapis.com/solsolutionpdf.firebasestorage.app/qrcodes/1:374bb0d8-796e-4ada-adcd-b5e7b05fdcee.png',
-    },
-    {
-      id: '2',
-      name: 'Marie Martin',
-      email: 'marie.martin@email.com',
-      phone: '+33 7 23 45 67 89',
-      status: 'pending',
-      plusOne: false,
-      qrCodeGenerated: false,
-    },
-    {
-      id: '3',
-      name: 'Pierre Bernard',
-      email: 'pierre.bernard@email.com',
-      phone: '+33 6 98 76 54 32',
-      status: 'declined',
-      responseDate: '2025-01-08',
-      qrCodeGenerated: false,
-    },
-    {
-      id: '4',
-      name: 'Sophie Leclerc',
-      email: 'sophie.leclerc@email.com',
-      status: 'confirmed',
-      dietaryRestrictions: 'Sans gluten',
-      plusOne: false,
-      responseDate: '2025-01-12',
-      qrCodeGenerated: true,
-      qrCodeUrl: 'https://storage.googleapis.com/solsolutionpdf.firebasestorage.app/qrcodes/2:f29ffae9-340e-4416-ac2f-5227c495af13.png',
-    },
-    {
-      id: '5',
-      name: 'Thomas Moreau',
-      email: 'thomas.moreau@email.com',
-      phone: '+33 7 34 56 78 90',
-      status: 'pending',
-      plusOne: true,
-      qrCodeGenerated: false,
-    },
-    {
-      id: '6',
-      name: 'Isabelle Rousseau',
-      email: 'isabelle.rousseau@email.com',
-      status: 'confirmed',
-      dietaryRestrictions: 'Vegan',
-      plusOne: false,
-      responseDate: '2025-01-11',
-      qrCodeGenerated: true,
-      qrCodeUrl: 'https://storage.googleapis.com/solsolutionpdf.firebasestorage.app/qrcodes/3:63bf9ac9-ad8c-4a6d-884d-641749588a49.png',
-    },
-    {
-      id: '7',
-      name: 'Marc Dubois',
-      email: 'marc.dubois@email.com',
-      phone: '+33 6 11 22 33 44',
-      status: 'declined',
-      responseDate: '2025-01-09',
-      qrCodeGenerated: false,
-    },
-    {
-      id: '8',
-      name: 'Claire Fontaine',
-      email: 'claire.fontaine@email.com',
-      status: 'confirmed',
-      plusOne: true,
-      responseDate: '2025-01-13',
-      qrCodeGenerated: true,
-      qrCodeUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="white" width="200" height="200"/%3E%3Crect fill="black" x="10" y="10" width="180" height="180" opacity="0.1"/%3E%3Ctext x="100" y="100" text-anchor="middle" dy=".3em" font-size="20" fill="black"%3EQR Code%3C/text%3E%3C/svg%3E',
-    },
+    // {
+    //   id: '1',
+    //   name: 'Jean Dupont',
+    //   email: 'jean.dupont@email.com',
+    //   phone: '+33 6 12 34 56 78',
+    //   status: 'confirmed',
+    //   dietaryRestrictions: 'Végétarien',
+    //   plusOne: true,
+    //   responseDate: '2025-01-10',
+    //   qrCodeGenerated: true,
+    //   qrCodeUrl: 'https://storage.googleapis.com/solsolutionpdf.firebasestorage.app/qrcodes/1:374bb0d8-796e-4ada-adcd-b5e7b05fdcee.png',
+    // }
   ];
+
+  constructor(
+    private route: ActivatedRoute, 
+    private router: Router,
+    private guestService: GuestService,
+    private communicationService: CommunicationService
+  ) {}
+
+  ngOnInit(): void {
+    const result = this.route.snapshot.paramMap.get('eventId') || '';
+    this.eventId = Number(result);
+    this.getGuestsByEvent();
+    this.communicationService.message$.subscribe(msg => {
+      this.eventTitle = msg;
+    });
+  }
 
   get totalGuests(): number {
     return this.guests.length;
@@ -129,8 +94,41 @@ export class GuestListComponent {
     return this.guests.filter(g => g.status === 'declined').length;
   }
 
-  constructor(private route: ActivatedRoute, private router: Router) {
-    this.filterGuests();
+  getGuestsByEvent(){
+    if (this.eventId) {
+      this.guestService.getGuestsForEvent(this.eventId).subscribe(
+        (response) => {
+          console.log("Response :: ", response.guests);
+          response.guests.map(res => {
+            const uper = res.rsvp_status
+            const data = {
+                id: String(res.id),
+                eventId: res.event_id,
+                name: res.full_name,
+                email: res.email,
+                phone: res.phone_number,  
+                status: uper.toLowerCase() as 'confirmed' | 'pending' | 'declined',
+                dietaryRestrictions: res.notes,
+                plusOne: res.has_plus_one ? true : false,
+                responseDate: res.response_date.split('T')[0],
+                qrCodeGenerated: res.qr_code_url ? true : false,
+                qrCodeUrl: res.qr_code_url
+            };
+            this.guests.push(data);
+            return data;
+          });
+          //console.log(" this.guests :: ",  this.guests);
+          // this.loading = false;
+          this.filterGuests();
+        },
+        (error) => {
+          // this.loading = false;
+          console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
+    }
   }
 
   filterGuests() {
@@ -247,6 +245,10 @@ export class GuestListComponent {
 
   exportGuests() {
     alert('📥 Export des invités...');
+  }
+
+  navigateToEventPage(){
+    this.router.navigate(['/events', this.eventId]);
   }
 }
 

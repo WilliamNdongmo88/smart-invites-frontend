@@ -4,11 +4,11 @@ import { BehaviorSubject } from "rxjs/internal/BehaviorSubject";
 
 @Injectable({ providedIn: 'root' })
 export class CommunicationService {
-  private messageSource = new BehaviorSubject<boolean>(false);
+  private messageSource = new BehaviorSubject<any>("");
   message$ = this.messageSource.asObservable();
 
-  sendMessage(bool: boolean) {
-    this.messageSource.next(bool);
+  sendMessage(variable: any) {
+    this.messageSource.next(variable);
   }
 
   // Pour déclencher une action chez le Sender

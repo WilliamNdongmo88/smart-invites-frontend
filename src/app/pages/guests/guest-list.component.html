@@ -1,8 +1,8 @@
  <div class="guest-list">
-    <!-- Header -->
+    <!-- Header eventId, eventTitle-->
     <div class="guest-list-header">
     <div class="container">
-        <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+        <a (click)="navigateToEventPage()" class="back-link">← Retour a l'événement</a>
         <div class="header-content">
         <div>
             <h1>Gestion des invités</h1>
@@ -25,27 +25,27 @@
     <!-- Search and Filter -->
     <div class="search-filter-section">
         <div class="search-box">
-        <input
-            type="text"
-            placeholder="Rechercher par nom, email ou téléphone..."
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="filterGuests()"
-            class="search-input"
-        />
-        <span class="search-icon">🔍</span>
+            <input
+                type="text"
+                placeholder="Rechercher par nom, email ou téléphone..."
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="filterGuests()"
+                class="search-input"
+            />
+            <span class="search-icon">🔍</span>
         </div>
 
         <div class="filter-buttons">
-        <!-- (click)="setFilterStatus(status)" -->
-        <button
-            *ngFor="let status of ['all', 'confirmed', 'pending', 'declined']"
-            [class.active]="filterStatus() === status"
-            
-            class="filter-btn"
-        >
-            {{ getFilterLabel(status) }}
-            <span class="count">{{ getStatusCount(status) }}</span>
-        </button>
+            <!-- (click)="setFilterStatus(status)" -->
+            <button
+                *ngFor="let filter of filters"
+                [class.active]="filterStatus() === filter.value"
+                (click)="setFilterStatus(filter.value)"
+                class="filter-btn"
+            >
+                {{ getFilterLabel(filter.value) }}
+                <span class="count">{{ getStatusCount(filter.value) }}</span>
+            </button>
         </div>
     </div>
 

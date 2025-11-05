@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatIcon } from "@angular/material/icon";
+import { EventService } from '../../services/event.service';
+import { AuthService, User } from '../../services/auth.service';
 import { CommunicationService } from '../../services/share.service';
 
 interface Event {
@@ -23,31 +25,79 @@ interface Event {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent {
+  organizerId: number | undefined;
+  currentUser: User | null = null;
+  errorMessage: string = '';
 
-  constructor(private router: Router) {}
-  
   events: Event[] = [
-    {
-      id: 1,
-      title: 'Mariage de Sophie et Pierre',
-      date: '2025-06-15',
-      location: 'Château de Versailles',
-      totalGuests: 150,
-      confirmedGuests: 98,
-      pendingGuests: 35,
-      declinedGuests: 17,
-    },
-    {
-      id: 2,
-      title: 'Mariage de Marie et Jean',
-      date: '2025-08-22',
-      location: 'Domaine de Montfort',
-      totalGuests: 120,
-      confirmedGuests: 85,
-      pendingGuests: 25,
-      declinedGuests: 10,
-    },
+    // {
+    //   id: 1,
+    //   title: 'Mariage de Sophie et Pierre',
+    //   date: '2025-06-15',
+    //   location: 'Château de Versailles',
+    //   totalGuests: 150,
+    //   confirmedGuests: 98,
+    //   pendingGuests: 35,
+    //   declinedGuests: 17,
+    // },
+    // {
+    //   id: 2,
+    //   title: 'Mariage de Marie et Jean',
+    //   date: '2025-08-22',
+    //   location: 'Domaine de Montfort',
+    //   totalGuests: 120,
+    //   confirmedGuests: 85,
+    //   pendingGuests: 25,
+    //   declinedGuests: 10,
+    // },
   ];
+
+  constructor(
+    private router: Router, 
+    private eventService: EventService,
+    private authService: AuthService,
+    private communicationService: CommunicationService
+  ) {}
+
+  ngOnInit(): void {
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      this.organizerId = user?.id 
+    });
+    this.getAllEvent();
+  }
+
+  getAllEvent(){
+    if (this.organizerId) {
+      this.eventService.getEvents(this.organizerId).subscribe(
+        (response) => {
+          // console.log("Response :: ", response.events);
+          response.events.map(elt => {
+            const data = {
+              id: elt.event_id,
+              title: elt.title,
+              date: elt.event_date.split('T')[0],     //"2025-12-05T13:30:00.000Z"
+              location: elt.event_location,
+              totalGuests: elt.max_guests,
+              confirmedGuests: elt.confirmed_count,
+              pendingGuests: elt.pending_count,
+              declinedGuests: elt.declined_count     
+            }
+            this.events.push(data);
+            return data;
+          });
+          // console.log("this.events :: ", this.events);
+          // this.loading = false;
+        },
+        (error) => {
+          // this.loading = false;
+          console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
+    }
+  }
 
   getTotalGuests(): number {
     return this.events.reduce((sum, e) => sum + e.totalGuests, 0);
@@ -83,8 +133,15 @@ export class DashboardComponent {
     this.router.navigate(['/events', eventId]);
   }
 
-  navigateToInvitePage(){
-    this.router.navigate(['/guests']);
+  navigateToInvitePage(eventId: number){
+    console.log("eventId ::: ",eventId);
+    console.log("---Events---- ::: ",this.events[eventId-1]);
+    this.send(this.events[eventId-1].title)
+    this.router.navigate(['/events', eventId, 'guests']);
+  }
+  send(message: any) {
+    this.communicationService.sendMessage(message);
+    //this.message = ""; // reset
   }
 }
 

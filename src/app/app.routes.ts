@@ -48,7 +48,7 @@ export const routes: Routes = [
     // canActivate: [AuthGuard]
   },
   {
-    path: 'guests',
+    path: 'events/:eventId/guests',
     component: GuestListComponent,
   },
   {

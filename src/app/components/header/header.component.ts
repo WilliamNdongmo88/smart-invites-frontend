@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
-import { CommunicationService } from '../../services/share.service';
 
 @Component({
   selector: 'app-header',

@@ -27,11 +27,17 @@ export class QrCodeService {
     });
   }
 
+  generateQRCode(id: number): Observable<any>{
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/invitation/generate/${id}`, { headers });
+  }
+
+  generateSeveralQRCode(idList: number[]): Observable<any>{
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/invitation/generate-several`, idList, { headers });
+  }
+
   viewQrCode(id: number): Observable<any> {
-    const userToken = localStorage.getItem('accessToken'); // JWT stocké
-    // const headers = new HttpHeaders({
-    //   Authorization: `Bearer ${userToken}`
-    // });
     const headers = this.getAuthHeaders();
     return this.http.get(`${this.apiUrl}/invitation/qrcode/view/${id}`, { headers });
   }

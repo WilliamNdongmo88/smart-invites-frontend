@@ -5,9 +5,16 @@ import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { User } from '../../services/auth.service';
 import { GuestService } from '../../services/guest.service';
 import { CommunicationService } from '../../services/share.service';
+import { QrCodeService } from '../../services/qr-code.service';
+import { SpinnerComponent } from "../../components/spinner/spinner";
+import { AddGuestModalComponent } from "../../components/add-guest-modal/add-guest-modal";
+import { ImportGuestsModalComponent } from "../../components/import-guests-modal/import-guests-modal";
+import { ImportedGuest } from '../../services/import-guest.service';
+import { ErrorModalComponent } from "../../components/error-modal/error-modal";
+import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 
 interface Guest {
-  id: string;
+  id: number;
   name: string;
   email: string;
   phone?: string;
@@ -24,20 +31,34 @@ type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined';
 @Component({
   selector: 'app-guest-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: `guest-list.component.html`,
+  imports: [CommonModule, FormsModule, SpinnerComponent, AddGuestModalComponent, 
+            ImportGuestsModalComponent, ErrorModalComponent, ConfirmDeleteModalComponent],
+  templateUrl: 'guest-list.component.html',
   styleUrl: 'guest-list.component.scss',
 })
 export class GuestListComponent implements OnInit{
+  viewMode: 'grid' | 'table' = 'grid'; 
   searchTerm = '';
-  // filterStatus = signal<'all' | 'confirmed' | 'pending' | 'declined'>('all');
   selectedGuest = signal<Guest | null>(null);
+  showAddGuestModal = signal(false);
+  showImportModal = signal(false);
   filteredGuests: Guest[] = [];
   eventId: number | undefined;
   guestId: number | undefined;
+  guestIdList: number[] = [];
+  isAllSelected: boolean = false;
   currentUser: User | null = null;
-  errorMessage: string = '';
+  showErrorModal = false;
+  errorMessage = '';
   eventTitle: string = '';
+  isLoading: boolean = false;
+  isModalLoading: boolean = false;
+  showDeleteModal = false;
+  selectedGuestId: number | null = null;
+  itemsPerPage = 10;
+  currentPage = 1;
+  modalAction: string | undefined;
+  warningMessage: string = "";
 
   filterStatus = signal<FilterStatus>('all');
   filters: { label: string; value: FilterStatus }[] = [
@@ -47,62 +68,42 @@ export class GuestListComponent implements OnInit{
     { label: 'Refusés', value: 'declined' },
   ];
 
-  guests: Guest[] = [
-    // {
-    //   id: '1',
-    //   name: 'Jean Dupont',
-    //   email: 'jean.dupont@email.com',
-    //   phone: '+33 6 12 34 56 78',
-    //   status: 'confirmed',
-    //   dietaryRestrictions: 'Végétarien',
-    //   plusOne: true,
-    //   responseDate: '2025-01-10',
-    //   qrCodeGenerated: true,
-    //   qrCodeUrl: 'https://storage.googleapis.com/solsolutionpdf.firebasestorage.app/qrcodes/1:374bb0d8-796e-4ada-adcd-b5e7b05fdcee.png',
-    // }
-  ];
+  guests: Guest[] = [];
 
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
     private guestService: GuestService,
+    private qrCodeService: QrCodeService,
     private communicationService: CommunicationService
-  ) {}
+  ) {this.loadViewModeFromStorage()}
 
   ngOnInit(): void {
     const result = this.route.snapshot.paramMap.get('eventId') || '';
     this.eventId = Number(result);
+    console.log("this.eventId :: ", this.eventId);
     this.getGuestsByEvent();
     this.communicationService.message$.subscribe(msg => {
-      this.eventTitle = msg;
+      console.log("msg :: ", localStorage.getItem('eventTitle'));
+      if (msg) {
+        this.eventTitle = msg;
+      }else{
+        this.eventTitle = localStorage.getItem('eventTitle') || "";
+      }
     });
-  }
-
-  get totalGuests(): number {
-    return this.guests.length;
-  }
-
-  get confirmedCount(): number {
-    return this.guests.filter(g => g.status === 'confirmed').length;
-  }
-
-  get pendingCount(): number {
-    return this.guests.filter(g => g.status === 'pending').length;
-  }
-
-  get declinedCount(): number {
-    return this.guests.filter(g => g.status === 'declined').length;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   getGuestsByEvent(){
     if (this.eventId) {
+      this.isLoading = true;
       this.guestService.getGuestsForEvent(this.eventId).subscribe(
         (response) => {
-          console.log("Response :: ", response.guests);
-          response.guests.map(res => {
+          console.log("[getGuestsByEvent] Response :: ", response.guests);
+          this.guests = response.guests.map(res => {
             const uper = res.rsvp_status
             const data = {
-                id: String(res.id),
+                id: Number(res.guest_id),
                 eventId: res.event_id,
                 name: res.full_name,
                 email: res.email,
@@ -114,15 +115,14 @@ export class GuestListComponent implements OnInit{
                 qrCodeGenerated: res.qr_code_url ? true : false,
                 qrCodeUrl: res.qr_code_url
             };
-            this.guests.push(data);
             return data;
           });
           //console.log(" this.guests :: ",  this.guests);
-          // this.loading = false;
+          this.isLoading = false;
           this.filterGuests();
         },
         (error) => {
-          // this.loading = false;
+          this.isLoading = false;
           console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
           console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';
@@ -202,6 +202,7 @@ export class GuestListComponent implements OnInit{
   }
 
   viewGuestDetails(guest: Guest) {
+    // console.log("guest:: ", guest)
     this.selectedGuest.set(guest);
   }
 
@@ -213,42 +214,351 @@ export class GuestListComponent implements OnInit{
     alert(`✏️ Édition de ${guest.name}...`);
   }
 
-  editGuestFromModal() {
-    if (this.selectedGuest()) {
-      alert(`✏️ Édition de ${this.selectedGuest.name}...`);
+  // Start Logique checkbox du tableau
+  onGuestSelected(guest: any, event: any) {
+    const checked = event.target.checked;
+    const guestId = Number(guest.id);  // 🔥 Normalisation
+
+    if (checked) {
+      if (!this.guestIdList.includes((guestId))) {
+        this.guestIdList.push(guestId);
+        console.log('Ajouter seulement si pas déjà ajouté : ', this.guestIdList);
+      }
+    } else {
+      this.guestIdList = this.guestIdList.filter(id => id !== guestId);
+      console.log('Retirer si décoché : ', this.guestIdList);
+    }
+
+    console.log('Guest sélectionné : ', this.guestIdList, 'checked:', checked);
+
+    // Mise à jour du "select all"
+    this.isAllSelected = this.guestIdList.length === this.guests.length;
+  }
+
+  toggleSelectAll(event: any) {
+    this.isAllSelected = event.target.checked;
+    if (this.isAllSelected) {
+      this.guestIdList = this.filteredGuests
+        .filter(g => !g.qrCodeGenerated)
+        .map(g => g.id);
+    } else {
+      this.guestIdList = [];
     }
   }
 
-  deleteGuest(guest: Guest) {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer ${guest.name} ?`)) {
-      this.guests = this.guests.filter(g => g.id !== guest.id);
-      this.filterGuests();
-      alert(`🗑️ ${guest.name} a été supprimé`);
+  deleteSelectedGuests() {
+    if (this.guestIdList.length === 0) return;
+    this.filteredGuests = this.filteredGuests.filter(
+      guest => !this.guestIdList.includes(guest.id)
+    );
+    this.guests = this.guests.filter(
+      guest => !this.guestIdList.includes(guest.id)
+    );
+    this.guestIdList = [];
+    this.isAllSelected = false;
+    console.log('Guests après suppression :', this.guests);
+  }
+  // End Logique checkbox
+
+  deleteInvitationFromModal(guest: Guest) {
+    if (this.selectedGuest()) {
+      this.isLoading = true;
+      this.guestService.revokeInvitation(Number(guest.id)).subscribe(
+        (response) => {
+          console.log("[revokeInvitation] response :: ", response);
+          for (const key in this.guests) {
+            const data = this.guests[key];
+            if(Number(data.id) == Number(guest.id)){
+              data.qrCodeGenerated = false;
+              data.qrCodeUrl = "";
+            }
+          }
+          this.filterGuests();
+          this.isLoading = false;
+        },
+        (error) => {
+          this.isLoading = false;
+          console.error('❌ [deleteInvitationFromModal] Erreur :', error.message);
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
     }
   }
 
-  generateQRCode() {
-    alert('✨ Génération du QR Code en cours...');
+  deleteGuest(guestId: number) {
+    this.isLoading = true;
+    this.guestService.deleteGuest(Number(guestId)).subscribe(
+      (response) => {
+        console.log("response :: ", response);
+        this.guests = this.guests.filter(g => g.id !== guestId);
+        this.filteredGuests = this.filteredGuests.filter(g => g.id !== guestId);
+        this.guestIdList = this.guestIdList.filter(id => id !== guestId);
+
+      this.isLoading = false;
+        this.isLoading = false;
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('❌ [deleteGuest] Erreur :', error.message);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';
+      }
+    );
+  }
+
+  deleteSeveralGuests(guestIdList: number[]) {
+    this.isLoading = true;
+    
+    this.guestService.deleteSeveralGuests(guestIdList).subscribe(
+      (response) => {
+        console.log("response :: ", response);
+        // Filtrer les guests pour ne garder que ceux non sélectionnés
+        this.deleteSelectedGuests()
+        this.isLoading = false;
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('❌ [deleteGuest] Erreur :', error.message);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';
+      }
+    );
+  }
+
+  sendSeveralGuestInvitation(guestIdList: number[]) {
+    this.isLoading = true;
+    this.qrCodeService.generateSeveralQRCode(guestIdList).subscribe(
+      (response) => {
+        console.log("[sendSeveralGuestInvitation] response :: ", response);
+        for (const res of response) {
+          const guest = this.guests.find(g => g.id === res.id);
+          if (guest) {
+            guest.qrCodeGenerated = true;
+            guest.qrCodeUrl = res.qrUrl;
+          }
+        }
+
+        this.filterGuests();
+        this.closeModal();
+        this.isLoading = false;
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('❌ [sendSeveralGuestInvitation] Erreur :', error.message);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';
+      }
+    );
+  }
+
+  generateQRCode(guestId: number) {
     if (this.selectedGuest()) {
-      this.selectedGuest.update(guest => guest ? { ...guest, qrCodeGenerated: true } : guest);
-      this.selectedGuest.update(guest => guest ? { ...guest, qrCodeUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="white" width="200" height="200"/%3E%3Crect fill="black" x="10" y="10" width="180" height="180" opacity="0.1"/%3E%3Ctext x="100" y="100" text-anchor="middle" dy=".3em" font-size="20" fill="black"%3EQR Code%3C/text%3E%3C/svg%3E' } : guest);
+      this.isModalLoading = true;
+      this.qrCodeService.generateQRCode(Number(guestId)).subscribe(
+        (response) => {
+          for (const key in this.guests) {
+            const data = this.guests[key];
+            if(Number(data.id) == Number(guestId)){
+              data.qrCodeGenerated = true;
+              data.qrCodeUrl = response.qrUrl
+            }
+          }
+          this.isModalLoading = false;
+        },
+        (error) => {
+          this.isModalLoading = false;
+          console.error('❌ [generateQRCode] Erreur :', error.message);
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
     }
+  }
+
+  onGuestAdded(newGuest: any) {
+    const datas = [{
+        eventId: this.eventId,
+        fullName: newGuest.name,
+        email: newGuest.email,
+        phoneNumber: newGuest.phone,
+        rsvpStatus: "PENDING",
+        hasPlusOne: newGuest.plusOne
+      }];
+        
+      this.isLoading = true;
+      this.guestService.addGuest(datas).subscribe(
+      (response) => {
+        console.log("Response :: ", response.guests);
+        this.isLoading = false;
+        this.getGuestsByEvent();
+        this.filterGuests();
+        this.closeAddGuestModal();
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('❌ Erreur :', error.message.split(':')[1]);
+        if(error.message.includes("409 Conflict")){
+          this.triggerError();
+          this.errorMessage = "Vous essayez d'enregistrer un invités qui existe déjà";
+          console.log("Message :: ", this.errorMessage);
+        }  
+      }
+    );
   }
 
   downloadQRCode() {
     alert('📥 Téléchargement du QR Code...');
   }
 
-  inviteNewGuests() {
-    alert('✉️ Inviter de nouveaux invités...');
+  openAddGuestModal() {
+    this.showAddGuestModal.set(true);
   }
 
-  exportGuests() {
-    alert('📥 Export des invités...');
+  closeAddGuestModal() {
+    this.showAddGuestModal.set(false);
+  }
+
+  sendReminder() {
+    alert('📧 Rappel envoyé aux invités en attente !');
+  }
+
+  openImportModal() {
+    this.showImportModal.set(true);
+  }
+
+  closeImportModal() {
+    this.showImportModal.set(false);
   }
 
   navigateToEventPage(){
     this.router.navigate(['/events', this.eventId]);
+  }
+
+  get totalGuests(): number {
+    return this.guests.length;
+  }
+
+  get confirmedCount(): number {
+    return this.guests.filter(g => g.status === 'confirmed').length;
+  }
+
+  get pendingCount(): number {
+    return this.guests.filter(g => g.status === 'pending').length;
+  }
+
+  get declinedCount(): number {
+    return this.guests.filter(g => g.status === 'declined').length;
+  }
+
+  // Logique error-modal
+  triggerError() {
+    this.errorMessage = "Impossible de charger les invités. Veuillez réessayer.";
+    this.showErrorModal = true;
+  }
+
+  closeErrorModal() {
+    this.showErrorModal = false;
+  }
+
+  // Logique modal de suppréssion
+  openDeleteModal(guest: any, modalAction?: string) {
+    this.modalAction = modalAction;
+    this.guestId = guest.id;
+    console.log("Guest", guest);
+    console.log("this.guestId ", this.guestId);
+    if (this.guestId && modalAction=='one') {
+      this.selectedGuestId = guest.id;
+      this.warningMessage = "Êtes-vous sûr de vouloir supprimer cet invité ?"
+      this.showDeleteModal = true;
+    }
+    if(modalAction=='delete'){
+      this.warningMessage = "Êtes-vous sûr de vouloir supprimer ces invités ?";
+      this.showDeleteModal = true;
+    }
+    if(modalAction=='send'){
+      this.warningMessage = "Êtes-vous sûr de vouloir envoyer une invitation a tous ces invités ?";
+      this.showDeleteModal = true;
+    }
+  }
+
+  confirmDelete() {
+    if (this.selectedGuestId !== null) {
+      this.deleteGuest(Number(this.selectedGuestId))
+    }
+    
+    if(this.modalAction=='delete'){
+      this.deleteSeveralGuests(this.guestIdList);
+    }
+    this.closeModal();
+  }
+
+  sendInvitation(){
+    if(this.modalAction=='send'){
+      this.sendSeveralGuestInvitation(this.guestIdList);
+    }
+  }
+
+  closeModal() {
+    this.showDeleteModal = false;
+    this.selectedGuestId = null;
+  }
+
+  //Change le mode d'affichage (grille ou tableau)
+  setViewMode(mode: 'grid' | 'table'): void {
+    this.viewMode = mode;
+    this.saveViewModeToStorage();
+  }
+
+  
+  //Sauvegarde le mode d'affichage dans le localStorage
+  private saveViewModeToStorage(): void {
+    try {
+      localStorage.setItem('guest-view-mode', this.viewMode);
+    } catch (error) {
+      console.warn('Impossible de sauvegarder le mode d\'affichage:', error);
+    }
+  }
+
+  //Charge le mode d'affichage depuis le localStorage
+  private loadViewModeFromStorage(): void {
+    try {
+      const savedMode = localStorage.getItem('guest-view-mode') as 'grid' | 'table';
+      if (savedMode && (savedMode === 'grid' || savedMode === 'table')) {
+        this.viewMode = savedMode;
+      }
+    } catch (error) {
+      console.warn('Impossible de charger le mode d\'affichage:', error);
+      this.viewMode = 'grid';
+    }
+  }
+
+  // Logique pagination 
+  get totalPages() {
+    return Math.ceil(this.filteredGuests.length / this.itemsPerPage);
+  }
+
+  totalPagesArray() {
+    return Array(this.totalPages)
+      .fill(0)
+      .map((_, i) => i + 1);
+  }
+
+  paginatedGuests() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredGuests.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  goToPage(page: number) {
+    this.currentPage = page;
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) this.currentPage++;
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) this.currentPage--;
   }
 }
 

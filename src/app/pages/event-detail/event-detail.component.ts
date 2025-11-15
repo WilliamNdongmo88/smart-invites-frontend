@@ -6,6 +6,10 @@ import { AuthService, User } from '../../services/auth.service';
 import { EventService } from '../../services/event.service';
 import { GuestService } from '../../services/guest.service';
 import { CommunicationService } from '../../services/share.service';
+import { AddGuestModalComponent } from "../../components/add-guest-modal/add-guest-modal";
+import { ErrorModalComponent } from "../../components/error-modal/error-modal";
+import { ImportGuestsModalComponent } from "../../components/import-guests-modal/import-guests-modal";
+import { SpinnerComponent } from "../../components/spinner/spinner";
 
 interface Guest {
   id: string;
@@ -35,18 +39,24 @@ type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined';
 @Component({
   selector: 'app-event-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, AddGuestModalComponent, ErrorModalComponent, ImportGuestsModalComponent, SpinnerComponent],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.scss']
 })
 export class EventDetailComponent implements OnInit{
+  showAddGuestModal = signal(false);
+  showImportModal = signal(false);
   searchTerm = '';
-  // filterStatus = signal<'all' | 'confirmed' | 'pending' | 'declined'>('all');
   filteredGuests: Guest[] = [];
   eventId: number | undefined;
   guestId: number | undefined;
   currentUser: User | null = null;
   errorMessage: string = '';
+  isLoading: boolean = false;
+  showErrorModal = false;
+
+  itemsPerPage = 10;
+  currentPage = 1;
 
   filterStatus = signal<FilterStatus>('all');
 
@@ -69,84 +79,8 @@ export class EventDetailComponent implements OnInit{
     pendingGuests: 0,
     declinedGuests: 0
   };
-  // event: Event = {
-  //   id: '1',
-  //   title: 'Mariage de Sophie et Pierre',
-  //   date: '2025-06-15',
-  //   time: '18:00',
-  //   location: 'Château de Versailles, Île-de-France',
-  //   description: 'Nous avons le plaisir de vous inviter à célébrer notre mariage. Ce sera une journée inoubliable remplie de joie, d\'amour et de moments précieux en compagnie de nos proches.',
-  //   totalGuests: 150,
-  //   confirmedGuests: 98,
-  //   pendingGuests: 35,
-  //   declinedGuests: 17,
-  // };
 
-  guests: Guest[] = [
-    // {
-    //   id: '1',
-    //   name: 'Jean Dupont',
-    //   email: 'jean.dupont@email.com',
-    //   status: 'confirmed',
-    //   dietaryRestrictions: 'Végétarien',
-    //   plusOne: true,
-    //   responseDate: '2025-01-10',
-    // },
-    // {
-    //   id: '2',
-    //   name: 'Marie Martin',
-    //   email: 'marie.martin@email.com',
-    //   status: 'pending',
-    //   plusOne: false,
-    // },
-    // {
-    //   id: '3',
-    //   name: 'Pierre Bernard',
-    //   email: 'pierre.bernard@email.com',
-    //   status: 'declined',
-    //   responseDate: '2025-01-08',
-    // },
-    // {
-    //   id: '4',
-    //   name: 'Sophie Leclerc',
-    //   email: 'sophie.leclerc@email.com',
-    //   status: 'confirmed',
-    //   dietaryRestrictions: 'Sans gluten',
-    //   plusOne: false,
-    //   responseDate: '2025-01-12',
-    // },
-    // {
-    //   id: '5',
-    //   name: 'Thomas Moreau',
-    //   email: 'thomas.moreau@email.com',
-    //   status: 'pending',
-    //   plusOne: true,
-    // },
-    // {
-    //   id: '6',
-    //   name: 'Isabelle Rousseau',
-    //   email: 'isabelle.rousseau@email.com',
-    //   status: 'confirmed',
-    //   dietaryRestrictions: 'Vegan',
-    //   plusOne: false,
-    //   responseDate: '2025-01-11',
-    // },
-    // {
-    //   id: '7',
-    //   name: 'Marc Dubois',
-    //   email: 'marc.dubois@email.com',
-    //   status: 'declined',
-    //   responseDate: '2025-01-09',
-    // },
-    // {
-    //   id: '8',
-    //   name: 'Claire Fontaine',
-    //   email: 'claire.fontaine@email.com',
-    //   status: 'confirmed',
-    //   plusOne: true,
-    //   responseDate: '2025-01-13',
-    // },
-  ];
+  guests: Guest[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -200,14 +134,14 @@ export class EventDetailComponent implements OnInit{
 
   getGuestsByEvent(){
     if (this.eventId) {
-      // console.log("eventId :: ",this.eventId);
+      this.isLoading = true;
       this.guestService.getGuestsForEvent(this.eventId).subscribe(
         (response) => {
           // console.log("Response :: ", response.guests);
           response.guests.map(res => {
             const uper = res.rsvp_status
             const data = {
-                id: String(res.id),
+                id: String(res.guest_id),
                 name: res.full_name,
                 email: res.email,
                 phoneNumber: res.phone_number,  
@@ -220,11 +154,11 @@ export class EventDetailComponent implements OnInit{
             return data;
           });
           // console.log(" this.guests :: ",  this.guests);
-          // this.loading = false;
+          this.isLoading = false;
           this.filterGuests();
         },
         (error) => {
-          // this.loading = false;
+          this.isLoading = false;
           console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
           console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';
@@ -314,11 +248,13 @@ export class EventDetailComponent implements OnInit{
   }
 
   sendInvitations() {
-    alert('✉️ Invitations envoyées avec succès !');
+    this.send(this.event.title)
+    this.router.navigate(['/events', this.event.id, 'guests']);
   }
 
   sendReminder() {
-    alert('📧 Rappel envoyé aux invités en attente !');
+    this.send(this.event.title)
+    this.router.navigate(['/events', this.event.id, 'guests']);
   }
 
   shareEvent() {
@@ -333,6 +269,36 @@ export class EventDetailComponent implements OnInit{
     if (confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
       alert('🗑️ Événement supprimé !');
     }
+  }
+
+  onGuestAdded(newGuest: any) {
+    const datas = [{
+        eventId: this.eventId,
+        fullName: newGuest.name,
+        email: newGuest.email,
+        phoneNumber: newGuest.phone,
+        rsvpStatus: "PENDING",
+        hasPlusOne: newGuest.plusOne
+      }];
+        
+      this.isLoading = true;
+      this.guestService.addGuest(datas).subscribe(
+      (response) => {
+        console.log("Response :: ", response.guests);
+        this.isLoading = false;
+        this.getGuestsByEvent();
+        this.closeAddGuestModal();
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('❌ Erreur :', error.message.split(':')[1]);
+        if(error.message.includes("409 Conflict")){
+          this.triggerError();
+          this.errorMessage = "Vous essayez d'enregistrer un invités qui existe déjà";
+          console.log("Message :: ", this.errorMessage);
+        }  
+      }
+    );
   }
 
   editGuest(guest: Guest) {
@@ -360,14 +326,66 @@ export class EventDetailComponent implements OnInit{
   }
 
   navigateToInvitePage(){
-    console.log("eventId ::: ",this.eventId);
-    console.log("---Events---- ::: ",this.event);
     this.send(this.event.title)
     this.router.navigate(['/events', this.event.id, 'guests']);
   }
   send(message: any) {
     this.communicationService.sendMessage(message);
     //this.message = ""; // reset
+  }
+
+  openAddGuestModal() {
+    this.showAddGuestModal.set(true);
+  }
+
+  closeAddGuestModal() {
+    this.showAddGuestModal.set(false);
+  }
+
+  openImportModal() {
+    this.showImportModal.set(true);
+  }
+
+  closeImportModal() {
+    this.showImportModal.set(false);
+  }
+
+  // Logique error-modal
+  triggerError() {
+    this.errorMessage = "Impossible de charger les invités. Veuillez réessayer.";
+    this.showErrorModal = true;
+  }
+
+  closeErrorModal() {
+    this.showErrorModal = false;
+  }
+
+  // Logique pagination 
+  get totalPages() {
+    return Math.ceil(this.filteredGuests.length / this.itemsPerPage);
+  }
+
+  totalPagesArray() {
+    return Array(this.totalPages)
+      .fill(0)
+      .map((_, i) => i + 1);
+  }
+
+  paginatedGuests() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredGuests.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  goToPage(page: number) {
+    this.currentPage = page;
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) this.currentPage++;
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) this.currentPage--;
   }
 }
 

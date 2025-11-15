@@ -36,7 +36,7 @@ export class GuestDetailComponent {
     plusOne: true,
     responseDate: '2025-01-10',
     qrCodeGenerated: true,
-    qrCodeUrl: 'https://storage.googleapis.com/solsolutionpdf.firebasestorage.app/qrcodes/1:374bb0d8-796e-4ada-adcd-b5e7b05fdcee.png',
+    qrCodeUrl: '',
     notes: 'Ami de longue date, très important pour nous',
     invitationSentDate: '2024-12-20',
   };
@@ -132,7 +132,7 @@ export class GuestDetailComponent {
   generateQRCode() {
     alert('✨ Génération du QR Code en cours...');
     this.guest.qrCodeGenerated = true;
-    this.guest.qrCodeUrl = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="white" width="200" height="200"/%3E%3Crect fill="black" x="10" y="10" width="180" height="180" opacity="0.1"/%3E%3Ctext x="100" y="100" text-anchor="middle" dy=".3em" font-size="20" fill="black"%3EQR Code%3C/text%3E%3C/svg%3E';
+    this.guest.qrCodeUrl = '';
   }
 
   downloadQRCode() {

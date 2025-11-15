@@ -1,0 +1,18 @@
+<div class="modal-backdrop" *ngIf="visible">
+  <div class="modal-content" [ngClass]="styleAction">
+    <div class="modal-header" [ngClass]="styleAction">
+      <h3>⚠️ Confirmation</h3>
+      <button class="close-btn" [ngClass]="styleAction" (click)="onCancel()">✖</button>
+    </div>
+
+    <div class="modal-body">
+      {{ message }}
+    </div>
+
+    <div class="modal-footer">
+      <button class="cancel-btn" [ngClass]="styleAction" (click)="onCancel()">Annuler</button>
+      <button *ngIf="isDelete" class="delete-btn" (click)="onConfirm()">Supprimer</button>
+      <button *ngIf="isSender" class="sender-btn" (click)="onConfirm()">Envoyer</button>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
 
@@ -15,7 +15,7 @@ export interface Guest {
   notes?: string;
 }
 export interface Guests{
-  id: string,
+  guest_id: string,
   event_id: number;
   full_name: string
   email: string
@@ -40,6 +40,20 @@ export interface Invitation {
   updatedAt: string;
 }
 
+export interface Event{
+  guestId: number;
+  guestName: string;
+  rsvpStatus: string;
+  guestHasPlusOne: string;
+  plusOneName: string;
+  eventTitle: string;
+  description: string;
+  eventHasPlusOne: string;
+  eventDate: string;
+  eventTime: string;
+  eventLocation: string;
+}
+
 @Injectable({
   providedIn: 'root'
 } )
@@ -55,13 +69,27 @@ export class GuestService {
       }
     }
 
-  addGuest(guest: Guest): Observable<Guest> {
-    console.log('Adding guest with data: ', guest);
-    return this.http.post<Guest>(`${this.apiUrl}`, guest );
+  getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('accessToken');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
+  addGuest(guests: any): Observable<any> {
+    console.log("guests :: ",guests);
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/guest/add-guest`, guests, { headers })
   }
 
   getGuests(): Observable<{ guests: Guests[] }> {
     return this.http.get<{ guests: Guests[] }>(`${this.apiUrl}/guest/all-guests`);
+  }
+
+  getEventByGuest(guestId: number): Observable<Event> {
+    console.log("guestId :: ",guestId);
+    return this.http.get<Event>(`${this.apiUrl}/guest/${guestId}/event/`);
   }
 
   getGuestsForEvent(eventId: number): Observable<{ guests: Guests[] }> {
@@ -73,29 +101,33 @@ export class GuestService {
     return this.http.get<Guest>(`${this.apiUrl}/${guestId}` );
   }
 
-  updateGuest(guestId: number, guest: Partial<Guest>): Observable<Guest> {
-    return this.http.put<Guest>(`${this.apiUrl}/${guestId}`, guest );
+  updateGuest(guestId: number, guest: any): Observable<Guest> {
+    return this.http.put<Guest>(`${this.apiUrl}/guest/${guestId}`, guest );
   }
 
   deleteGuest(guestId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${guestId}` );
+    const headers = this.getAuthHeaders();
+    return this.http.delete<void>(`${this.apiUrl}/guest/${guestId}`, { headers });
   }
+
+  deleteSeveralGuests(guestIdList: number[]): Observable<void> {
+    const headers = this.getAuthHeaders();
+    console.log("### guestIdList :: ", guestIdList);
+    return this.http.post<void>(`${this.apiUrl}/guest/delete`, guestIdList, {headers});
+  }
+
 
   // Méthode pour créer une invitation pour un invité existant
   createInvitation(invitation: Invitation): Observable<Invitation> {
     return this.http.post<Invitation>(`${this.apiUrl}/invitations/generate`, invitation );
   }
 
-  // Méthode pour récupérer les invitations d'un invité
-//   getInvitationsByGuestId(guestId: number): Observable<Invitation[]> {
-//     return this.http.get<Invitation[]>(`${this.apiUrl}/invitations/guest/${guestId}` );
-//   }
   getInvitationsByGuestId(guestId: number): Observable<Invitation[]> {
     return this.http.get<Invitation[]>(`${this.apiUrl}/invitations/guest/${guestId}` );
   }
 
   // Méthode pour révoquer une invitation
-  revokeInvitation(invitationId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/invitations/${invitationId}` );
+  revokeInvitation(guestId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/invitation/delete/${guestId}` );
   }
 }

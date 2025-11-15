@@ -100,8 +100,8 @@
       align-items: center;
       gap: 0.5rem;
 
-      &:hover {
-        background-color: #F5F5F5;
+      &:hover { 
+        background-color: #F5F5F5; 
       }
 
       &.active {
@@ -109,6 +109,14 @@
         color: #1A1A1A;
         border-color: #D4AF37;
       }
+    }
+
+    .filter-btn.send:hover {
+      background-color: #22C55E;
+    }
+
+    .filter-btn.delete:hover {
+      background-color: #EF4444;
     }
 
     .count {
@@ -556,6 +564,406 @@
     .modal-actions .btn {
       flex: 1;
     }
+
+    button:disabled,
+      .btn:disabled,
+      .btn-primary:disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+        pointer-events: none !important;
+    }
+
+
+    //Style mode affichage
+    .view-controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .view-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #6c757d;
+    }
+
+    .view-buttons {
+      display: flex;
+      background-color: #f8f9fa;
+      border-radius: 6px;
+      padding: 4px;
+      border: 1px solid #dee2e6;
+    }
+
+    .view-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      color: #6c757d;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 80px;
+      justify-content: center;
+    }
+
+    .view-btn:hover {
+      background-color: #e9ecef;
+      color: #495057;
+    }
+
+    .view-btn.active {
+      background-color: #D4AF37;
+      color: white;
+      box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+    }
+
+    .view-icon {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    // End Mode affichage
+
+    // Style Tableau et Pagination
+    .guests-table {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      thead {
+        background-color: #F5F5F5;
+        border-bottom: 2px solid #E0E0E0;
+      }
+
+      th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #666666;
+      }
+
+      td {
+        padding: 1rem;
+        border-bottom: 1px solid #E0E0E0;
+        font-size: 0.875rem;
+      }
+
+      tbody tr {
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #F9F9F9;
+        }
+
+        &.status-confirmed {
+          border-left: 3px solid #22C55E;
+        }
+
+        &.status-pending {
+          border-left: 3px solid #EAB308;
+        }
+
+        &.status-declined {
+          border-left: 3px solid #EF4444;
+        }
+      }
+    }
+
+    .email {
+      color: #666666;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+
+      &.status-confirmed {
+        background-color: rgba(34, 197, 94, 0.1);
+        color: #22C55E;
+      }
+
+      &.status-pending {
+        background-color: rgba(234, 179, 8, 0.1);
+        color: #EAB308;
+      }
+
+      &.status-declined {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #EF4444;
+      }
+    }
+
+    .restrictions {
+      color: #666666;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .actions {
+      text-align: left;
+    }
+
+    .btn-small {
+      padding: 0.25rem 0.75rem;
+      background-color: #F5F5F5;
+      border: 1px solid #E0E0E0;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #D4AF37;
+        color: #ffffff;
+        border-color: #D4AF37;
+      }
+    }
+    .btn-small-delete {
+      padding: 0.25rem 0.75rem;
+      background-color: #F5F5F5;
+      border: 1px solid #E0E0E0;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.2s ease;
+      margin-left: 10px;
+
+      &:hover {
+        background-color: #EF4444;
+        color: #ffffff;
+        border-color: #EF4444;
+      }
+    }
+
+    .no-guests {
+      text-align: center;
+      padding: 2rem;
+      color: #666666;
+    }
+
+    .stats-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #666666;
+      font-weight: 500;
+
+      &.confirmed {
+        color: #22C55E;
+      }
+
+      &.pending {
+        color: #EAB308;
+      }
+
+      &.declined {
+        color: #EF4444;
+      }
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1A1A1A;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background-color: #E0E0E0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: #D4AF37;
+      transition: width 0.3s ease;
+
+      &.confirmed {
+        background-color: #22C55E;
+      }
+
+      &.pending {
+        background-color: #EAB308;
+      }
+
+      &.declined {
+        background-color: #EF4444;
+      }
+    }
+
+    .response-rate {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .label {
+        font-size: 0.875rem;
+        color: #666666;
+      }
+
+      .value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #D4AF37;
+      }
+    }
+
+    .actions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .export-desc {
+      font-size: 0.875rem;
+      color: #666666;
+      margin-bottom: 1rem;
+    }
+
+    .export-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-danger {
+      color: #EF4444;
+      border-color: #EF4444;
+
+      &:hover {
+        background-color: rgba(239, 68, 68, 0.1);
+      }
+    }
+
+    .mt-8 {
+      margin-top: 2rem;
+    }
+
+    .mt-6 {
+      margin-top: 1.5rem;
+    }
+
+    // Pagination style
+    .preview-table {
+      margin-top: 20px;
+      overflow-x: auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 110%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 7px;
+      margin-bottom: 7px;
+      gap: 5px;
+    }
+
+    .page-btn {
+      background-color: transparent;
+      border: 1px solid #D4AF37;
+      color: #D4AF37;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .page-btn:hover {
+      background-color: #ffeaa5;
+      color: #222;
+    }
+
+    .page-btn.active {
+      background-color: #D4AF37;
+      color: #222;
+      font-weight: bold;
+    }
+
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    // Pagination end
+
+    // Start style checkbox du tableau
+    .modern-checkbox {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+      cursor: pointer;
+      appearance: none; /* Supprime le style natif */
+      outline: none;
+      position: relative;
+      transition: all 0.2s ease-in-out;
+    }
+
+    /* Etat coché */
+    .modern-checkbox:checked {
+      background-color: #D4AF37; /* couleur moderne */
+      border-color: #D4AF37;
+    }
+
+    /* Tick blanc */
+    .modern-checkbox:checked::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+    // End style checkbox
 
     @media (max-width: 768px) {
       .guests-grid {

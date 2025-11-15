@@ -1,0 +1,79 @@
+<div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="modal-close" (click)="closeModal()">✕</button>
+
+        <div class="modal-header">
+            <h2>Ajouter un nouvel invité</h2>
+            <p>Remplissez les informations de l'invité</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" #addGuestForm="ngForm" class="modal-form">
+            <!-- Name -->
+            <div class="form-group">
+            <label for="name">Nom complet *</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                [(ngModel)]="newGuest.name"
+                placeholder="William Ndongmo"
+                required
+                class="form-input"
+            />
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+            <label for="email">Adresse email *</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                [(ngModel)]="newGuest.email"
+                placeholder="will.ndon@gmail.com"
+                required
+                class="form-input"
+            />
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group">
+            <label for="phone">Téléphone (optionnel)</label>
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                [(ngModel)]="newGuest.phone"
+                placeholder="+237 6 58 34 56 78"
+                class="form-input"
+            />
+            </div>
+
+            <!-- Plus One -->
+            <div class="form-group">
+            <label class="checkbox-label">
+                <input
+                type="checkbox"
+                name="plusOne"
+                [(ngModel)]="newGuest.plusOne"
+                />
+                <span>Autoriser un +1</span>
+            </label>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+            <button type="button" class="btn btn-outline" (click)="closeModal()">
+                Annuler
+            </button>
+            <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="!addGuestForm.valid"
+            >
+                ✓ Ajouter l'invité
+            </button>
+            </div>
+        </form>
+    </div>
+</div>

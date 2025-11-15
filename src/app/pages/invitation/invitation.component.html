@@ -2,7 +2,7 @@
       <!-- Header -->
       <div class="invitation-header">
         <div class="container">
-          <h1 class="text-elegant">Sophie & Pierre</h1>
+          <h1 class="text-elegant">{{ concernedEvent }}</h1>
           <p>Vous êtes cordialement invité</p>
         </div>
       </div>
@@ -23,14 +23,13 @@
           <div class="invitation-content">
             <!-- Greeting -->
             <div class="greeting">
-              <p>Cher(e) Jean Dupont,</p>
-              <h2>Mariage de Sophie et Pierre</h2>
+              <p>Cher(e) {{ data.guestName }},</p>
+              <h2>{{ data.eventTitle }}</h2>
             </div>
 
             <!-- Description -->
             <p class="description">
-              Nous avons le plaisir de vous inviter à célébrer notre mariage. Ce sera une journée inoubliable 
-              remplie de joie, d'amour et de moments précieux en compagnie de nos proches.
+              {{ data.description }}
             </p>
 
             <!-- Event Details -->
@@ -41,8 +40,8 @@
                   <span class="detail-icon">📅</span>
                   <div>
                     <p class="detail-label">Date et heure</p>
-                    <p class="detail-value">{{ formatDate('2025-06-15') }}</p>
-                    <p class="detail-value">18:00</p>
+                    <p class="detail-value">{{ formatDate(data.eventDate) }}</p>
+                    <p class="detail-value">{{ data.eventTime }}</p>
                   </div>
                 </div>
 
@@ -50,7 +49,7 @@
                   <span class="detail-icon">📍</span>
                   <div>
                     <p class="detail-label">Lieu</p>
-                    <p class="detail-value">Château de Versailles, Île-de-France</p>
+                    <p class="detail-value">{{ data.eventLocation}}</p>
                   </div>
                 </div>
               </div>
@@ -88,7 +87,7 @@
               </div>
 
               <!-- Additional info -->
-              <div *ngIf="response() === 'confirmed'" class="additional-info">
+              <div *ngIf="response() === 'confirmed' && data.eventHasPlusOne" class="additional-info">
                 <div class="form-group">
                   <label>Restrictions alimentaires (optionnel)</label>
                   <textarea
@@ -115,7 +114,7 @@
 
               <!-- Footer message -->
               <div class="invitation-footer">
-                <p>Nous attendons votre réponse avant le <strong>15 mai 2025</strong></p>
+                <p>Nous attendons votre réponse avant le <strong>{{ formatDate(data.eventDate) }}</strong></p>
                 <p class="footer-contact">
                   Pour toute question, contactez-nous à
                   <a href="mailto:contact@example.com">contactexample.com</a>

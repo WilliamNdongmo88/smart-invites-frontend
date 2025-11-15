@@ -8,6 +8,7 @@ export class CommunicationService {
   message$ = this.messageSource.asObservable();
 
   sendMessage(variable: any) {
+    localStorage.setItem('eventTitle', variable);
     this.messageSource.next(variable);
   }
 

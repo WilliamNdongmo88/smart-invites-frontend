@@ -29,28 +29,7 @@ export class DashboardComponent {
   currentUser: User | null = null;
   errorMessage: string = '';
 
-  events: Event[] = [
-    // {
-    //   id: 1,
-    //   title: 'Mariage de Sophie et Pierre',
-    //   date: '2025-06-15',
-    //   location: 'Château de Versailles',
-    //   totalGuests: 150,
-    //   confirmedGuests: 98,
-    //   pendingGuests: 35,
-    //   declinedGuests: 17,
-    // },
-    // {
-    //   id: 2,
-    //   title: 'Mariage de Marie et Jean',
-    //   date: '2025-08-22',
-    //   location: 'Domaine de Montfort',
-    //   totalGuests: 120,
-    //   confirmedGuests: 85,
-    //   pendingGuests: 25,
-    //   declinedGuests: 10,
-    // },
-  ];
+  events: Event[] = [];
 
   constructor(
     private router: Router, 
@@ -108,7 +87,7 @@ export class DashboardComponent {
   }
 
   getTotalPending(): number {
-    console.log("TOTAL pendingGuests:: ",this.events.reduce((sum, e) => sum + Number(e.pendingGuests), 0));
+    //console.log("TOTAL pendingGuests:: ",this.events.reduce((sum, e) => sum + Number(e.pendingGuests), 0));
     return this.events.reduce((sum, e) => sum + Number(e.pendingGuests), 0);
   }
 

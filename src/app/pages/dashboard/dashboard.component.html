@@ -17,7 +17,7 @@
 
     <!-- Events List -->
     <div class="mt-8 c-mt">
-      <h2>Vos événements</h2>
+      <h2 *ngIf="events.length > 0">Vos événements</h2>
 
       <div class="events-list">
         <div *ngFor="let event of events" class="event-card card">
@@ -63,6 +63,14 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="events.length === 0" class="empty-state">
+        <h3>Aucun événement trouvé</h3>
+        <button class="btn btn-primary" (click)="openEventDialog()">
+        + Nouvel événement
+        </button>
     </div>
 
     <!-- Stats Overview -->

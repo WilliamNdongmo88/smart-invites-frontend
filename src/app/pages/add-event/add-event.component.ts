@@ -4,17 +4,19 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../services/auth.service';
 import { CreateEventRequest, EventService } from '../../services/event.service';
+import { SpinnerComponent } from "../../components/spinner/spinner";
 
 @Component({
   selector: 'app-add-event',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, SpinnerComponent],
   templateUrl: './add-event.component.html',
   styleUrls: ['./add-event.component.scss']
 })
 export class AddEventComponent implements OnInit{
   currentStep = signal(1);
   errorMessage : string ='';
+  isLoading = false
 
   eventData = {
     title: '',
@@ -56,26 +58,29 @@ export class AddEventComponent implements OnInit{
   }
 
   onSubmit() {
+    const datas = [];
     const eventDatas : CreateEventRequest = {
       organizerId: this.organizerId,
       title: this.eventData.title,
       description: this.eventData.description,
-      eventDate: this.eventData.date+' '+ this.eventData.time+':00', //"2025-12-05 14:30:00"
+      eventDate: this.eventData.date+' '+ this.eventData.time+':00',
       eventLocation: this.eventData.location,
       maxGuests: this.eventData.totalGuests,
       hasPlusOne: this.eventData.allowPlusOne,
       footRestriction: this.eventData.allowDietaryRestrictions,
       status: 'PLANNED'
     }
-    console.log('Event created:', eventDatas);
-    this.eventService.createEvent(eventDatas).subscribe(
+    datas.push(eventDatas);
+    console.log('Event created:', datas);
+    this.isLoading = true;
+    this.eventService.createEvent(datas).subscribe(
       (response) => {
         console.log("Response :: ", response)
-        // this.loading = false;
+        this.isLoading = false;
         this.router.navigate(['/dashboard']);
       },
       (error) => {
-        // this.loading = false;
+        this.isLoading = false;
         console.error('❌ Erreur de creation :', error.message.split(':')[4]);
         console.log("Message :: ", error.message);
         this.errorMessage = error.message || 'Erreur de connexion';

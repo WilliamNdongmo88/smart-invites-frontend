@@ -55,7 +55,7 @@ export class EventService {
     return this.http.get<{ event: Event[] }>(`${this.apiUrl}/event/${eventId}`);
   }
 
-  createEvent(request: CreateEventRequest): Observable<any> {
+  createEvent(request: CreateEventRequest[]): Observable<any> {
     console.log('Creating event with data:', request);
     return this.http.post<any>(`${this.apiUrl}/event/create-event`, request);
   }

@@ -161,6 +161,11 @@
       transition: width 0.3s ease;
     }
 
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
     @media (max-width: 768px) {
       .grid-2 {
         grid-template-columns: 1fr !important;

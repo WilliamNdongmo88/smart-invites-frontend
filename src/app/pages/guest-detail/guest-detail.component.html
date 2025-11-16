@@ -162,7 +162,7 @@
             <div class="no-qr-icon">📱</div>
             <p>Aucun code QR généré</p>
             <button class="btn btn-primary" style="width: 100%;" (click)="generateQRCode()">
-                ✨ Générer un QR Code
+                {{loading ? '⏳ Envoie en cours ...' :'✨ Envoyer une invitation'}}
             </button>
             </div>
         </div>

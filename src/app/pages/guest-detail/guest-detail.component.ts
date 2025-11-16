@@ -39,7 +39,6 @@ export class GuestDetailComponent implements OnInit{
   modalAction: string | undefined;
   warningMessage: string = "";
   showDeleteModal = false;
-  isModalLoading: boolean = false;
 
   guest: Guest = {
     id: 1,
@@ -74,7 +73,7 @@ export class GuestDetailComponent implements OnInit{
 
   getGuest(){
     if (this.guestId) {
-      this.isLoading = true;
+      this.loading = true;
       this.guestService.getGuestById(Number(this.guestId)).subscribe(
         (response) => {
           console.log("response :: ", response);
@@ -94,10 +93,10 @@ export class GuestDetailComponent implements OnInit{
               notes: 'Ami de longue date, très important pour nous',
               invitationSentDate: response.invitation_sent_date?.split('T')[0] || '',
             };
-          this.isLoading = false;
+          this.loading = false;
         },
         (error) => {
-          this.isLoading = false;
+          this.loading = false;
           console.error('❌ [getGuestById] Erreur :', error.message);
           console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';
@@ -280,7 +279,7 @@ export class GuestDetailComponent implements OnInit{
   }
 
   generateQRCode() {
-    this.isModalLoading = true;
+    this.loading = true;
     this.qrCodeService.generateQRCode(this.guestId).subscribe(
       (response) => {
         console.log("###response :: ", response);
@@ -288,10 +287,10 @@ export class GuestDetailComponent implements OnInit{
             this.guest.qrCodeGenerated = true;
             this.guest.qrCodeUrl = response.qrUrl
         }
-        this.isModalLoading = false;
+        this.loading = false;
       },
       (error) => {
-        this.isModalLoading = false;
+        this.loading = false;
         console.error('❌ [generateQRCode] Erreur :', error.message);
         console.log("Message :: ", error.message);
         this.errorMessage = error.message || 'Erreur de connexion';

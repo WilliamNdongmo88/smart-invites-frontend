@@ -14,7 +14,7 @@
             </div>
             <div class="header-actions">
                 <button class="btn btn-primary" (click)="sendReminder()">
-                ✉️ Envoyer rappel
+                    {{ loading ? '⏳ Renvoie...' : '✉️ Envoyer rappel' }}
                 </button>
                 <button class="btn btn-outline" (click)="openAddGuestModal()">
                 ➕  Nouveau invité
@@ -78,14 +78,14 @@
                     (click)="openDeleteModal(guestIdList, 'send')"
                     class="filter-btn send"
                     >
-                    Envoyer {{ guestIdList.length }} invitation(s)
+                    {{ loading ? '⏳ Envoie...' : 'Envoyer ' + guestIdList.length + ' invitation(s)' }}
                 </button>
                 <button
                     [disabled]="guestIdList.length === 0"
                     (click)="openDeleteModal(guestIdList, 'delete')"
                     class="filter-btn delete"
                     >
-                    Supprimer {{ guestIdList.length }} invité(s) sélectionné(s)
+                    {{ loadingDelete ? '⏳ Suppression...' : 'Supprimer' + guestIdList.length + 'invité(s) sélectionné(s)'}}
                 </button>
             </div>
         </div>
@@ -94,7 +94,7 @@
         <div *ngIf="viewMode === 'grid' && filteredGuests.length > 0" class="guests-grid">
             <div *ngFor="let guest of paginatedGuests()" class="guest-card" [class]="'status-' + guest.status">
                 <!-- Card Header -->
-                <div class="card-header">
+                <div class="card-header click" (click)="goToGuestDetail(guest.id)">
                     <div class="guest-avatar">
                     {{ guest.name.charAt(0).toUpperCase() }}
                     </div>
@@ -106,7 +106,7 @@
                 </div>
 
                 <!-- Card Body -->
-                <div class="card-body">
+                <div class="card-body click" (click)="goToGuestDetail(guest.id)">
                     <h3>{{ guest.name }}</h3>
                     <p class="guest-email">{{ guest.email }}</p>
 
@@ -322,8 +322,8 @@
                     <button class="btn btn-outline" (click)="closeGuestDetails()">Fermer</button>
                     <button class="btn btn-primary" 
                     (click)="deleteInvitationFromModal(guest)" 
-                    [disabled]="guest.qrCodeGenerated ? false : true">
-                    🗑️ Supprimer</button>
+                    [disabled]="guest.qrCodeGenerated && !loadingDelete ? false : true">
+                    {{loadingDelete ? '⏳ Suppression...' : '🗑️ Supprimer'}}</button>
                 </div>
             </div>
         </div>

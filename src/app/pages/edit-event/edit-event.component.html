@@ -1,0 +1,302 @@
+    <div class="edit-event">
+
+    <!-- Indicateur de chargement -->
+    <app-spinner [isLoading]="isLoading"></app-spinner>
+
+      <!-- Header -->
+      <div class="edit-event-header">
+        <div class="container">
+          <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+          <h1>Modifier l'événement</h1>
+          <p>Mettez à jour les détails de votre événement</p>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div class="container py-12">
+        <div class="form-wrapper">
+          <form (ngSubmit)="onSubmit()" #eventForm="ngForm">
+            <!-- Step indicator -->
+            <div class="step-indicator">
+              <div class="step" [class.active]="currentStep() === 1" [class.completed]="currentStep() > 1">
+                <span>1</span>
+                <p>Informations</p>
+              </div>
+              <div class="step-line" [class.completed]="currentStep() > 1"></div>
+              <div class="step" [class.active]="currentStep() === 2" [class.completed]="currentStep() > 2">
+                <span>2</span>
+                <p>Détails</p>
+              </div>
+              <div class="step-line" [class.completed]="currentStep() > 2"></div>
+              <div class="step" [class.active]="currentStep() === 3">
+                <span>3</span>
+                <p>Confirmation</p>
+              </div>
+            </div>
+
+            <!-- Step 1: Basic Information -->
+            <div *ngIf="currentStep() === 1" class="step-content">
+              <h2>Informations de base</h2>
+
+              <div class="form-group">
+                <label for="eventTitle">Titre de l'événement</label>
+                <input
+                  type="text"
+                  id="eventTitle"
+                  name="eventTitle"
+                  [(ngModel)]="eventData.title"
+                  placeholder="Ex: Mariage de Sophie et Pierre"
+                  required
+                  class="form-input"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="eventDate">Date de l'événement</label>
+                <input
+                  type="date"
+                  id="eventDate"
+                  name="eventDate"
+                  [(ngModel)]="eventData.date"
+                  required
+                  class="form-input"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="eventTime">Heure de l'événement</label>
+                <input
+                  type="time"
+                  id="eventTime"
+                  name="eventTime"
+                  [(ngModel)]="eventData.time"
+                  required
+                  class="form-input"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="eventLocation">Lieu de l'événement</label>
+                <input
+                  type="text"
+                  id="eventLocation"
+                  name="eventLocation"
+                  [(ngModel)]="eventData.location"
+                  placeholder="Ex: Château de Versailles, Île-de-France"
+                  required
+                  class="form-input"
+                />
+              </div>
+
+              <!-- Status -->
+              <div class="form-group">
+                <label for="status">Statut de l'événement</label>
+                <select
+                  id="status"
+                  name="status"
+                  [(ngModel)]="eventData.status"
+                  class="form-input"
+                >
+                  <option value="planned">Prévu</option>
+                  <option value="active">Active</option>
+                  <option value="completed">Terminé</option>
+                  <option value="cancelled">Annulé</option>
+                </select>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-primary" (click)="nextStep()">
+                  Suivant →
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 2: Event Details -->
+            <div *ngIf="currentStep() === 2" class="step-content">
+              <h2>Détails de l'événement</h2>
+
+              <div class="form-group">
+                <label for="eventDescription">Description</label>
+                <textarea
+                  id="eventDescription"
+                  name="eventDescription"
+                  [(ngModel)]="eventData.description"
+                  placeholder="Décrivez votre événement..."
+                  rows="4"
+                  class="form-textarea"
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="totalGuests">Nombre total d'invités</label>
+                <input
+                  type="number"
+                  id="totalGuests"
+                  name="totalGuests"
+                  [(ngModel)]="eventData.totalGuests"
+                  min="1"
+                  placeholder="150"
+                  required
+                  class="form-input"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="budget">Budget (optionnel)</label>
+                <div class="input-with-icon">
+                  <span class="currency">€</span>
+                  <input
+                    type="number"
+                    id="budget"
+                    name="budget"
+                    [(ngModel)]="eventData.budget"
+                    placeholder="0"
+                    min="0"
+                    class="form-input"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="eventType">Type d'événement</label>
+                <select
+                  id="eventType"
+                  name="eventType"
+                  [(ngModel)]="eventData.type"
+                  class="form-input"
+                >
+                  <option value="">Sélectionner un type</option>
+                  <option value="wedding">Mariage</option>
+                  <option value="engagement">Fiançailles</option>
+                  <option value="anniversary">Anniversaire</option>
+                  <option value="birthday">Anniversaire</option>
+                  <option value="other">Autre</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" [(ngModel)]="eventData.allowDietaryRestrictions" name="allowDietaryRestrictions" />
+                  <span>Permettre les restrictions alimentaires</span>
+                </label>
+              </div>
+
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" [(ngModel)]="eventData.allowPlusOne" name="allowPlusOne" />
+                  <span>Permettre les +1</span>
+                </label>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-outline" (click)="previousStep()">
+                  ← Précédent
+                </button>
+                <button type="button" class="btn btn-primary" (click)="nextStep()">
+                  Suivant →
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 3: Confirmation -->
+            <div *ngIf="currentStep() === 3" class="step-content">
+              <h2>Confirmation des modifications</h2>
+
+              <div class="confirmation-card">
+                <h3>Résumé de votre événement</h3>
+
+                <div class="confirmation-item">
+                  <span class="label">Titre :</span>
+                  <span class="value">{{ eventData.title }}</span>
+                </div>
+
+                <div class="confirmation-item">
+                  <span class="label">Date :</span>
+                  <span class="value">{{ formatDate(eventData.date) }} à {{ eventData.time }}</span>
+                </div>
+
+                <div class="confirmation-item">
+                  <span class="label">Lieu :</span>
+                  <span class="value">{{ eventData.location }}</span>
+                </div>
+
+                <div class="confirmation-item">
+                  <span class="label">Nombre d'invités :</span>
+                  <span class="value">{{ eventData.totalGuests }}</span>
+                </div>
+
+                <div class="confirmation-item" *ngIf="eventData.budget">
+                  <span class="label">Budget :</span>
+                  <span class="value">{{ eventData.budget }}€</span>
+                </div>
+
+                <div class="confirmation-item">
+                  <span class="label">Type :</span>
+                  <span class="value">{{ getEventTypeLabel(eventData.type) }}</span>
+                </div>
+
+                <div class="confirmation-item">
+                  <span class="label">Statut :</span>
+                  <span class="value status" [class]="'status-' + eventData.status">
+                    {{ getStatusLabel(eventData.status) }}
+                  </span>
+                </div>
+
+                <div class="confirmation-item">
+                  <span class="label">Restrictions alimentaires :</span>
+                  <span class="value">{{ eventData.allowDietaryRestrictions ? 'Activées' : 'Désactivées' }}</span>
+                </div>
+
+                <div class="confirmation-item">
+                  <span class="label">+1 autorisés :</span>
+                  <span class="value">{{ eventData.allowPlusOne ? 'Oui' : 'Non' }}</span>
+                </div>
+              </div>
+
+              <!-- Changes Summary -->
+              <div class="changes-summary" *ngIf="getChanges().length > 0">
+                <h3>Modifications détectées</h3>
+                <ul class="changes-list">
+                  <li *ngFor="let change of getChanges()">
+                    <span class="change-field">{{ change.field }}</span>
+                    <span class="change-arrow">→</span>
+                    <span class="change-value">{{ change.newValue }}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-outline" (click)="previousStep()">
+                  ← Précédent
+                </button>
+                <button type="submit" class="btn btn-primary" [disabled]="!eventForm.valid">
+                  ✓ Enregistrer les modifications
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Delete Button -->
+          <div class="delete-section">
+            <button type="button" class="btn btn-outline btn-danger" (click)="openDeleteModal('delete')">
+              🗑️ Supprimer cet événement
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-error-modal
+        [visible]="showErrorModal"
+        [message]="errorMessage"
+        (closed)="closeErrorModal()">
+    </app-error-modal>
+
+    <!-- Modal de confirmation -->
+    <app-confirm-delete-modal
+        [visible]="showDeleteModal"
+        [message] = warningMessage
+        [action]="modalAction"
+        (confirmDelete)="confirmDelete()"
+        (cancel)="closeModal()">
+    </app-confirm-delete-modal>

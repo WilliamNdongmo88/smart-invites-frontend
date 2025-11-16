@@ -24,7 +24,11 @@ export class ForgotPasswordComponent {
   showConfirmPassword = signal(false);
   passwordStrength = signal<'weak' | 'medium' | 'strong'>('weak');
 
-    constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router, 
+    private authService: AuthService) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
   submitEmail() {
     if (this.email && this.email.trim() !== '') {

@@ -109,7 +109,7 @@
                 [disabled]="!response()"
                 (click)="submitResponse()"
               >
-                ❤️ Confirmer ma réponse
+                {{loading ? '⏳ Confirmation...' :'❤️ Confirmer ma réponse'}}
               </button>
 
               <!-- Footer message -->

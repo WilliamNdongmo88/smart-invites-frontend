@@ -1,10 +1,14 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
+import { GuestService } from '../../services/guest.service';
+import { SpinnerComponent } from "../../components/spinner/spinner";
+import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
+import { QrCodeService } from '../../services/qr-code.service';
 
 interface Guest {
-  id: string;
+  id: number;
   name: string;
   email: string;
   phone?: string;
@@ -12,6 +16,7 @@ interface Guest {
   dietaryRestrictions?: string;
   plusOne?: boolean;
   responseDate?: string;
+  responseTime?: string;
   qrCodeGenerated?: boolean;
   qrCodeUrl?: string;
   notes?: string;
@@ -21,13 +26,23 @@ interface Guest {
 @Component({
   selector: 'app-guest-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, SpinnerComponent, ConfirmDeleteModalComponent],
   templateUrl:'guest-detail.component.html',
   styleUrl: 'guest-detail.component.scss'
 })
-export class GuestDetailComponent {
+export class GuestDetailComponent implements OnInit{
+  guestId: number = 0;
+  eventId: number = 0;
+  isLoading: boolean = false;
+  loading: boolean = false;
+  errorMessage: string = "";
+  modalAction: string | undefined;
+  warningMessage: string = "";
+  showDeleteModal = false;
+  isModalLoading: boolean = false;
+
   guest: Guest = {
-    id: '1',
+    id: 1,
     name: 'Jean Dupont',
     email: 'jean.dupont@email.com',
     phone: '+33 6 12 34 56 78',
@@ -41,7 +56,55 @@ export class GuestDetailComponent {
     invitationSentDate: '2024-12-20',
   };
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private guestService: GuestService,
+    private qrCodeService: QrCodeService,
+    private router: Router) {}
+
+  ngOnInit(): void {
+    const result = this.route.snapshot.paramMap.get('guestId') || '';
+    this.guestId = Number(result);
+    this.getGuest();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.getStatusLabel('pending');
+    console.log("Invité depuis :: ", this.daysAgo('2025-12-17'));
+    console.log("Temps de réponse :: ", this.daysBetween('2025-12-17', '2025-12-25'));
+  }
+
+  getGuest(){
+    if (this.guestId) {
+      this.isLoading = true;
+      this.guestService.getGuestById(Number(this.guestId)).subscribe(
+        (response) => {
+          console.log("response :: ", response);
+          this.eventId = response.eventId;
+            this.guest = {
+              id: response.guest_id,
+              name: response.full_name,
+              email: response.email,
+              phone: response.phone_number,
+              status: response.rsvp_status,
+              dietaryRestrictions: response.notes,
+              plusOne: response.has_plus_one || '',
+              responseDate: response.response_date.split('T')[0],
+              responseTime: response.response_date.split('T')[1].split(':')[0]+':'+response.response_date.split('T')[1].split(':')[1],
+              qrCodeGenerated: response.qrCodeUrl ? true : false,
+              qrCodeUrl: response.qrCodeUrl || '',
+              notes: 'Ami de longue date, très important pour nous',
+              invitationSentDate: response.invitation_sent_date?.split('T')[0] || '',
+            };
+          this.isLoading = false;
+        },
+        (error) => {
+          this.isLoading = false;
+          console.error('❌ [getGuestById] Erreur :', error.message);
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
+    }
+  }
 
   getStatusIcon(status: string): string {
     switch (status) {
@@ -95,30 +158,117 @@ export class GuestDetailComponent {
   }
 
   editGuest() {
-    alert(`✏️ Édition de ${this.guest.name}...`);
+    this.router.navigate(['/events', this.eventId, 'guests', this.guestId, 'edit']);
   }
 
   deleteGuest() {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer ${this.guest.name} ?`)) {
-      alert(`🗑️ ${this.guest.name} a été supprimé`);
-      this.router.navigate(['/guests']);
+    this.isLoading = true;
+    this.guestService.deleteGuest(this.guestId).subscribe(
+      (response) => {
+        console.log("response :: ", response);
+        this.isLoading = false;
+        this.backToGuestList();
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('❌ [deleteGuest] Erreur :', error.message);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';
+      }
+    );
+  }
+
+  openDeleteModal(modalAction?: string) {
+    this.modalAction = modalAction;
+
+    if(modalAction=='delete'){
+      this.warningMessage = "Êtes-vous sûr de vouloir supprimer cet invité ?";
+      this.showDeleteModal = true;
     }
   }
 
+  confirmDelete() {
+    if(this.modalAction=='delete'){
+      this.deleteGuest();
+    }
+    this.closeModal();
+  }
+
+  closeModal() {
+    this.showDeleteModal = false;
+  }
+
   resendInvitation() {
-    alert(`✉️ Invitation renvoyée à ${this.guest.name}`);
+    //alert(`✉️ Invitation renvoyée à ${this.guest.name}`);
+    this.loading = true;
+    this.guestService.sendReminderMail([this.guest.id]).subscribe(
+      (response) => {
+        this.loading = false;
+      },
+      (error) => {
+        this.loading = false;
+        console.error('❌ [sendReminderMail] Erreur :', error.message);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';
+      }
+    );
   }
 
   markAsConfirmed() {
-    this.guest.status = 'confirmed';
-    this.guest.responseDate = new Date().toISOString().split('T')[0];
-    alert(`✓ ${this.guest.name} marqué comme confirmé`);
+    this.guestService.updateRsvpStatusGuest(this.guestId, 'confirmed').subscribe(
+      (response) => {
+        console.log("response :: ", response);
+        const responseDate = response.updated_at;
+        this.guest.status = response.rsvp_status;
+        this.guest.responseDate = response.updated_at.split('T')[0];
+        this.guest.responseTime = responseDate.split('T')[1].split(':')[0]+':'+responseDate.split('T')[1].split(':')[1];
+        this.loading = false;
+      },
+      (error) => {
+        this.loading = false;
+        console.error('❌ [updateRsvpStatusGuest] Erreur :', error.message);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';}
+    );
+    //alert(`✓ ${this.guest.name} marqué comme confirmé`);
+  }
+
+  markAsPending() {
+    this.guestService.updateRsvpStatusGuest(this.guestId, 'pending').subscribe(
+      (response) => {
+        console.log("response :: ", response);
+        const responseDate = response.updated_at;
+        this.guest.status = response.rsvp_status;
+        this.guest.responseDate = response.updated_at.split('T')[0];
+        this.guest.responseTime = responseDate.split('T')[1].split(':')[0]+':'+responseDate.split('T')[1].split(':')[1];
+        this.loading = false;
+      },
+      (error) => {
+        this.loading = false;
+        console.error('❌ [updateRsvpStatusGuest] Erreur :', error.message);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';}
+    );
+    //alert(`✓ ${this.guest.name} marqué comme confirmé`);
   }
 
   markAsDeclined() {
-    this.guest.status = 'declined';
-    this.guest.responseDate = new Date().toISOString().split('T')[0];
-    alert(`✕ ${this.guest.name} marqué comme refusé`);
+    this.guestService.updateRsvpStatusGuest(this.guestId, 'declined').subscribe(
+      (response) => {
+        console.log("response :: ", response);
+        const responseDate = response.updated_at;
+        this.guest.status = response.rsvp_status;
+        this.guest.responseDate = response.updated_at.split('T')[0];
+        this.guest.responseTime = responseDate.split('T')[1].split(':')[0]+':'+responseDate.split('T')[1].split(':')[1];
+        this.loading = false;
+      },
+      (error) => {
+        this.loading = false;
+        console.error('❌ [updateRsvpStatusGuest] Erreur :', error.message);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';}
+    );
+    //alert(`✕ ${this.guest.name} marqué comme refusé`);
   }
 
   editOptions() {
@@ -130,9 +280,23 @@ export class GuestDetailComponent {
   }
 
   generateQRCode() {
-    alert('✨ Génération du QR Code en cours...');
-    this.guest.qrCodeGenerated = true;
-    this.guest.qrCodeUrl = '';
+    this.isModalLoading = true;
+    this.qrCodeService.generateQRCode(this.guestId).subscribe(
+      (response) => {
+        console.log("###response :: ", response);
+        if(Number(this.guest.id) == this.guestId){
+            this.guest.qrCodeGenerated = true;
+            this.guest.qrCodeUrl = response.qrUrl
+        }
+        this.isModalLoading = false;
+      },
+      (error) => {
+        this.isModalLoading = false;
+        console.error('❌ [generateQRCode] Erreur :', error.message);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';
+      }
+    );
   }
 
   downloadQRCode() {
@@ -157,6 +321,10 @@ export class GuestDetailComponent {
 
   shareInvitation() {
     alert(`🔗 Partage de l'invitation avec ${this.guest.name}...`);
+  }
+
+  backToGuestList(){
+    this.router.navigate(['/events', this.eventId, 'guests']);
   }
 }
 

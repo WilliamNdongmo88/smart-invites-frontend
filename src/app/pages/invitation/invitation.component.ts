@@ -24,6 +24,7 @@ export class InvitationComponent implements OnInit{
   guestId : number = 0;
   url = ''
   plusOne = false;
+  loading = false;
   submitted = signal(false);
   concernedEvent: string = "";
   data: Event = {
@@ -52,6 +53,7 @@ export class InvitationComponent implements OnInit{
       this.guestId = Number(result.split(':')[0]);
       this.getQrCodeImageUrl();
       this.getEventByGuest();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   submitResponse() {
@@ -66,12 +68,15 @@ export class InvitationComponent implements OnInit{
       hasPlusOne: this.plusOne,
     };
     console.log('Payload envoyé au backend :', payload);
+    this.loading = true;
     this.guestService.updateGuest(this.guestId, payload).subscribe({
         next: (response: any) => {
           console.log('[updateGuest] response :: ', response);
+          this.loading = false;
           this.submitted.set(true);
         },
         error: (err) => {
+          this.loading = false;
           console.error('[updateGuest] Erreur :', err);
         }
       });
@@ -105,6 +110,7 @@ export class InvitationComponent implements OnInit{
             this.submitted.set(true);
           }else{
             this.concernedEvent = response.eventTitle.split('de')[1];
+            const responseDate = response.eventDate;
             this.data = {
               guestId: response.guestId,
               guestName: response.guestName,
@@ -115,7 +121,7 @@ export class InvitationComponent implements OnInit{
               description: response.description,
               eventHasPlusOne: response.eventHasPlusOne,
               eventDate: response.eventDate.split('T')[0],
-              eventTime: response.eventDate.split('T')[1].split(':00')[0],
+              eventTime: responseDate.split('T')[1].split(':')[0]+':'+responseDate.split('T')[1].split(':')[1],
               eventLocation: response.eventLocation
             }
           }

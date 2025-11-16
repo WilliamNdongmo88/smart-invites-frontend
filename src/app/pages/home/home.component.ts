@@ -17,10 +17,11 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     if (this.authService.getUser()) {
-      this.authService.isAuthenticated().subscribe(isAuth => {
-      this.isAuthenticated = isAuth;
-    });
+        this.authService.isAuthenticated().subscribe(isAuth => {
+        this.isAuthenticated = isAuth;
+      });
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   navigateToLogin() {

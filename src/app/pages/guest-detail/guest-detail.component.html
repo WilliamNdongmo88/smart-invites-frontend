@@ -1,8 +1,11 @@
 <div class="guest-detail">
+    <!-- Indicateur de chargement -->
+    <app-spinner [isLoading]="isLoading"></app-spinner>
+    
     <!-- Header -->
     <div class="guest-detail-header">
     <div class="container">
-        <a routerLink="/guests" class="back-link">← Retour à la liste des invités</a>
+        <a (click)="backToGuestList()" class="back-link">← Retour à la liste des invités</a>
         <div class="header-content">
         <div class="guest-avatar-large">
             {{ guest.name.charAt(0).toUpperCase() }}
@@ -16,7 +19,7 @@
         </div>
         <div class="header-actions">
             <button class="btn btn-outline" (click)="editGuest()">✏️ Éditer</button>
-            <button class="btn btn-outline btn-danger" (click)="deleteGuest()">🗑️ Supprimer</button>
+            <button class="btn btn-outline btn-danger" (click)="openDeleteModal('delete')">🗑️ Supprimer</button>
         </div>
         </div>
     </div>
@@ -51,7 +54,7 @@
             <div class="divider-gold"></div>
 
             <button class="btn btn-primary" style="width: 100%;" (click)="resendInvitation()">
-            ✉️ Renvoyer l'invitation
+                {{ loading ? '⏳ Renvoie en cours ...' : '✉️ Renvoyer invitation'}}
             </button>
         </div>
 
@@ -66,7 +69,7 @@
             <div class="status-info">
                 <p class="status-title">{{ getStatusLabel(guest.status) }}</p>
                 <p class="status-date" *ngIf="guest.responseDate">
-                Répondu le {{ formatDate(guest.responseDate) }}
+                Répondu le {{ formatDate(guest.responseDate) }} à {{ guest.responseTime }}
                 </p>
                 <p class="status-date" *ngIf="!guest.responseDate">
                 En attente de réponse
@@ -77,11 +80,14 @@
             <div class="divider-gold"></div>
 
             <div class="action-buttons">
+            <button class="btn btn-outline" (click)="markAsPending()">
+                {{ loading ? '⏳ Changement en cours ...' : 'Marquer attente'}}
+            </button>
             <button class="btn btn-outline" (click)="markAsConfirmed()">
-                ✓ Marquer confirmé
+                {{ loading ? '⏳ Changement en cours ...' : '✓ Marquer confirmé'}}
             </button>
             <button class="btn btn-outline" (click)="markAsDeclined()">
-                ✕ Marquer refusé
+                {{ loading ? '⏳ Changement en cours ...' : '✕ Marquer refusé'}}
             </button>
             </div>
         </div>
@@ -215,3 +221,12 @@
     </div>
     </div>
 </div>
+
+<!-- Modal de confirmation -->
+<app-confirm-delete-modal
+    [visible]="showDeleteModal"
+    [message] = warningMessage
+    [action]="modalAction"
+    (confirmDelete)="confirmDelete()"
+    (cancel)="closeModal()">
+</app-confirm-delete-modal>

@@ -11,7 +11,7 @@
             <div class="header-actions">
                 <!-- <button class="btn btn-outline" (click)="shareEvent()">🔗 Partager</button> -->
                 <button class="btn btn-outline" (click)="editEvent()">✏️ Éditer</button>
-                <button class="btn btn-outline btn-danger" (click)="deleteEvent()">🗑️ Supprimer</button>
+                <button class="btn btn-outline btn-danger" (click)="openDeleteModal('delete')">🗑️ Supprimer</button>
             </div>
             </div>
         </div>
@@ -252,6 +252,15 @@
         (refresh)="getGuestsByEvent()"
         (closed)="closeImportModal()"
     ></app-import-guests-modal>
+
+    <!-- Modal de confirmation -->
+    <app-confirm-delete-modal
+        [visible]="showDeleteModal"
+        [message] = warningMessage
+        [action]="modalAction"
+        (confirmDelete)="confirmDelete()"
+        (cancel)="closeModal()">
+    </app-confirm-delete-modal>
 
     <!-- Indicateur de chargement -->
     <app-spinner [isLoading]="isLoading"></app-spinner>

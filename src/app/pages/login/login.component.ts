@@ -19,9 +19,10 @@ export class LoginComponent {
   rememberMe = false;
   showPassword = signal(false);
 
-  constructor(private router: Router,
-              private authService: AuthService
-            ) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });}
 
   togglePasswordVisibility() {
     this.showPassword.update(value => !value);

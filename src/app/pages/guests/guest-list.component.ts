@@ -52,6 +52,8 @@ export class GuestListComponent implements OnInit{
   errorMessage = '';
   eventTitle: string = '';
   isLoading: boolean = false;
+  loading: boolean = false;
+  loadingDelete: boolean = false;
   isModalLoading: boolean = false;
   showDeleteModal = false;
   selectedGuestId: number | null = null;
@@ -147,6 +149,10 @@ export class GuestListComponent implements OnInit{
     this.filterGuests();
   }
 
+  goToGuestDetail(guestId: number){
+    this.router.navigate(['/events', this.eventId, 'guests', guestId]);
+  }
+
   getStatusIcon(status: string): string {
     switch (status) {
       case 'confirmed':
@@ -211,7 +217,7 @@ export class GuestListComponent implements OnInit{
   }
 
   editGuest(guest: Guest) {
-    alert(`✏️ Édition de ${guest.name}...`);
+    this.router.navigate(['/events', this.eventId, 'guests', guest.id, 'edit']);
   }
 
   // Start Logique checkbox du tableau
@@ -262,7 +268,7 @@ export class GuestListComponent implements OnInit{
 
   deleteInvitationFromModal(guest: Guest) {
     if (this.selectedGuest()) {
-      this.isLoading = true;
+      this.loadingDelete = true;
       this.guestService.revokeInvitation(Number(guest.id)).subscribe(
         (response) => {
           console.log("[revokeInvitation] response :: ", response);
@@ -274,10 +280,10 @@ export class GuestListComponent implements OnInit{
             }
           }
           this.filterGuests();
-          this.isLoading = false;
+          this.loadingDelete = false;
         },
         (error) => {
-          this.isLoading = false;
+          this.loadingDelete = false;
           console.error('❌ [deleteInvitationFromModal] Erreur :', error.message);
           console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';
@@ -308,17 +314,17 @@ export class GuestListComponent implements OnInit{
   }
 
   deleteSeveralGuests(guestIdList: number[]) {
-    this.isLoading = true;
+    this.loadingDelete = true;
     
     this.guestService.deleteSeveralGuests(guestIdList).subscribe(
       (response) => {
         console.log("response :: ", response);
         // Filtrer les guests pour ne garder que ceux non sélectionnés
         this.deleteSelectedGuests()
-        this.isLoading = false;
+        this.loadingDelete = false;
       },
       (error) => {
-        this.isLoading = false;
+        this.loadingDelete = false;
         console.error('❌ [deleteGuest] Erreur :', error.message);
         console.log("Message :: ", error.message);
         this.errorMessage = error.message || 'Erreur de connexion';
@@ -327,7 +333,7 @@ export class GuestListComponent implements OnInit{
   }
 
   sendSeveralGuestInvitation(guestIdList: number[]) {
-    this.isLoading = true;
+    this.loading = true;
     this.qrCodeService.generateSeveralQRCode(guestIdList).subscribe(
       (response) => {
         console.log("[sendSeveralGuestInvitation] response :: ", response);
@@ -338,16 +344,18 @@ export class GuestListComponent implements OnInit{
             guest.qrCodeUrl = res.qrUrl;
           }
         }
-
+        
         this.filterGuests();
-        this.closeModal();
-        this.isLoading = false;
+        this.loading = false;
       },
       (error) => {
-        this.isLoading = false;
-        console.error('❌ [sendSeveralGuestInvitation] Erreur :', error.message);
-        console.log("Message :: ", error.message);
-        this.errorMessage = error.message || 'Erreur de connexion';
+        this.loading = false;
+        if(error.message.includes("409 Conflict")){
+          this.closeModal();
+          this.triggerError();
+          this.errorMessage = "Ces invités ont déjà réçu une invitation !";
+          console.log("Message :: ", this.errorMessage);
+        }  
       }
     );
   }
@@ -420,7 +428,23 @@ export class GuestListComponent implements OnInit{
   }
 
   sendReminder() {
-    alert('📧 Rappel envoyé aux invités en attente !');
+    // Récupérer uniquement les invités avec le statut "pending"
+    const pendingGuests = this.guests.filter(g => g.status === 'pending');
+    // Extraire uniquement leurs IDs
+    const pendingGuestIds = pendingGuests.map(g => g.id);
+    alert(`✉️ Invitation renvoyée à ${this.getStatusCount('pending')}`);
+    this.loading = true;
+    this.guestService.sendReminderMail(pendingGuestIds).subscribe(
+      (response) => {
+        this.loading = false;
+      },
+      (error) => {
+        this.loading = false;
+        console.error('❌ [sendReminderMail] Erreur :', error.message);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';
+      }
+    );
   }
 
   openImportModal() {
@@ -497,6 +521,7 @@ export class GuestListComponent implements OnInit{
     if(this.modalAction=='send'){
       this.sendSeveralGuestInvitation(this.guestIdList);
     }
+    this.closeModal();
   }
 
   closeModal() {

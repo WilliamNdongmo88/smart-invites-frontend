@@ -15,6 +15,7 @@
       text-decoration: none;
       margin-bottom: 1rem;
       transition: color 0.3s ease;
+      cursor: pointer;
 
       &:hover {
         color: darken(#D4AF37, 10%);

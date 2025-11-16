@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
 
@@ -12,6 +12,9 @@ export interface Event {
   event_location: string;
   max_guests: number;
   status: string;
+  organizer_id?: number
+  foot_restriction?: boolean
+  has_plus_one?: boolean
   confirmed_count: number;
   pending_count: number;
   declined_count: number;
@@ -26,8 +29,8 @@ export interface CreateEventRequest {
   eventDate: string;
   eventLocation: string;
   maxGuests: number;
-  hasPlusOne: boolean;
-  footRestriction: boolean;
+  hasPlusOne?: boolean;
+  footRestriction?: boolean;
   status: string;
 }
 
@@ -46,22 +49,32 @@ export class EventService {
     }
   }
 
+  getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('accessToken');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
   getEvents(organizerId: number): Observable<{ events: Event[] }> {
     return this.http.get<{ events: Event[] }>(`${this.apiUrl}/event/organizer/${organizerId}`);
   }
 
-  getEventById(eventId: number): Observable<{ event: Event[] }> {
+  getEventById(eventId: number): Observable<Event[]> {
     console.log("eventId :: ",eventId);
-    return this.http.get<{ event: Event[] }>(`${this.apiUrl}/event/${eventId}`);
+    return this.http.get<Event[]>(`${this.apiUrl}/event/${eventId}`);
   }
 
   createEvent(request: CreateEventRequest[]): Observable<any> {
     console.log('Creating event with data:', request);
-    return this.http.post<any>(`${this.apiUrl}/event/create-event`, request);
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/event/create-event`, request, { headers });
   }
 
   updateEvent(eventId: number, request: Partial<CreateEventRequest>): Observable<Event> {
-    return this.http.put<Event>(`${this.apiUrl}/${eventId}`, request);
+    const headers = this.getAuthHeaders();
+    return this.http.put<Event>(`${this.apiUrl}/event/${eventId}`, request, { headers });
   }
 
   updateEventStatus(eventId: number, status: string): Observable<Event> {
@@ -71,11 +84,9 @@ export class EventService {
       { params: { status } }
     );
   }
-
-  /**
-   * Delete event
-   */
+  
   deleteEvent(eventId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${eventId}`);
+    const headers = this.getAuthHeaders();
+    return this.http.delete<void>(`${this.apiUrl}/event/${eventId}`, { headers });
   }
 }

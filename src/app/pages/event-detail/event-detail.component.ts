@@ -10,6 +10,7 @@ import { AddGuestModalComponent } from "../../components/add-guest-modal/add-gue
 import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 import { ImportGuestsModalComponent } from "../../components/import-guests-modal/import-guests-modal";
 import { SpinnerComponent } from "../../components/spinner/spinner";
+import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 
 interface Guest {
   id: string;
@@ -39,7 +40,7 @@ type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined';
 @Component({
   selector: 'app-event-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, AddGuestModalComponent, ErrorModalComponent, ImportGuestsModalComponent, SpinnerComponent],
+  imports: [CommonModule, FormsModule, RouterLink, AddGuestModalComponent, ErrorModalComponent, ImportGuestsModalComponent, SpinnerComponent, ConfirmDeleteModalComponent],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.scss']
 })
@@ -54,6 +55,9 @@ export class EventDetailComponent implements OnInit{
   errorMessage: string = '';
   isLoading: boolean = false;
   showErrorModal = false;
+  showDeleteModal = false;
+  modalAction: string | undefined;
+  warningMessage: string = "";
 
   itemsPerPage = 10;
   currentPage = 1;
@@ -105,12 +109,12 @@ export class EventDetailComponent implements OnInit{
       this.eventService.getEventById(this.eventId).subscribe(
         (response) => {
           // console.log("Response :: ", response.event[0]);
-          const res = response.event[0];
-          const time = res.event_date.split('T')[1].split(':00')[0];
+          const res = response[0];
+          const time = res.event_date.split('T')[1].split(':')[0]+':'+res.event_date.split('T')[1].split(':')[1]
           this.event = {
               id: res.event_id,
               title: res.title,
-              date: res.event_date.split('T')[0],     //"2025-12-05T13:30:00.000Z"
+              date: res.event_date.split('T')[0],
               time: time,
               location: res.event_location,
               description: res.description,
@@ -262,13 +266,39 @@ export class EventDetailComponent implements OnInit{
   }
 
   editEvent() {
-    alert('✏️ Édition de l\'événement...');
+    //alert('✏️ Édition de l\'événement...');
+    this.router.navigate(['/events/edit-event', this.event.id]);
+  }
+
+  openDeleteModal(modalAction?: string) {
+    this.modalAction = modalAction;
+
+    if(modalAction=='delete'){
+      this.warningMessage = "Êtes-vous sûr de vouloir supprimer cet événement ?";
+      this.showDeleteModal = true;
+    }
   }
 
   deleteEvent() {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
-      alert('🗑️ Événement supprimé !');
-    }
+    this.isLoading = false;
+    this.eventService.deleteEvent(Number(this.eventId)).subscribe(
+      (response) => {
+        console.log("[deleteEvent] response :: ", response);
+        this.isLoading = false;
+        this.router.navigate(['/dashboard']);
+      },
+      (error) => {
+        this.isLoading = false;
+        if (error.status === 409) {
+          this.errorMessage = error.error.error;
+          this.triggerError();
+          this.errorMessage = this.errorMessage;
+          console.warn(this.errorMessage);
+        } else {
+          this.errorMessage = "Une erreur est survenue.";
+        }
+      }
+    );
   }
 
   onGuestAdded(newGuest: any) {
@@ -352,12 +382,20 @@ export class EventDetailComponent implements OnInit{
 
   // Logique error-modal
   triggerError() {
-    this.errorMessage = "Impossible de charger les invités. Veuillez réessayer.";
     this.showErrorModal = true;
   }
 
   closeErrorModal() {
     this.showErrorModal = false;
+  }
+
+  confirmDelete() {
+    this.deleteEvent()
+    this.closeModal();
+  }
+
+  closeModal() {
+    this.showDeleteModal = false;
   }
 
   // Logique pagination 

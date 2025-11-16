@@ -97,12 +97,17 @@ export class GuestService {
     return this.http.get<{ guests: Guests[] }>(`${this.apiUrl}/guest/event/${eventId}`);
   }
 
-  getGuestById(guestId: number): Observable<Guest> {
-    return this.http.get<Guest>(`${this.apiUrl}/${guestId}` );
+  getGuestById(guestId: number): Observable<any> {
+    console.log("guestId :: ", guestId);
+    return this.http.get<any>(`${this.apiUrl}/guest/${guestId}` );
   }
 
   updateGuest(guestId: number, guest: any): Observable<Guest> {
     return this.http.put<Guest>(`${this.apiUrl}/guest/${guestId}`, guest );
+  }
+
+  updateRsvpStatusGuest(guestId: number, rsvpStatus: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/guest/rsvp/${guestId}`, {rsvpStatus} );
   }
 
   deleteGuest(guestId: number): Observable<void> {
@@ -129,5 +134,11 @@ export class GuestService {
   // Méthode pour révoquer une invitation
   revokeInvitation(guestId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/invitation/delete/${guestId}` );
+  }
+
+  sendReminderMail(guestIList: any): Observable<any> {
+    console.log("guestIList :: ",guestIList);
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/guest/reminde-mail`, guestIList, { headers })
   }
 }

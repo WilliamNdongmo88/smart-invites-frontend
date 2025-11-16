@@ -10,6 +10,8 @@ import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password
 import { AddEventComponent } from './pages/add-event/add-event.component';
 import { GuestListComponent } from './pages/guests/guest-list.component';
 import { GuestDetailComponent } from './pages/guest-detail/guest-detail.component';
+import { EditEventComponent } from './pages/edit-event/edit-event.component';
+import { EditGuestComponent } from './pages/edit-guest/edit-guest.component';
 
 export const routes: Routes = [
   {
@@ -38,6 +40,10 @@ export const routes: Routes = [
     component: AddEventComponent,
   },
   {
+    path: 'events/edit-event/:eventId',
+    component: EditEventComponent,
+  },
+  {
     path: 'events/:eventId',
     component: EventDetailComponent,
     canActivate: [AuthGuard]
@@ -52,8 +58,12 @@ export const routes: Routes = [
     component: GuestListComponent,
   },
   {
-    path: 'guests/:id',
+    path: 'events/:eventId/guests/:guestId',
     component: GuestDetailComponent,
+  },
+  {
+    path: 'events/:eventId/guests/:guestId/edit',
+    component: EditGuestComponent,
   },
   // {
   //   path: '/404',

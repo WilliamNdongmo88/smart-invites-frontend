@@ -44,6 +44,7 @@ export class DashboardComponent {
       this.organizerId = user?.id 
     });
     this.getAllEvent();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   getAllEvent(){
@@ -111,6 +112,11 @@ export class DashboardComponent {
 
   navigateToEventDetails(eventId: number): void {
     this.router.navigate(['/events', eventId]);
+  }
+
+  editEvent(eventId: number) {
+    //alert('✏️ Édition de l\'événement...');
+    this.router.navigate(['/events/edit-event', eventId]);
   }
 
   navigateToInvitePage(eventId: number){

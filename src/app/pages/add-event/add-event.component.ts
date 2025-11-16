@@ -44,6 +44,7 @@ export class AddEventComponent implements OnInit{
       this.currentUser = user;
       this.organizerId = user?.id 
     });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   nextStep() {
     if (this.currentStep() < 3) {

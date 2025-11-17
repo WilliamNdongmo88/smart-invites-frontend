@@ -87,8 +87,8 @@
               </div>
 
               <!-- Additional info -->
-              <div *ngIf="response() === 'confirmed' && data.eventHasPlusOne" class="additional-info">
-                <div class="form-group">
+              <div *ngIf="response() === 'confirmed'" class="additional-info">
+                <div *ngIf="data.footRestriction" class="form-group">
                   <label>Restrictions alimentaires (optionnel)</label>
                   <textarea
                     [(ngModel)]="dietaryRestrictions"
@@ -97,7 +97,7 @@
                   ></textarea>
                 </div>
 
-                <label class="checkbox-label">
+                <label *ngIf="data.eventHasPlusOne" class="checkbox-label">
                   <input type="checkbox" [(ngModel)]="plusOne" (change)="boxChecked()" />
                   <span>Je souhaite amener un accompagnant (+1)</span>
                 </label>
@@ -110,8 +110,9 @@
                   [(ngModel)]="plusOneName"
                   rows="3"
                 >
-                <label class="label-mt">Restrictions alimentaires (optionnel)</label>
+                <label *ngIf="data.footRestriction" class="label-mt">Restrictions alimentaires (optionnel)</label>
                 <textarea
+                  *ngIf="data.footRestriction"
                   [(ngModel)]="plusOneNameDietRestr"
                   placeholder="Ex: Végétarien, Sans gluten, Allergies..."
                   rows="3"
@@ -123,6 +124,7 @@
                 class="btn btn-primary submit-btn"
                 [disabled]="!response()"
                 (click)="submitResponse()"
+                [disabled]="loading"
               >
                 {{loading ? '⏳ Confirmation...' :'❤️ Confirmer ma réponse'}}
               </button>

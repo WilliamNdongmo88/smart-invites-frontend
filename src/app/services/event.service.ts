@@ -12,12 +12,12 @@ export interface Event {
   event_location: string;
   max_guests: number;
   type: string;
-  budget?: string;
+  budget?: number;
   status: string;
   event_name_concerned1?: string;
   event_name_concerned2?: string;
   organizer_id?: number
-  foot_restriction?: boolean
+  footRestriction?: boolean
   has_plus_one?: boolean
   confirmed_count: number;
   pending_count: number;

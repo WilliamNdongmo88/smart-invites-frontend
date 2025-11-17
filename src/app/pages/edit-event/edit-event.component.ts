@@ -17,7 +17,7 @@ interface Event {
   location: string;
   description: string;
   totalGuests: number;
-  budget?: string;
+  budget?: number;
   type: string;
   eventNameConcerned1?: string;
   eventNameConcerned2?: string;
@@ -59,7 +59,7 @@ export class EditEventComponent implements OnInit {
       description: '',
       totalGuests: 0,
       type: '',
-      budget: '',
+      budget: 0,
       eventNameConcerned1: '',
       eventNameConcerned2: '',
       allowDietaryRestrictions: true,
@@ -86,7 +86,7 @@ export class EditEventComponent implements OnInit {
   loadEvent() {
     this.eventService.getEventById(this.eventId).subscribe(
     (response) => {
-        console.log("Response :: ", response[0]);
+        console.log("#Response :: ", response[0]);
         const res = response[0];
         const time = res.event_date.split('T')[1].split(':')[0]+':'+res.event_date.split('T')[1].split(':')[1]
         this.originalEventData = {
@@ -100,7 +100,7 @@ export class EditEventComponent implements OnInit {
             totalGuests: res.max_guests,
             budget: res.budget,
             type: res.type,
-            allowDietaryRestrictions: res.foot_restriction,
+            allowDietaryRestrictions: res.footRestriction,
             eventNameConcerned1: res.event_name_concerned1,
             eventNameConcerned2: res.event_name_concerned2,
             allowPlusOne: res.has_plus_one,
@@ -109,7 +109,7 @@ export class EditEventComponent implements OnInit {
             updatedAt: res.updatedAt,
         };
         this.eventData = { ...this.originalEventData };
-        console.log("this.eventData :: ", this.eventData);
+        console.log("#this.eventData :: ", this.eventData);
     },
     (error) => {
         // this.loading = false;
@@ -177,9 +177,13 @@ export class EditEventComponent implements OnInit {
         description: this.eventData.description,
         eventDate: this.eventData.date+' '+ this.eventData.time+':00',
         eventLocation: this.eventData.location,
+        type: this.eventData.type,
+        budget: this.eventData.budget,
+        eventNameConcerned1: this.eventData.eventNameConcerned1,
+        eventNameConcerned2: this.eventData.eventNameConcerned2,
         maxGuests: this.eventData.totalGuests,
         hasPlusOne: this.eventData.allowPlusOne,
-        footRestriction: this.eventData.allowDietaryRestrictions,
+        footRestriction: this.eventData.allowDietaryRestrictions || false,
         status: this.eventData.status,
     }
     console.log('Event updated:', eventDatas);

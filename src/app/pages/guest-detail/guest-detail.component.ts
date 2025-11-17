@@ -93,7 +93,7 @@ export class GuestDetailComponent implements OnInit{
               responseDate: response.response_date.split('T')[0],
               responseTime: response.response_date.split('T')[1].split(':')[0]+':'+response.response_date.split('T')[1].split(':')[1],
               qrCodeGenerated: response.qrCodeUrl ? true : false,
-              qrCodeUrl: response.qrCodeUrl || '',
+              qrCodeUrl: response.qrCodeUrl,
               notes: response.notes,
               invitationSentDate: response.invitation_sent_date?.split('T')[0] || '',
             };

@@ -49,6 +49,7 @@ export interface Event{
   eventTitle: string;
   description: string;
   eventHasPlusOne: string;
+  footRestriction: boolean;
   eventDate: string;
   eventTime: string;
   eventLocation: string;

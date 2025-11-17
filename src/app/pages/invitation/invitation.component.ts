@@ -39,6 +39,7 @@ export class InvitationComponent implements OnInit{
     eventTitle: '',
     description: '',
     eventHasPlusOne: '',
+    footRestriction: false,
     eventDate: '',
     eventTime: '',
     eventLocation: ''
@@ -125,6 +126,7 @@ export class InvitationComponent implements OnInit{
               eventTitle: response.eventTitle,
               description: response.description,
               eventHasPlusOne: response.eventHasPlusOne,
+              footRestriction: response.footRestriction,
               eventDate: response.eventDate.split('T')[0],
               eventTime: responseDate.split('T')[1].split(':')[0]+':'+responseDate.split('T')[1].split(':')[1],
               eventLocation: response.eventLocation

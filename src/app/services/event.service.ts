@@ -11,7 +11,11 @@ export interface Event {
   event_date: string;
   event_location: string;
   max_guests: number;
+  type: string;
+  budget?: string;
   status: string;
+  event_name_concerned1?: string;
+  event_name_concerned2?: string;
   organizer_id?: number
   foot_restriction?: boolean
   has_plus_one?: boolean
@@ -32,6 +36,10 @@ export interface CreateEventRequest {
   hasPlusOne?: boolean;
   footRestriction?: boolean;
   status: string;
+  budget?: number;
+  type?: string;
+  eventNameConcerned1?: string;
+  eventNameConcerned2?: string;
 }
 
 @Injectable({

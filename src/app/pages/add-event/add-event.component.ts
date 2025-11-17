@@ -16,7 +16,12 @@ import { SpinnerComponent } from "../../components/spinner/spinner";
 export class AddEventComponent implements OnInit{
   currentStep = signal(1);
   errorMessage : string ='';
-  isLoading = false
+  isLoading = false;
+  showWeddingNames = false;
+  showEngagementNames = false;
+  showAnniversaryNames = false;
+  showBirthdayNames = false;
+  showAnother = false;
 
   eventData = {
     title: '',
@@ -27,6 +32,8 @@ export class AddEventComponent implements OnInit{
     totalGuests: 0,
     budget: 0,
     type: '',
+    eventNameConcerned1: '',
+    eventNameConcerned2: '',
     allowDietaryRestrictions: true,
     allowPlusOne: true,
   };
@@ -48,6 +55,42 @@ export class AddEventComponent implements OnInit{
   }
   nextStep() {
     if (this.currentStep() < 3) {
+      console.log('this.eventData:', this.eventData);
+      if (this.eventData.type=='wedding') {
+        this.showWeddingNames = true;
+        this.showEngagementNames = false;
+        this.showAnniversaryNames = false;
+        this.showBirthdayNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='engagement') {
+        this.showEngagementNames = true;
+        this.showWeddingNames = false;
+        this.showAnniversaryNames = false;
+        this.showBirthdayNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='anniversary') {
+        this.showAnniversaryNames = true;
+        this.showWeddingNames = false;
+        this.showEngagementNames = false;
+        this.showBirthdayNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='birthday') {
+        this.showBirthdayNames = true;
+        this.showWeddingNames = false;
+        this.showEngagementNames = false;
+        this.showAnniversaryNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='other') {
+        this.showAnother = true;
+        this.showWeddingNames = false;
+        this.showEngagementNames = false;
+        this.showAnniversaryNames = false;
+        this.showBirthdayNames = false;
+      }
       this.currentStep.update(step => step + 1);
     }
   }
@@ -68,8 +111,12 @@ export class AddEventComponent implements OnInit{
       eventLocation: this.eventData.location,
       maxGuests: this.eventData.totalGuests,
       hasPlusOne: this.eventData.allowPlusOne,
+      budget: this.eventData.budget,
+      type: this.eventData.type,
+      eventNameConcerned1: this.eventData.eventNameConcerned1 || '',
+      eventNameConcerned2: this.eventData.eventNameConcerned2 || '',
       footRestriction: this.eventData.allowDietaryRestrictions,
-      status: 'PLANNED'
+      status: 'planned'
     }
     datas.push(eventDatas);
     console.log('Event created:', datas);

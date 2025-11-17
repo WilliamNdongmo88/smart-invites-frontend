@@ -88,6 +88,23 @@
                 />
               </div>
 
+              <div class="form-group">
+                <label for="eventType">Type d'événement</label>
+                <select
+                  id="eventType"
+                  name="eventType"
+                  [(ngModel)]="eventData.type"
+                  class="form-input"
+                >
+                  <option value="">Sélectionner un type</option>
+                  <option value="wedding">Mariage</option>
+                  <option value="engagement">Fiançailles</option>
+                  <option value="anniversary">Anniversaire</option>
+                  <option value="birthday">Anniversaire</option>
+                  <option value="other">Autre</option>
+                </select>
+              </div>
+
               <!-- Status -->
               <div class="form-group">
                 <label for="status">Statut de l'événement</label>
@@ -157,21 +174,44 @@
                 </div>
               </div>
 
-              <div class="form-group">
-                <label for="eventType">Type d'événement</label>
-                <select
-                  id="eventType"
-                  name="eventType"
-                  [(ngModel)]="eventData.type"
+              <div *ngIf="showWeddingNames || showEngagementNames || showAnniversaryNames" class="form-group">
+                <label *ngIf="showWeddingNames" for="eventNameConcerned2">Prenom du future marié</label>
+                <label *ngIf="showEngagementNames" for="eventNameConcerned2">Prenom du fiancé</label>
+                <label *ngIf="showAnniversaryNames" for="eventNameConcerned2">Nom du marié</label>
+                <input
+                  type="text"
+                  id="eventNameConcerned1"
+                  name="eventNameConcerned1"
+                  [(ngModel)]="eventData.eventNameConcerned1"
+                  required
                   class="form-input"
-                >
-                  <option value="">Sélectionner un type</option>
-                  <option value="wedding">Mariage</option>
-                  <option value="engagement">Fiançailles</option>
-                  <option value="anniversary">Anniversaire</option>
-                  <option value="birthday">Anniversaire</option>
-                  <option value="other">Autre</option>
-                </select>
+                />
+              </div>
+
+              <div *ngIf="showWeddingNames || showEngagementNames || showAnniversaryNames" class="form-group">
+                <label *ngIf="showWeddingNames" for="eventNameConcerned2">Prenom de la future mariée</label>
+                <label *ngIf="showEngagementNames" for="eventNameConcerned2">Prenom de la fiancée</label>
+                <label *ngIf="showAnniversaryNames" for="eventNameConcerned2">Nom de la mariée</label>
+                <input
+                  type="text"
+                  id="eventNameConcerned2"
+                  name="eventNameConcerned2"
+                  [(ngModel)]="eventData.eventNameConcerned2"
+                  required
+                  class="form-input"
+                />
+              </div>
+
+              <div *ngIf="showBirthdayNames || showAnother" class="form-group">
+                <label for="eventNameConcerned1">Nom du concerné</label>
+                <input
+                  type="text"
+                  id="eventNameConcerned1"
+                  name="eventNameConcerned1"
+                  [(ngModel)]="eventData.eventNameConcerned1"
+                  required
+                  class="form-input"
+                />
               </div>
 
               <div class="form-group">
@@ -233,6 +273,25 @@
                 <div class="confirmation-item">
                   <span class="label">Type :</span>
                   <span class="value">{{ getEventTypeLabel(eventData.type) }}</span>
+                </div>
+
+                <div *ngIf="showWeddingNames || showEngagementNames || showAnniversaryNames" class="confirmation-item">
+                  <span *ngIf="showWeddingNames" class="label">Prenom du future marié :</span>
+                  <span *ngIf="showEngagementNames" class="label">Prenom du fiancé :</span>
+                  <span *ngIf="showAnniversaryNames" class="label">Nom du marié :</span>
+                  <span class="value">{{ eventData.eventNameConcerned1 }}</span>
+                </div>
+
+                <div *ngIf="showWeddingNames || showEngagementNames || showAnniversaryNames" class="confirmation-item">
+                  <span *ngIf="showWeddingNames" class="label">Prenom de la future mariée :</span>
+                  <span *ngIf="showEngagementNames" class="label">Prenom de la fiancée :</span>
+                  <span *ngIf="showAnniversaryNames" class="label">Nom de la mariée :</span>
+                  <span class="value">{{ eventData.eventNameConcerned2 }}</span>
+                </div>
+
+                <div *ngIf="showBirthdayNames || showAnother" class="confirmation-item">
+                  <span class="label">Nom du concerné :</span>
+                  <span class="value">{{ eventData.eventNameConcerned1 }}</span>
                 </div>
 
                 <div class="confirmation-item">

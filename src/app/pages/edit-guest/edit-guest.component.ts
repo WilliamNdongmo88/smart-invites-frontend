@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GuestService } from '../../services/guest.service';
+import { SpinnerComponent } from "../../components/spinner/spinner";
 
 interface Guest {
   id: number;
@@ -26,7 +27,7 @@ interface Guest {
 @Component({
   selector: 'app-edit-guest',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SpinnerComponent],
   templateUrl: 'edit-guest.component.html',
   styleUrl: 'edit-guest.component.scss'
 })
@@ -77,23 +78,27 @@ export class EditGuestComponent implements OnInit {
         console.log("###response :: ", response);
         this.eventId = response.eventId;
         this.originalGuestData = {
-            id: 1,
-            name: 'Jean Dupont',
-            email: 'jean.dupont@email.com',
-            phone: '+33 6 12 34 56 78',
-            status: 'confirmed',
-            dietaryRestrictions: 'Végétarien',
-            plusOne: true,
+            id: Number(response.guest_id),
+            name: response.full_name,
+            email: response.email,
+            phone: response.phone_number,
+            status: response.rsvp_status as 'confirmed' | 'pending' | 'declined' || 'pending',
+            dietaryRestrictions: response.dietary_restrictions,
+            plusOne: response.has_plus_one,
             plusOneInfo: {
-            name: 'Marie Dupont',
-            dietaryRestrictions: 'Sans gluten',
+            name: response.plus_one_name,
+            dietaryRestrictions: response.plus_one_name_diet_restr,
             },
-            responseDate: '2025-01-10',
-            notes: 'Ami de longue date, très important pour nous',
-            invitationSentDate: '2024-12-20',
-            qrCodeGenerated: true,
-            qrCodeUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="white" width="200" height="200"/%3E%3Crect fill="black" x="10" y="10" width="180" height="180" opacity="0.1"/%3E%3Ctext x="100" y="100" text-anchor="middle" dy=".3em" font-size="20" fill="black"%3EQR Code%3C/text%3E%3C/svg%3E',
+            responseDate: response.response_date.split('T')[0],
+            notes: response.notes,
+            invitationSentDate: response.invitationSentDate.split('T')[0],
+            qrCodeGenerated: response.qrCodeUrl ? true : false,
+            qrCodeUrl: response.qrCodeUrl,
         };
+        this.guestData = JSON.parse(JSON.stringify(this.originalGuestData));
+        if (!this.guestData.plusOneInfo) {
+        this.guestData.plusOneInfo = {};
+        }
         this.isLoading = false;
     },
     (error) => {
@@ -103,16 +108,35 @@ export class EditGuestComponent implements OnInit {
         this.errorMessage = error.message || 'Erreur de connexion';
     }
     );
-    this.guestData = JSON.parse(JSON.stringify(this.originalGuestData));
-    if (!this.guestData.plusOneInfo) {
-      this.guestData.plusOneInfo = {};
-    }
   }
 
   onSubmit() {
     console.log('Guest updated:', this.guestData);
-    alert('✓ Invité mis à jour avec succès !');
-    this.router.navigate(['/events', this.eventId, 'guests', this.guestId]);
+    const data = {
+        eventId: this.eventId,
+        fullName: this.guestData.name,
+        email: this.guestData.email,
+        phoneNumber: this.guestData.phone,
+        rsvpStatus: this.guestData.status,
+        dietaryRestrictions: this.guestData.dietaryRestrictions,
+        hasPlusOne: this.guestData.plusOne,
+        plusOneName: this.guestData.plusOneInfo?.name,
+        plusOneNameDietRestr: this.guestData.plusOneInfo?.dietaryRestrictions,
+        notes: this.guestData.notes
+    }
+    console.log('data :: ', data);
+    this.isLoading = true;
+    this.guestService.updateGuest(this.guestId, data).subscribe({
+        next: (response: any) => {
+          console.log('response :: ', response);
+          this.isLoading = false;
+          this.router.navigate(['/events', this.eventId, 'guests', this.guestId]);
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.error('Erreur :', err);
+        }
+      });
   }
 
   getStatusLabel(status: string): string {

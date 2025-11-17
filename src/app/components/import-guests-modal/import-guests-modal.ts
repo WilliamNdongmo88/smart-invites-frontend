@@ -109,7 +109,7 @@ export class ImportGuestsModalComponent {
     for (const key in this.importedGuests) {
       const elt = this.importedGuests[key];
       const data = {
-        eventId: elt.eventid,
+        eventId: Number(elt.eventid),
         fullName: elt.nom,
         email: elt.email,
         phoneNumber: elt.phone,

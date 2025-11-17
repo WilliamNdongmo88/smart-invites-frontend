@@ -15,6 +15,8 @@ interface Guest {
   status: 'confirmed' | 'pending' | 'declined';
   dietaryRestrictions?: string;
   plusOne?: boolean;
+  plusOneName?: string;
+  plusOneDietaryRestrictions?: string;
   responseDate?: string;
   responseTime?: string;
   qrCodeGenerated?: boolean;
@@ -84,13 +86,15 @@ export class GuestDetailComponent implements OnInit{
               email: response.email,
               phone: response.phone_number,
               status: response.rsvp_status,
-              dietaryRestrictions: response.notes,
-              plusOne: response.has_plus_one || '',
+              dietaryRestrictions: response.dietary_restrictions,
+              plusOne: response.has_plus_one,
+              plusOneName: response.plus_one_name,
+              plusOneDietaryRestrictions: response.plus_one_name_diet_restr,
               responseDate: response.response_date.split('T')[0],
               responseTime: response.response_date.split('T')[1].split(':')[0]+':'+response.response_date.split('T')[1].split(':')[1],
               qrCodeGenerated: response.qrCodeUrl ? true : false,
               qrCodeUrl: response.qrCodeUrl || '',
-              notes: 'Ami de longue date, très important pour nous',
+              notes: response.notes,
               invitationSentDate: response.invitation_sent_date?.split('T')[0] || '',
             };
           this.loading = false;

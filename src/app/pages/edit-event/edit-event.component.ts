@@ -17,11 +17,13 @@ interface Event {
   location: string;
   description: string;
   totalGuests: number;
-  budget?: number;
+  budget?: string;
   type: string;
+  eventNameConcerned1?: string;
+  eventNameConcerned2?: string;
   allowDietaryRestrictions?: boolean;
   allowPlusOne?: boolean;
-  status: 'PLANNED' | 'ACTIVE' | 'COMPLETED' | 'CANCELED' ;
+  status: 'planned' | 'active' | 'completed' | 'canceled';
   createdAt?: string;
   updatedAt?: string;
 }
@@ -42,6 +44,11 @@ export class EditEventComponent implements OnInit {
   showDeleteModal = false;
   modalAction: string | undefined;
   warningMessage: string = "";
+  showWeddingNames = false;
+  showEngagementNames = false;
+  showAnniversaryNames = false;
+  showBirthdayNames = false;
+  showAnother = false;
 
   originalEventData: Event = {
       id: '',
@@ -52,7 +59,12 @@ export class EditEventComponent implements OnInit {
       description: '',
       totalGuests: 0,
       type: '',
-      status: 'PLANNED'
+      budget: '',
+      eventNameConcerned1: '',
+      eventNameConcerned2: '',
+      allowDietaryRestrictions: true,
+      allowPlusOne: true,
+      status: 'planned'
   };
 
   eventData: Event = { ...this.originalEventData };
@@ -86,15 +98,18 @@ export class EditEventComponent implements OnInit {
             location: res.event_location,
             description: res.description,
             totalGuests: res.max_guests,
-            budget: 25000, // Placeholder as budget is not in response
-            type: 'wedding',
+            budget: res.budget,
+            type: res.type,
             allowDietaryRestrictions: res.foot_restriction,
+            eventNameConcerned1: res.event_name_concerned1,
+            eventNameConcerned2: res.event_name_concerned2,
             allowPlusOne: res.has_plus_one,
-            status: res.status as 'PLANNED' | 'ACTIVE' | 'COMPLETED' | 'CANCELED',
+            status: res.status as 'planned' | 'active' | 'completed' | 'canceled',
             createdAt: res.createdAt,
             updatedAt: res.updatedAt,
         };
         this.eventData = { ...this.originalEventData };
+        console.log("this.eventData :: ", this.eventData);
     },
     (error) => {
         // this.loading = false;
@@ -108,6 +123,42 @@ export class EditEventComponent implements OnInit {
 
   nextStep() {
     if (this.currentStep() < 3) {
+      console.log('this.eventData:', this.eventData);
+      if (this.eventData.type=='wedding') {
+        this.showWeddingNames = true;
+        this.showEngagementNames = false;
+        this.showAnniversaryNames = false;
+        this.showBirthdayNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='engagement') {
+        this.showEngagementNames = true;
+        this.showWeddingNames = false;
+        this.showAnniversaryNames = false;
+        this.showBirthdayNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='anniversary') {
+        this.showAnniversaryNames = true;
+        this.showWeddingNames = false;
+        this.showEngagementNames = false;
+        this.showBirthdayNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='birthday') {
+        this.showBirthdayNames = true;
+        this.showWeddingNames = false;
+        this.showEngagementNames = false;
+        this.showAnniversaryNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='other') {
+        this.showAnother = true;
+        this.showWeddingNames = false;
+        this.showEngagementNames = false;
+        this.showAnniversaryNames = false;
+        this.showBirthdayNames = false;
+      }
       this.currentStep.update(step => step + 1);
     }
   }

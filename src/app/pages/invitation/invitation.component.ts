@@ -20,6 +20,8 @@ export class InvitationComponent implements OnInit{
   generatedQrCode: QrCodeGenerationResponse | null = null;
   response = signal<ResponseType>(null);
   dietaryRestrictions = '';
+  plusOneName = '';
+  plusOneNameDietRestr = '';
   token = '';
   guestId : number = 0;
   url = ''
@@ -27,6 +29,7 @@ export class InvitationComponent implements OnInit{
   loading = false;
   submitted = signal(false);
   concernedEvent: string = "";
+
   data: Event = {
     guestId: 0,
     guestName: '',
@@ -64,22 +67,24 @@ export class InvitationComponent implements OnInit{
     }
     const payload = {
       rsvpStatus: this.response(),
-      notes: this.dietaryRestrictions || null,
+      dietaryRestrictions: this.dietaryRestrictions || null,
       hasPlusOne: this.plusOne,
+      plusOneName: this.plusOne ? this.plusOneName : null,
+      plusOneNameDietRestr: this.plusOne ? this.plusOneNameDietRestr : null
     };
     console.log('Payload envoyé au backend :', payload);
     this.loading = true;
     this.guestService.updateGuest(this.guestId, payload).subscribe({
-        next: (response: any) => {
-          console.log('[updateGuest] response :: ', response);
-          this.loading = false;
-          this.submitted.set(true);
-        },
-        error: (err) => {
-          this.loading = false;
-          console.error('[updateGuest] Erreur :', err);
-        }
-      });
+      next: (response: any) => {
+        console.log('[updateGuest] response :: ', response);
+        this.loading = false;
+        this.submitted.set(true);
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('[updateGuest] Erreur :', err);
+      }
+    });
   }
 
   getQrCodeImageUrl() {
@@ -100,7 +105,7 @@ export class InvitationComponent implements OnInit{
     if (this.guestId) {
       this.guestService.getEventByGuest(this.guestId).subscribe({
         next: (response: any) => {
-          console.log('rsvpStatus :: ', response.rsvpStatus);
+          console.log('response :: ', response);
           if(response.rsvpStatus == 'confirmed'){
             this.response.set('confirmed');
             this.submitted.set(true);
@@ -123,7 +128,7 @@ export class InvitationComponent implements OnInit{
               eventDate: response.eventDate.split('T')[0],
               eventTime: responseDate.split('T')[1].split(':')[0]+':'+responseDate.split('T')[1].split(':')[1],
               eventLocation: response.eventLocation
-            }
+            };
           }
         },
         error: (err) => {
@@ -131,6 +136,10 @@ export class InvitationComponent implements OnInit{
         }
       });
     }
+  }
+
+  boxChecked() {
+    console.log("Plus one :", this.plusOne);
   }
 
   formatDate(dateString: string): string {

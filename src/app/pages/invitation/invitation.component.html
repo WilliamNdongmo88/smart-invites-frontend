@@ -98,9 +98,24 @@
                 </div>
 
                 <label class="checkbox-label">
-                  <input type="checkbox" [(ngModel)]="plusOne" />
+                  <input type="checkbox" [(ngModel)]="plusOne" (change)="boxChecked()" />
                   <span>Je souhaite amener un accompagnant (+1)</span>
                 </label>
+              </div>
+
+              <!-- Info plus one -->
+              <div *ngIf="plusOne" class="form-group">
+                <label>Nom de votre accompagnant</label>
+                <input
+                  [(ngModel)]="plusOneName"
+                  rows="3"
+                >
+                <label class="label-mt">Restrictions alimentaires (optionnel)</label>
+                <textarea
+                  [(ngModel)]="plusOneNameDietRestr"
+                  placeholder="Ex: Végétarien, Sans gluten, Allergies..."
+                  rows="3"
+                ></textarea>
               </div>
 
               <!-- Submit button -->

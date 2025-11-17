@@ -97,15 +97,27 @@
             <h2>Options et restrictions</h2>
 
             <div class="options-list">
-            <div class="option-item" *ngIf="guest.dietaryRestrictions">
-                <span class="option-label">🍽️ Restrictions alimentaires</span>
-                <span class="option-value">{{ guest.dietaryRestrictions }}</span>
+                <div class="option-item" *ngIf="guest.dietaryRestrictions">
+                    <span class="option-label">🍽️ Restrictions alimentaires</span>
+                    <span class="option-value">{{ guest.dietaryRestrictions }}</span>
+                </div>
+
+                <div class="option-item">
+                    <span class="option-label">👥 +1 autorisé</span>
+                    <span class="option-value">{{ guest.plusOne ? 'Oui' : 'Non' }}</span>
+                </div>
             </div>
 
-            <div class="option-item">
-                <span class="option-label">👥 +1 autorisé</span>
-                <span class="option-value">{{ guest.plusOne ? 'Oui' : 'Non' }}</span>
-            </div>
+            <div *ngIf="guest.plusOne" class="options-list">
+                <div class="option-item">
+                    <span class="option-label">Nom de l'accompagnant</span>
+                    <span class="option-value">{{ guest.plusOneName }}</span>
+                </div>
+
+                <div class="option-item">
+                    <span class="option-label">🍽️ Restrictions alimentaires</span>
+                    <span class="option-value">{{ guest.plusOneDietaryRestrictions }}</span>
+                </div>
             </div>
 
             <div class="divider-gold"></div>

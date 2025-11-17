@@ -89,9 +89,9 @@ export class EditGuestComponent implements OnInit {
             name: response.plus_one_name,
             dietaryRestrictions: response.plus_one_name_diet_restr,
             },
-            responseDate: response.response_date.split('T')[0],
+            responseDate: response.response_date ? response.response_date.split('T')[0] : null,
             notes: response.notes,
-            invitationSentDate: response.invitationSentDate.split('T')[0],
+            invitationSentDate: response.invitationSentDate ? response.invitationSentDate.split('T')[0] : null,
             qrCodeGenerated: response.qrCodeUrl ? true : false,
             qrCodeUrl: response.qrCodeUrl,
         };

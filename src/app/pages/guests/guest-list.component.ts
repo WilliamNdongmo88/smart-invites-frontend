@@ -111,9 +111,9 @@ export class GuestListComponent implements OnInit{
                 email: res.email,
                 phone: res.phone_number,  
                 status: uper.toLowerCase() as 'confirmed' | 'pending' | 'declined',
-                dietaryRestrictions: res.notes,
+                dietaryRestrictions: res.dietary_restrictions,
                 plusOne: res.has_plus_one ? true : false,
-                responseDate: res.response_date.split('T')[0],
+                responseDate: res.response_date ? res.response_date.split('T')[0] : '',
                 qrCodeGenerated: res.qr_code_url ? true : false,
                 qrCodeUrl: res.qr_code_url
             };

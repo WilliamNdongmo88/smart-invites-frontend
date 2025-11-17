@@ -22,6 +22,8 @@ export interface Guests{
   phone_number: string
   rsvp_status: string
   has_plus_one: boolean
+  dietary_restrictions: string
+  plus_one_name_diet_restr: string
   plus_one_name: string
   notes: string
   response_date: string

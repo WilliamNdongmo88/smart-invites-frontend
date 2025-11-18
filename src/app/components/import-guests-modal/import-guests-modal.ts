@@ -108,16 +108,18 @@ export class ImportGuestsModalComponent {
     const datas = [];
     for (const key in this.importedGuests) {
       const elt = this.importedGuests[key];
+      // console.log("elt :: ", elt.plusone);
       const data = {
         eventId: Number(elt.eventid),
         fullName: elt.nom,
         email: elt.email,
         phoneNumber: elt.phone,
         rsvpStatus: elt.rsvpstatus,
-        hasPlusOne: Boolean(elt.plusone),
+        guesthasPlusOneAutoriseByAdmin: elt.plusone == 1 ? true : false,
       }
       datas.push(data);
     }
+    //console.log("datas to import :: ", datas);
     this.guestService.addGuest(datas).subscribe(
       (response) => {
         console.log("Response :: ", response.guests);

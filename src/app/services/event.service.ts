@@ -17,7 +17,7 @@ export interface Event {
   event_name_concerned1?: string;
   event_name_concerned2?: string;
   organizer_id?: number
-  footRestriction?: boolean
+  foot_restriction?: boolean
   has_plus_one?: boolean
   confirmed_count: number;
   pending_count: number;

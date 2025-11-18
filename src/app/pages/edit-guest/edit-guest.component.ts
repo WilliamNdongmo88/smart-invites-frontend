@@ -12,7 +12,7 @@ interface Guest {
   phone?: string;
   status: 'confirmed' | 'pending' | 'declined';
   dietaryRestrictions?: string;
-  plusOne?: boolean;
+  plusOne: boolean;
   plusOneInfo?: {
     name?: string;
     dietaryRestrictions?: string;
@@ -84,7 +84,7 @@ export class EditGuestComponent implements OnInit {
             phone: response.phone_number,
             status: response.rsvp_status as 'confirmed' | 'pending' | 'declined' || 'pending',
             dietaryRestrictions: response.dietary_restrictions,
-            plusOne: response.has_plus_one,
+            plusOne: response.guest_has_plus_one_autorise_by_admin,
             plusOneInfo: {
             name: response.plus_one_name,
             dietaryRestrictions: response.plus_one_name_diet_restr,
@@ -119,7 +119,7 @@ export class EditGuestComponent implements OnInit {
         phoneNumber: this.guestData.phone,
         rsvpStatus: this.guestData.status,
         dietaryRestrictions: this.guestData.dietaryRestrictions,
-        hasPlusOne: this.guestData.plusOne,
+        guesthasPlusOneAutoriseByAdmin: this.guestData.plusOne,
         plusOneName: this.guestData.plusOneInfo?.name,
         plusOneNameDietRestr: this.guestData.plusOneInfo?.dietaryRestrictions,
         notes: this.guestData.notes

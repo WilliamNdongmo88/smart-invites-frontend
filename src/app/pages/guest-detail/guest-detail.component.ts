@@ -13,6 +13,7 @@ interface Guest {
   email: string;
   phone?: string;
   status: 'confirmed' | 'pending' | 'declined';
+  footRestriction?: boolean;
   dietaryRestrictions?: string;
   plusOne?: boolean;
   plusOneName?: string;
@@ -78,7 +79,7 @@ export class GuestDetailComponent implements OnInit{
       this.loading = true;
       this.guestService.getGuestById(Number(this.guestId)).subscribe(
         (response) => {
-          console.log("response :: ", response);
+          console.log("[getGuest]response :: ", response);
           this.eventId = response.eventId;
             this.guest = {
               id: response.guest_id,
@@ -89,6 +90,7 @@ export class GuestDetailComponent implements OnInit{
               dietaryRestrictions: response.dietary_restrictions,
               plusOne: response.has_plus_one,
               plusOneName: response.plus_one_name,
+              footRestriction: response.eventFootRestriction,
               plusOneDietaryRestrictions: response.plus_one_name_diet_restr,
               responseDate: response.response_date.split('T')[0],
               responseTime: response.response_date.split('T')[1].split(':')[0]+':'+response.response_date.split('T')[1].split(':')[1],
@@ -274,9 +276,9 @@ export class GuestDetailComponent implements OnInit{
     //alert(`✕ ${this.guest.name} marqué comme refusé`);
   }
 
-  editOptions() {
-    alert(`✏️ Modification des options pour ${this.guest.name}...`);
-  }
+  // editOptions() {
+  //   alert(`✏️ Modification des options pour ${this.guest.name}...`);
+  // }
 
   addNotes() {
     alert(`📝 Ajout de notes pour ${this.guest.name}...`);

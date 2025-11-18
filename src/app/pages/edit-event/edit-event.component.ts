@@ -100,7 +100,7 @@ export class EditEventComponent implements OnInit {
             totalGuests: res.max_guests,
             budget: res.budget,
             type: res.type,
-            allowDietaryRestrictions: res.footRestriction,
+            allowDietaryRestrictions: res.foot_restriction,
             eventNameConcerned1: res.event_name_concerned1,
             eventNameConcerned2: res.event_name_concerned2,
             allowPlusOne: res.has_plus_one,

@@ -127,6 +127,7 @@
                       name="status"
                       value="confirmed"
                       [(ngModel)]="guestData.status"
+                      disabled
                     />
                     <span class="status-label confirmed">✓ Confirmé</span>
                   </label>
@@ -160,6 +161,7 @@
                   [(ngModel)]="guestData.dietaryRestrictions"
                   placeholder="Ex: Végétarien, Sans gluten, Vegan..."
                   class="form-input"
+                  disabled
                 />
               </div>
 
@@ -171,6 +173,7 @@
                   name="responseDate"
                   [(ngModel)]="guestData.responseDate"
                   class="form-input"
+                  disabled
                 />
               </div>
 
@@ -212,6 +215,7 @@
                     [(ngModel)]="guestData.plusOneInfo!.name"
                     placeholder="Nom de l'accompagnant"
                     class="form-input"
+                    disabled
                   />
                 </div>
 
@@ -224,6 +228,7 @@
                     [(ngModel)]="guestData.plusOneInfo!.dietaryRestrictions"
                     placeholder="Ex: Végétarien, Sans gluten..."
                     class="form-input"
+                    disabled
                   />
                 </div>
 

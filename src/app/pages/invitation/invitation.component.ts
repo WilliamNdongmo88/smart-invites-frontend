@@ -27,18 +27,22 @@ export class InvitationComponent implements OnInit{
   url = ''
   plusOne = false;
   loading = false;
+  isValidating = true;
   submitted = signal(false);
   concernedEvent: string = "";
+  errorMessage: string | null = null;
+  additionalInfo: string = '';
 
   data: Event = {
     guestId: 0,
     guestName: '',
     rsvpStatus: '',
-    guestHasPlusOne: '',
+    guestHasPlusOneAutoriseByAdmin: false,
+    guestHasPlusOne: false,
     plusOneName: '',
     eventTitle: '',
     description: '',
-    eventHasPlusOne: '',
+    eventHasPlusOne: false,
     footRestriction: false,
     eventDate: '',
     eventTime: '',
@@ -54,19 +58,22 @@ export class InvitationComponent implements OnInit{
   ngOnInit(): void {
       const result = this.route.snapshot.paramMap.get('token') || '';
       this.token = result;
+      console.log("Token reçu :: ", result);
       this.guestId = Number(result.split(':')[0]);
       this.getQrCodeImageUrl();
       this.getEventByGuest();
       window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  checkResponse() {
+    this.isValidating = false;
+    this.errorMessage = "";
+    console.log("isValidating :", this.isValidating);
+  }
   submitResponse() {
     console.log("this.response():: ", this.response())
-    if (!this.response() == null) {
-      alert('Veuillez sélectionner une réponse');
-      return;
-    }
     const payload = {
+      rsvpToken: this.token,
       rsvpStatus: this.response(),
       dietaryRestrictions: this.dietaryRestrictions || null,
       hasPlusOne: this.plusOne,
@@ -83,7 +90,8 @@ export class InvitationComponent implements OnInit{
       },
       error: (err) => {
         this.loading = false;
-        console.error('[updateGuest] Erreur :', err);
+        this.errorMessage = err.error.error || 'Erreur lors de la soumission de votre réponse.';
+        console.error('[updateGuest] Erreur :', err.error.error);
       }
     });
   }
@@ -121,16 +129,18 @@ export class InvitationComponent implements OnInit{
               guestId: response.guestId,
               guestName: response.guestName,
               rsvpStatus: response.rsvpStatus,
+              guestHasPlusOneAutoriseByAdmin: response.guestHasPlusOneAutoriseByAdmin,
               guestHasPlusOne: response.guestHasPlusOne,
               plusOneName: response.plusOneName,
               eventTitle: response.eventTitle,
               description: response.description,
               eventHasPlusOne: response.eventHasPlusOne,
-              footRestriction: response.footRestriction,
+              footRestriction: response.eventFootRestriction,
               eventDate: response.eventDate.split('T')[0],
               eventTime: responseDate.split('T')[1].split(':')[0]+':'+responseDate.split('T')[1].split(':')[1],
               eventLocation: response.eventLocation
             };
+            this.changeStyle();
           }
         },
         error: (err) => {
@@ -142,6 +152,21 @@ export class InvitationComponent implements OnInit{
 
   boxChecked() {
     console.log("Plus one :", this.plusOne);
+    if (this.plusOne) {
+      this.isValidating = true;
+      this.errorMessage = '';
+    }
+  }
+
+  checkField() {
+    console.log("Valeur actuelle du champ :", this.plusOneName);
+    if (this.plusOneName.trim().length > 0) {
+      this.isValidating = false; 
+      this.errorMessage = '';
+    } else {
+      this.isValidating = true;
+      this.errorMessage = "";
+    }
   }
 
   formatDate(dateString: string): string {
@@ -153,5 +178,14 @@ export class InvitationComponent implements OnInit{
       year: "numeric",
     });
   }
-}
 
+  changeStyle() {
+    console.log("guestHasPlusOne :: ", this.data.guestHasPlusOne);
+    console.log("eventHasPlusOne :: ", this.data.eventHasPlusOne);
+    console.log("guestHasPlusOneAutoriseByAdmin :: ", this.data.guestHasPlusOneAutoriseByAdmin);
+    if(this.data.guestHasPlusOne == true ||
+       (this.data.guestHasPlusOneAutoriseByAdmin == true && this.data.eventHasPlusOne == true)){
+      this.additionalInfo = 'additional-info';
+    }
+  }
+}

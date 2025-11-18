@@ -223,6 +223,17 @@
       }
     }
 
+    .error-message {
+      color: #d9534f;
+      background-color: #fbe9e7;
+      border: 1px solid #f5c6cb;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 2px;
+      text-align: center;
+      font-weight: 500;
+    }
+
     .invitation-footer {
       text-align: center;
       margin-top: 2rem;

@@ -65,6 +65,7 @@
                   class="response-btn confirmed"
                   [class.active]="response() === 'confirmed'"
                   (click)="response.set('confirmed')"
+                  (click)="checkResponse()"
                 >
                   <span class="icon">✓</span>
                   <div>
@@ -77,6 +78,7 @@
                   class="response-btn declined"
                   [class.active]="response() === 'declined'"
                   (click)="response.set('declined')"
+                  (click)="checkResponse()"
                 >
                   <span class="icon">✕</span>
                   <div>
@@ -87,7 +89,7 @@
               </div>
 
               <!-- Additional info -->
-              <div *ngIf="response() === 'confirmed'" class="additional-info">
+              <div *ngIf="response() === 'confirmed'" [class]="additionalInfo">
                 <div *ngIf="data.footRestriction" class="form-group">
                   <label>Restrictions alimentaires (optionnel)</label>
                   <textarea
@@ -97,7 +99,7 @@
                   ></textarea>
                 </div>
 
-                <label *ngIf="data.eventHasPlusOne" class="checkbox-label">
+                <label *ngIf="data.eventHasPlusOne && data.guestHasPlusOneAutoriseByAdmin" class="checkbox-label">
                   <input type="checkbox" [(ngModel)]="plusOne" (change)="boxChecked()" />
                   <span>Je souhaite amener un accompagnant (+1)</span>
                 </label>
@@ -105,10 +107,11 @@
 
               <!-- Info plus one -->
               <div *ngIf="plusOne" class="form-group">
-                <label>Nom de votre accompagnant</label>
+                <label>Nom de votre accompagnant *</label>
                 <input
                   [(ngModel)]="plusOneName"
                   rows="3"
+                  (change)="checkField()"
                 >
                 <label *ngIf="data.footRestriction" class="label-mt">Restrictions alimentaires (optionnel)</label>
                 <textarea
@@ -124,10 +127,15 @@
                 class="btn btn-primary submit-btn"
                 [disabled]="!response()"
                 (click)="submitResponse()"
-                [disabled]="loading"
+                [disabled]="isValidating"
               >
                 {{loading ? '⏳ Confirmation...' :'❤️ Confirmer ma réponse'}}
               </button>
+
+              <!-- Affichage du message d'erreur -->
+              <div *ngIf="errorMessage" class="error-message">
+                {{ errorMessage }}
+              </div>
 
               <!-- Footer message -->
               <div class="invitation-footer">

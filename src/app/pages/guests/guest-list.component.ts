@@ -390,10 +390,10 @@ export class GuestListComponent implements OnInit{
         fullName: newGuest.name,
         email: newGuest.email,
         phoneNumber: newGuest.phone,
-        rsvpStatus: "PENDING",
-        hasPlusOne: newGuest.plusOne
+        rsvpStatus: "pending",
+        guesthasPlusOneAutoriseByAdmin: newGuest.plusOne
       }];
-        
+    console.log("datas :: ", datas);
       this.isLoading = true;
       this.guestService.addGuest(datas).subscribe(
       (response) => {

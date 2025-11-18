@@ -46,11 +46,12 @@ export interface Event{
   guestId: number;
   guestName: string;
   rsvpStatus: string;
-  guestHasPlusOne: string;
+  guestHasPlusOneAutoriseByAdmin: boolean;
+  guestHasPlusOne: boolean;
   plusOneName: string;
   eventTitle: string;
   description: string;
-  eventHasPlusOne: string;
+  eventHasPlusOne: boolean;
   footRestriction: boolean;
   eventDate: string;
   eventTime: string;

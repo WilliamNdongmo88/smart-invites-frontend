@@ -44,7 +44,7 @@ export class QrCodeService {
 
   downloadQrCode(guestId: number, qrUrl: string) {
     if (!qrUrl) {
-      console.error("QR Code URL manquante !");
+      console.error("QR Code URL manquante pour le téléchargement.");
       return;
     }
 

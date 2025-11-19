@@ -89,7 +89,7 @@
               </div>
 
               <!-- Additional info -->
-              <div *ngIf="response() === 'confirmed'" [class]="additionalInfo">
+              <div *ngIf="response() === 'confirmed'" [ngClass]="additionalInfo">
                 <div *ngIf="data.footRestriction" class="form-group">
                   <label>Restrictions alimentaires (optionnel)</label>
                   <textarea
@@ -110,8 +110,7 @@
                 <label>Nom de votre accompagnant *</label>
                 <input
                   [(ngModel)]="plusOneName"
-                  rows="3"
-                  (change)="checkField()"
+                  (input)="checkField()"
                 >
                 <label *ngIf="data.footRestriction" class="label-mt">Restrictions alimentaires (optionnel)</label>
                 <textarea

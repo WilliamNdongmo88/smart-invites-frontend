@@ -11,6 +11,7 @@ export class ErrorModalComponent {
   @Input() message: string = 'Une erreur est survenue.';
   @Input() visible: boolean = false;
   @Output() closed = new EventEmitter<void>();
+  @Input() alertMessage: 'error' | 'alert' = 'error';
 
   close() {
     this.closed.emit();

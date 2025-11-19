@@ -1,7 +1,8 @@
 <div class="modal-backdrop" *ngIf="visible">
   <div class="modal-content">
     <div class="modal-header">
-      <h3>⚠️ Erreur</h3>
+      <h3 *ngIf="alertMessage === 'error'">⚠️ Erreur</h3>
+      <h3 *ngIf="alertMessage === 'alert'">⚠️ Alerte</h3>
       <button class="close-btn" (click)="close()">✖</button>
     </div>
 

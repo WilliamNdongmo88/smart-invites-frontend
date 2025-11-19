@@ -6,6 +6,7 @@ import { GuestService } from '../../services/guest.service';
 import { SpinnerComponent } from "../../components/spinner/spinner";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 import { QrCodeService } from '../../services/qr-code.service';
+import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 
 interface Guest {
   id: number;
@@ -29,7 +30,7 @@ interface Guest {
 @Component({
   selector: 'app-guest-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, SpinnerComponent, ConfirmDeleteModalComponent],
+  imports: [CommonModule, FormsModule, SpinnerComponent, ConfirmDeleteModalComponent, ErrorModalComponent],
   templateUrl:'guest-detail.component.html',
   styleUrl: 'guest-detail.component.scss'
 })
@@ -42,6 +43,7 @@ export class GuestDetailComponent implements OnInit{
   modalAction: string | undefined;
   warningMessage: string = "";
   showDeleteModal = false;
+  showErrorModal = false;
 
   guest: Guest = {
     id: 1,
@@ -206,7 +208,13 @@ export class GuestDetailComponent implements OnInit{
   resendInvitation() {
     //alert(`✉️ Invitation renvoyée à ${this.guest.name}`);
     this.loading = true;
-    this.guestService.sendReminderMail([this.guest.id]).subscribe(
+    console.log("this.guest :: ", this.guest);
+    if(this.guest.qrCodeUrl == null){
+      this.triggerError();
+      this.errorMessage = "✉️ L'invitation n'a pas encore été envoyée à cet invité.";
+      this.loading = false;
+    }else{
+      this.guestService.sendReminderMail([this.guest.id]).subscribe(
       (response) => {
         this.loading = false;
       },
@@ -217,6 +225,7 @@ export class GuestDetailComponent implements OnInit{
         this.errorMessage = error.message || 'Erreur de connexion';
       }
     );
+    }
   }
 
   markAsConfirmed() {
@@ -331,5 +340,14 @@ export class GuestDetailComponent implements OnInit{
   backToGuestList(){
     this.router.navigate(['/events', this.eventId, 'guests']);
   }
-}
 
+  // Logique error-modal
+  triggerError() {
+    this.errorMessage = "L'invitation a déjà été envoyée à cet invité.";
+    this.showErrorModal = true;
+  }
+
+  closeErrorModal() {
+    this.showErrorModal = false;
+  }
+}

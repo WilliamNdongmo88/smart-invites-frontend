@@ -164,8 +164,8 @@
                 <button class="btn btn-outline" style="width: 100%;" (click)="downloadQRCode()">
                 📥 Télécharger
                 </button>
-                <button class="btn btn-outline" style="width: 100%;" (click)="printQRCode()">
-                ✉️ Envoyer à l'invité
+                <button class="btn btn-outline" style="width: 100%;" (click)="sendFileQRCode()">
+                {{ loading ? '⏳ Envoie en cours ...' :'✉️ Envoyer à l\'invité' }}
                 </button>
             </div>
             </div>

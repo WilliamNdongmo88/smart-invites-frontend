@@ -186,7 +186,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let guest of paginatedGuests()" [class]="'status-' + guest.status">
+                    <tr *ngFor="let guest of paginatedGuests()" [ngClass]="'status-' + guest.status">
                         <td>  
                            <input
                             type="checkbox"

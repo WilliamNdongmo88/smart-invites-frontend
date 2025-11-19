@@ -41,4 +41,18 @@ export class QrCodeService {
     const headers = this.getAuthHeaders();
     return this.http.get(`${this.apiUrl}/invitation/qrcode/view/${id}`, { headers });
   }
+
+  downloadQrCode(guestId: number, qrUrl: string) {
+    if (!qrUrl) {
+      console.error("QR Code URL manquante pour le téléchargement.");
+      return;
+    }
+
+    const downloadUrl = `${this.apiUrl}/invitation/download/${guestId}?url=${encodeURIComponent(qrUrl)}`;
+    console.log("Download URL:", downloadUrl);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = `qr-code-invitation-${guestId}.png`;
+    link.click();
+  }
 }

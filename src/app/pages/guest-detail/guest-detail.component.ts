@@ -314,7 +314,13 @@ export class GuestDetailComponent implements OnInit{
   }
 
   downloadQRCode() {
-    alert('📥 Téléchargement du QR Code...');
+    if (!this.guest.qrCodeUrl) {
+      this.triggerError();
+      this.errorMessage = "Le QR code n'est pas disponible pour cet invité.";
+      return;
+    }
+
+    this.qrCodeService.downloadQrCode(this.guest.id, this.guest.qrCodeUrl);
   }
 
   sendFileQRCode() {

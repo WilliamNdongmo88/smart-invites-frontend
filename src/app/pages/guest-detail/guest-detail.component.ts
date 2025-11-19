@@ -309,7 +309,7 @@ export class GuestDetailComponent implements OnInit{
   }
 
   printQRCode() {
-    alert('🖨️ Impression du QR Code...');
+    alert('✉️ Envoi du QR Code à l\'invité...');
   }
 
   sendMessage() {

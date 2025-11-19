@@ -81,7 +81,7 @@ export class InvitationComponent implements OnInit{
       plusOneNameDietRestr: this.plusOne ? this.plusOneNameDietRestr : null
     };
     console.log('Payload envoyé au backend :', payload);
-    this.isValidating = false;
+    this.isValidating = true;
     this.loading = true;
     this.guestService.updateGuest(this.guestId, payload).subscribe({
       next: (response: any) => {
@@ -155,6 +155,9 @@ export class InvitationComponent implements OnInit{
     console.log("Plus one :", this.plusOne);
     if (this.plusOne) {
       this.isValidating = true;
+      this.errorMessage = '';
+    }else{
+      this.isValidating = false;
       this.errorMessage = '';
     }
   }

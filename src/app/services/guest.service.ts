@@ -145,4 +145,10 @@ export class GuestService {
     const headers = this.getAuthHeaders();
     return this.http.post<any>(`${this.apiUrl}/guest/reminde-mail`, guestIList, { headers })
   }
+
+  sendFileQrCode(guestId: any): Observable<any> {
+    console.log("guestId :: ",guestId);
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/guest/${guestId}/send-file`, { headers })
+  }
 }

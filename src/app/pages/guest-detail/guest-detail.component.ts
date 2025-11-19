@@ -317,8 +317,20 @@ export class GuestDetailComponent implements OnInit{
     alert('📥 Téléchargement du QR Code...');
   }
 
-  printQRCode() {
-    alert('✉️ Envoi du QR Code à l\'invité...');
+  sendFileQRCode() {
+    this.loading = true;
+    this.guestService.sendFileQrCode(this.guestId).subscribe(
+      (response) => {
+        console.log("###response :: ", response);
+        this.loading = false;
+      },
+      (error) => {
+        this.loading = false;
+        console.error('❌ [sendFileQrCode] Erreur :', error.message);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';
+      }
+    );
   }
 
   sendMessage() {

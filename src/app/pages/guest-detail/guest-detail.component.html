@@ -242,3 +242,10 @@
     (confirmDelete)="confirmDelete()"
     (cancel)="closeModal()">
 </app-confirm-delete-modal>
+
+<app-error-modal
+    [alertMessage]="'alert'"
+    [visible]="showErrorModal"
+    [message]="errorMessage"
+    (closed)="closeErrorModal()">
+</app-error-modal>

@@ -26,10 +26,10 @@ export class HeaderComponent implements OnInit {
     // On écoute l’état d’authentification
     this.authSub = this.authService.isAuthenticated$.subscribe(status => {
       this.isAuthenticated = status;
-      console.log('Header rafraîchi - Connecté =', status);
+      //console.log('Header rafraîchi - Connecté =', status);
     });
     this.authService.currentUser$.subscribe(user => {
-      console.log("---user---: ", user)
+      console.log("---user :: ", user)
       this.currentUser = user;
     });
   }
@@ -50,6 +50,11 @@ export class HeaderComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.authSub.unsubscribe();
+  }
+
+  scanQrCode(){
+    this.router.navigate(['/qr-scanner']);
+    this.mobileMenuOpen.set(false);
   }
 }
 

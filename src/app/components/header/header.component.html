@@ -7,7 +7,7 @@
         </a>
 
         <!-- Desktop Navigation -->
-        <nav class="nav hide-mobile">
+        <nav *ngIf="!mobileMenuOpen" class="nav hide-mobile">
           @if(!isAuthenticated) {
             <a routerLink="/" class="nav-link">Accueil</a>
             <a href="#features" class="nav-link">Fonctionnalités</a>
@@ -37,6 +37,8 @@
           <button class="btn btn-primary" style="width: 100%;">Connexion</button>
         }@if(isAuthenticated){
           <p class="mobile-nav-link">Bienvenue, {{ currentUser?.name }}!</p>
+          <a routerLink="/" class="nav-link">Accueil</a>
+          <a (click)="scanQrCode()" class="nav-link nav-link-cursor">Scanner</a>
           <button class="btns btns-primary" style="width: 100%;" (click)="logout()">Déconnexion</button>
         }
       </nav>

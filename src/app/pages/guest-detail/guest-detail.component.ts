@@ -332,18 +332,23 @@ export class GuestDetailComponent implements OnInit{
 
   sendFileQRCode() {
     this.loading = true;
-    this.guestService.sendFileQrCode(this.guestId).subscribe(
-      (response) => {
-        console.log("###response :: ", response);
-        this.loading = false;
-      },
-      (error) => {
-        this.loading = false;
-        console.error('❌ [sendFileQrCode] Erreur :', error.message);
-        console.log("Message :: ", error.message);
-        this.errorMessage = error.message || 'Erreur de connexion';
-      }
-    );
+    if(this.guest.status == 'confirmed'){
+      this.guestService.sendFileQrCode(this.guestId).subscribe(
+        (response) => {
+          console.log("###response :: ", response);
+          this.loading = false;
+        },
+        (error) => {
+          this.loading = false;
+          console.error('❌ [sendFileQrCode] Erreur :', error.message);
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
+    }else{
+      this.triggerError();
+      this.errorMessage = "L'invité n'a pas encore confirmé sa présence.";
+    }
   }
 
   sendMessage() {
@@ -368,11 +373,11 @@ export class GuestDetailComponent implements OnInit{
 
   // Logique error-modal
   triggerError() {
-    this.errorMessage = "L'invitation a déjà été envoyée à cet invité.";
     this.showErrorModal = true;
   }
 
   closeErrorModal() {
     this.showErrorModal = false;
+    this.loading = false;
   }
 }

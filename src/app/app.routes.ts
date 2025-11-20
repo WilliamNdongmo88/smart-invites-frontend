@@ -12,6 +12,7 @@ import { GuestListComponent } from './pages/guests/guest-list.component';
 import { GuestDetailComponent } from './pages/guest-detail/guest-detail.component';
 import { EditEventComponent } from './pages/edit-event/edit-event.component';
 import { EditGuestComponent } from './pages/edit-guest/edit-guest.component';
+import { QRScannerComponent } from './pages/qr-scanner/qr-scanner.component';
 
 export const routes: Routes = [
   {
@@ -64,6 +65,10 @@ export const routes: Routes = [
   {
     path: 'events/:eventId/guests/:guestId/edit',
     component: EditGuestComponent,
+  },
+  {
+    path: 'qr-scanner',
+    component: QRScannerComponent,
   },
   // {
   //   path: '/404',

@@ -86,11 +86,11 @@ export class GuestListComponent implements OnInit{
     console.log("this.eventId :: ", this.eventId);
     this.getGuestsByEvent();
     this.communicationService.message$.subscribe(msg => {
-      console.log("msg :: ", localStorage.getItem('eventTitle'));
+      console.log("msg :: ", localStorage.getItem('variable'));
       if (msg) {
         this.eventTitle = msg;
       }else{
-        this.eventTitle = localStorage.getItem('eventTitle') || "";
+        this.eventTitle = localStorage.getItem('variable') || "";
       }
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });

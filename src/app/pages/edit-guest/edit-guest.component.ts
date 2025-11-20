@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GuestService } from '../../services/guest.service';
 import { SpinnerComponent } from "../../components/spinner/spinner";
+import { CommunicationService } from '../../services/share.service';
+import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 
 interface Guest {
   id: number;
@@ -27,7 +29,7 @@ interface Guest {
 @Component({
   selector: 'app-edit-guest',
   standalone: true,
-  imports: [CommonModule, FormsModule, SpinnerComponent],
+  imports: [CommonModule, FormsModule, SpinnerComponent, ConfirmDeleteModalComponent],
   templateUrl: 'edit-guest.component.html',
   styleUrl: 'edit-guest.component.scss'
 })
@@ -37,6 +39,10 @@ export class EditGuestComponent implements OnInit {
   isLoading: boolean = false;
   errorMessage: string = '';
   eventId: number = 0;
+  modalAction: string | undefined;
+  warningMessage: string = "";
+  showDeleteModal = false;
+  showErrorModal = false;
 
   originalGuestData: Guest = {
     id: 1,
@@ -61,13 +67,23 @@ export class EditGuestComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private guestService: GuestService, 
+    private guestService: GuestService,
+    private communicationService: CommunicationService,
     private router: Router) {}
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
       this.guestId = Number(params['guestId']);
       this.loadGuest();
+    });
+    this.communicationService.message$.subscribe(msg => {
+      console.log("msg :: ", localStorage.getItem('variable'));
+      if (msg) {
+        this.activeTab.set(msg);
+      }else{
+        const storedMsg = localStorage.getItem('variable') as 'personal' | 'response' | 'plusone' | 'notes';
+        this.activeTab.set(storedMsg);
+      }
     });
   }
 
@@ -190,10 +206,41 @@ export class EditGuestComponent implements OnInit {
   }
 
   deleteGuest() {
-    if (confirm(`Êtes-vous sûr de vouloir supprimer ${this.guestData.name} ? Cette action est irréversible.`)) {
-      alert('🗑️ Invité supprimé avec succès');
-      this.router.navigate(['/guests']);
+    this.isLoading = true;
+    this.guestService.deleteGuest(this.guestId).subscribe(
+      (response) => {
+        console.log("response :: ", response);
+        this.isLoading = false;
+        this.router.navigate(['/guests']);
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('❌ [deleteGuest] Erreur :', error.message);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';
+      }
+    );
+  }
+
+  openDeleteModal(modalAction?: string) {
+    this.modalAction = modalAction;
+
+    if(modalAction=='delete'){
+      this.warningMessage = `Êtes-vous sûr de vouloir supprimer ${this.guestData.name} ? 
+      Cette action est irréversible.`;
+      this.showDeleteModal = true;
     }
+  }
+
+  confirmDelete() {
+    if(this.modalAction=='delete'){
+      this.deleteGuest();
+    }
+    this.closeModal();
+  }
+
+  closeModal() {
+    this.showDeleteModal = false;
   }
 
   gobackToGuestList() {

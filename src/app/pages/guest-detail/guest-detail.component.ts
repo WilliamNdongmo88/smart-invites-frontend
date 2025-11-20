@@ -7,6 +7,7 @@ import { SpinnerComponent } from "../../components/spinner/spinner";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 import { QrCodeService } from '../../services/qr-code.service';
 import { ErrorModalComponent } from "../../components/error-modal/error-modal";
+import { CommunicationService } from '../../services/share.service';
 
 interface Guest {
   id: number;
@@ -64,6 +65,7 @@ export class GuestDetailComponent implements OnInit{
     private route: ActivatedRoute,
     private guestService: GuestService,
     private qrCodeService: QrCodeService,
+    private communicationService: CommunicationService,
     private router: Router) {}
 
   ngOnInit(): void {
@@ -165,7 +167,11 @@ export class GuestDetailComponent implements OnInit{
   }
 
   editGuest() {
+    this.send('plusone');
     this.router.navigate(['/events', this.eventId, 'guests', this.guestId, 'edit']);
+  }
+  send(message: any) {
+    this.communicationService.sendMessage(message);
   }
 
   deleteGuest() {
@@ -290,7 +296,8 @@ export class GuestDetailComponent implements OnInit{
   // }
 
   addNotes() {
-    alert(`📝 Ajout de notes pour ${this.guest.name}...`);
+    this.send('notes');
+    this.router.navigate(['/events', this.eventId, 'guests', this.guestId, 'edit']);
   }
 
   generateQRCode() {

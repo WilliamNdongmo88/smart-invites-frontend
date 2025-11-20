@@ -293,10 +293,19 @@
 
           <!-- Delete Button -->
           <div class="delete-section">
-            <button type="button" class="btn btn-outline btn-danger" (click)="deleteGuest()">
+            <button type="button" class="btn btn-outline btn-danger" (click)="openDeleteModal('delete')">
               🗑️ Supprimer cet invité
             </button>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Modal de confirmation -->
+    <app-confirm-delete-modal
+        [visible]="showDeleteModal"
+        [message]=warningMessage
+        [action]="modalAction"
+        (confirmDelete)="confirmDelete()"
+        (cancel)="closeModal()">
+    </app-confirm-delete-modal>

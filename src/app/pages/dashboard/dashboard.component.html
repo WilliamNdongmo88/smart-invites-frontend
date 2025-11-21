@@ -7,7 +7,12 @@
           <h1>Tableau de bord</h1>
           <p>Bienvenue ! Gérez vos événements et invitations.</p>
         </div>
-        <button (click)="openEventDialog()" class="btn btn-primary c-mtop">+ Nouvel événement</button>
+        <!-- affichage desktop -->
+        <button *ngIf="!(isMobile | async)" (click)="openEventDialog()" class="btn btn-primary c-mtop">+ Nouvel événement</button>
+        <!-- affichage mobile -->
+        <button *ngIf="isMobile | async" (click)="openEventDialog()" class="btn btn-primary c-mtop">
+          <span class="icon-add">+</span>
+        </button>
       </div>
     </div>
   </div>

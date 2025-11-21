@@ -11,6 +11,8 @@ import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 import { ImportGuestsModalComponent } from "../../components/import-guests-modal/import-guests-modal";
 import { SpinnerComponent } from "../../components/spinner/spinner";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { map, Observable } from 'rxjs';
 
 interface Guest {
   id: string;
@@ -59,9 +61,10 @@ export class EventDetailComponent implements OnInit{
   modalAction: string | undefined;
   warningMessage: string = "";
 
-  itemsPerPage = 10;
+  itemsPerPage = 6;
   currentPage = 1;
 
+  isMobile!: Observable<boolean>;
   filterStatus = signal<FilterStatus>('all');
 
   filters: { label: string; value: FilterStatus }[] = [
@@ -92,6 +95,7 @@ export class EventDetailComponent implements OnInit{
     private authService: AuthService,
     private eventService: EventService,
     private guestService: GuestService,
+    private breakpointObserver: BreakpointObserver,
     private communicationService: CommunicationService
   ) {}
 
@@ -102,6 +106,8 @@ export class EventDetailComponent implements OnInit{
     this.getGuestsByEvent();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.sendEventIdToHeaderComponent(this.eventId);
+    this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
+    console.log("this.isMobile::", this.isMobile)
   }
 
   getOneEvent(){

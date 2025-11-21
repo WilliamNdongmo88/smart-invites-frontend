@@ -13,27 +13,32 @@
                 Smart Invite rend la gestion de vos invitations de mariage simple, élégante et mémorable. 
                 Créez, partagez et suivez vos invitations en quelques clics.
               </p>
-              <div class="hero-buttons">
+              <div *ngIf="!(isMobile | async)" class="hero-buttons">
                 <button class="btn btn-primary" (click)="navigateToLogin()">
                   Commencer maintenant →
                 </button>
-                <button class="btn btn-outline">
+                <!-- <button class="btn btn-outline">
                   En savoir plus
-                </button>
+                </button> -->
               </div>
-              <div class="trust-indicators">
+              <!-- <div class="trust-indicators">
                 <div class="avatars">
                   <span class="avatar">👰</span>
                   <span class="avatar">👰</span>
                   <span class="avatar">👰</span>
                 </div>
                 <p class="text-muted">Rejoignez des centaines de couples heureux</p>
-              </div>
+              </div> -->
             </div>
 
             <!-- Right side - Image -->
             <div class="hero-image">
               <img src="img/wedding-theme.jpg" alt="Wedding theme" />
+            </div>
+            <div *ngIf="isMobile | async" class="hero-buttons">
+                <button class="btn btn-primary" (click)="navigateToLogin()">
+                  Commencer maintenant →
+                </button>
             </div>
           </div>
         </div>

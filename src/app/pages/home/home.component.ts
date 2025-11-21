@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { map, Observable } from 'rxjs';
+import { BreakpointObserver } from '@angular/cdk/layout';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -12,8 +14,13 @@ import { AuthService } from '../../services/auth.service';
 })
 export class HomeComponent implements OnInit {
   isAuthenticated = false;
+  isMobile!: Observable<boolean>;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router, 
+    private authService: AuthService,
+    private breakpointObserver: BreakpointObserver
+  ) {}
 
   ngOnInit() {
     if (this.authService.getUser()) {
@@ -22,6 +29,7 @@ export class HomeComponent implements OnInit {
       });
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
   }
 
   navigateToLogin() {

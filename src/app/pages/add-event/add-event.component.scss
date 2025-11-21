@@ -244,6 +244,7 @@
 
       .form-actions {
         flex-direction: column;
+        padding: 0px 5px;
       }
 
       .confirmation-item {
@@ -254,5 +255,13 @@
 
       .confirmation-item .value {
         text-align: left;
+      }
+
+      .add-event-header {
+        height: 190px;
+      }
+
+      .form-group {
+        padding: 0px 5px;
       }
     }

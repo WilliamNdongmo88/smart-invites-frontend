@@ -255,11 +255,11 @@ export class ImportGuestService {
   generateCSVTemplate(): string {
     return `
       eventId,nom,email,phone,rsvpStatus,plusone
-      1,Lucie Kamga,lucie.kamga@gmail.com,+237690117788,CONFIRMED,true
-      1,Fabrice Nlend,fabrice.nlend@gmail.com,+237673890055,DECLINED,true
-      2,Carine Fotso,carine.fotso@gmail.com,+237692009933,CONFIRMED,false
-      1,Noel Talla,noel.talla@gmail.com,+237691667788,PENDING,true
-      2,Nadine Ngah,nadine.ngah@gmail.com,+237674991144,CONFIRMED,true
+      1,Ndongmo Thierry,fotso-n@gmail.com,+237697432310,pending,1
+      1,Djoumessi Michka,djoumessi-m@gmail.com,+237670113245,pending,1
+      1,Kevin Ngassa,kevin.ngassa@gmail.com,+237675443902,pending,0
+      1,Samantha Fotso,samantha.fotso@gmail.com,+237691001234,pending,0
+      1,Brenda Noubissi,brenda.noubissi@gmail.com,+237670005678,pending,1
     `;}
 
   downloadCSVTemplate() {

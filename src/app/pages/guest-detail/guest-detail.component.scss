@@ -396,6 +396,10 @@
       .header-actions .btn {
         flex: 1;
       }
+
+      .guest-detail-header {
+        padding: 1rem 0;
+      }
     }
 
     @media (max-width: 768px) {
@@ -420,5 +424,10 @@
 
       .info-row .value {
         text-align: left;
+      }
+
+      .guest-detail-header {
+        padding: 1rem 0;
+        width: 130%;
       }
     }

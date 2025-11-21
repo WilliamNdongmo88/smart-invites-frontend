@@ -428,6 +428,29 @@
 
       .guest-detail-header {
         padding: 1rem 0;
-        width: 130%;
+        width: 100%;
+      }
+
+      .card {
+        padding: 0 5px;
+        width: 100%;
+        h2 {
+          margin-bottom: 1rem;
+          margin-top: 10px;
+        }
+      }
+
+      .divider-gold {
+        margin: 0.5rem 0;
+      }
+
+      .action-buttons .btn {
+        flex: 1;
+        width: 10px;
+      }
+
+      .info-section {
+        gap: 0rem;
+        margin-bottom: -0.5rem;
       }
     }

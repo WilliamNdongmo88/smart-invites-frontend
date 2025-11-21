@@ -968,7 +968,7 @@
     }
     // End style checkbox
 
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
       .guests-grid {
         grid-template-columns: 1fr;
       }
@@ -986,11 +986,11 @@
       }
 
       .filter-buttons {
-        flex-direction: column;
+        flex-direction: row;
       }
 
       .filter-btn {
-        width: 100%;
+        width: 20%;
       }
 
       .stats-footer {
@@ -999,5 +999,68 @@
 
       .modal-content {
         max-width: 100%;
+      }
+
+      .guest-list-header {
+        height: 220px;
+      }
+
+      table {
+        width: 127%;
+      }
+
+      .search-filter-section {
+        padding: 0 5px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .guests-grid {
+        grid-template-columns: 1fr;
+        padding: 0 2px;
+      }
+
+      .header-content {
+        flex-direction: column;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .header-actions .btn {
+        flex: 1;
+      }
+
+      .filter-buttons {
+        flex-direction: row;
+      }
+
+      .filter-btn {
+        width: 48%;
+      }
+
+      .stats-footer {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .modal-content {
+        max-width: 100%;
+      }
+
+      .guest-list-header {
+        height: 275px;
+      }
+
+      .view-controls {
+        margin-left: 15px;
+      }
+
+      table {
+        width: 322%;
+      }
+
+      .search-filter-section {
+        padding: 0 5px;
       }
     }

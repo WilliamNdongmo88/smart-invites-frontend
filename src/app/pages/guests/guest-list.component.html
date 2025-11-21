@@ -13,14 +13,14 @@
                 <p>{{ eventTitle }} - {{ totalGuests }} invités</p>
             </div>
             <div class="header-actions">
-                <button class="btn btn-primary" (click)="sendReminder()">
-                    {{ loading ? '⏳ Renvoie...' : '✉️ Envoyer rappel' }}
-                </button>
                 <button class="btn btn-outline" (click)="openAddGuestModal()">
-                ➕  Nouveau invité
+                ➕  Nouveau
                 </button>
                 <button class="btn btn-outline" (click)="openImportModal()">
                 📥 Importer
+                </button>
+                <button class="btn btn-primary" (click)="sendReminder()">
+                    {{ loading ? '⏳ Renvoie...' : '✉️ Envoyer rappel' }}
                 </button>
             </div>
             </div>
@@ -85,7 +85,7 @@
                     (click)="openDeleteModal(guestIdList, 'delete')"
                     class="filter-btn delete"
                     >
-                    {{ loadingDelete ? '⏳ Suppression...' : 'Supprimer' + guestIdList.length + 'invité(s) sélectionné(s)'}}
+                    {{ loadingDelete ? '⏳ Suppression...' : 'Supprimer ' + guestIdList.length + ' invité(s)'}}
                 </button>
             </div>
         </div>

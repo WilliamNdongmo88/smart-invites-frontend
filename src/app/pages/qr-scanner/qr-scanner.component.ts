@@ -70,10 +70,13 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     this.userConnected = JSON.parse(localStorage.getItem('currentUser') || '');
     console.log('this.userConnected', this.userConnected);
     this.communicationService.message$.subscribe(msg => {
-        if(msg){
+        if(typeof msg === 'number'){
             this.eventId = msg;
+            localStorage.setItem('scanner', String(this.eventId));
+            console.log("eventId 1 :::", this.eventId);
         }else{
-            this.eventId = Number(localStorage.getItem('variable'));
+            this.eventId = Number(localStorage.getItem('scanner'));
+            console.log("eventId 2 :::", this.eventId);
         }
     });
     this.getEventAndInvitationRelated();

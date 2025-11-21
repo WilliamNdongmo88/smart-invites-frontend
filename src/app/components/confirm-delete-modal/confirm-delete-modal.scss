@@ -137,3 +137,10 @@
   from { transform: scale(0.9); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 255px;
+    padding: 8px;
+  }
+}

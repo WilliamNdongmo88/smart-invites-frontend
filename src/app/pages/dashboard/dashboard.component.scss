@@ -179,4 +179,17 @@
         width: 100%;
         flex-direction: column;
       }
+
+      .c-mtop{
+        margin-top: 14px;
+        margin-left: 13rem;
+      }
+
+      .icon-add {
+        font-size: 17px;
+        font-weight: bold;
+        color: #666;
+        cursor: pointer;
+        user-select: none;
+      }
     }

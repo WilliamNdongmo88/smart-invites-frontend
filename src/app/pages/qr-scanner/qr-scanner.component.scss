@@ -325,7 +325,10 @@ $primary-gold: #d4af37;
 
     .detail-item {
         display: block;
+        justify-content: space-between; /* un à gauche, un à droite */
+        align-items: center;
     }
+
     .detail-item .label {
         font-weight: 600;
         margin-right: 51px;

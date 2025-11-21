@@ -5,6 +5,8 @@ import { MatIcon } from "@angular/material/icon";
 import { EventService } from '../../services/event.service';
 import { AuthService, User } from '../../services/auth.service';
 import { CommunicationService } from '../../services/share.service';
+import { map, Observable } from 'rxjs';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 interface Event {
   id: number;
@@ -28,6 +30,7 @@ export class DashboardComponent {
   organizerId: number | undefined;
   currentUser: User | null = null;
   errorMessage: string = '';
+  isMobile!: Observable<boolean>;
 
   events: Event[] = [];
 
@@ -35,7 +38,8 @@ export class DashboardComponent {
     private router: Router, 
     private eventService: EventService,
     private authService: AuthService,
-    private communicationService: CommunicationService
+    private communicationService: CommunicationService,
+    private breakpointObserver: BreakpointObserver
   ) {}
 
   ngOnInit(): void {
@@ -46,6 +50,8 @@ export class DashboardComponent {
     });
     this.getAllEvent();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
+    console.log("this.isMobile::", this.isMobile)
   }
 
   getAllEvent(){

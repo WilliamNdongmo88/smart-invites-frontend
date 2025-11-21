@@ -51,6 +51,13 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         hasPlusOne: '',
         plusOneName: ''
   };
+  userConnected = {
+    id: 0,
+    name: '',
+    email: '',
+    role: ''
+  };
+
   constructor(
     private router: Router,
     private qrcodeService: QrCodeService,
@@ -60,6 +67,8 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.userConnected = JSON.parse(localStorage.getItem('currentUser') || '');
+    console.log('this.userConnected', this.userConnected);
     this.communicationService.message$.subscribe(msg => {
         if(msg){
             this.eventId = msg;
@@ -213,7 +222,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         if(elt.guestId == this.guestId){
             data.eventId = elt.eventId;
             data.invitationId = elt.invitationId;
-            data.scannedBy = elt.guestName;
+            data.scannedBy = this.userConnected.name;
             this.data.eventTitle = elt.title;
             this.data.guestName = elt.guestName;
             this.data.hasPlusOne = elt.hasPlusOne;

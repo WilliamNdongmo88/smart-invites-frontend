@@ -1,45 +1,58 @@
-    <header class="header" *ngIf="isShowHeader">
-      <div class="container flex flex-between">
-        <!-- Logo -->
-        <a routerLink="/" class="logo">
-          <img src="img/logo.png" alt="Smart Invite" class="logo-img" />
-          <span class="logo-text hide-mobile">Smart Invite</span>
-        </a>
+<header class="header" *ngIf="isShowHeader">
+  <div class="container flex flex-between">
 
-        <!-- Desktop Navigation -->
-        <nav *ngIf="!mobileMenuOpen" class="nav hide-mobile">
-          @if(!isAuthenticated) {
-            <a routerLink="/" class="nav-link">Accueil</a>
-            <a href="#features" class="nav-link">Fonctionnalités</a>
-            <a href="#" class="nav-link">Tarifs</a>
-            <a href="#" class="nav-link">À propos</a>
-            <button class="btn btn-primary" (click)="navigateToLogin()">Connexion</button>
-          }@else {
-              <p>Bienvenue, {{ currentUser?.name }}!</p>
-              <button *ngIf="isAuthenticated" class="btns btns-primary" (click)="logout()">Déconnexion</button>
-          }
-        </nav>
+    <!-- Logo -->
+    <a routerLink="/" class="logo">
+      <img src="img/logo.png" alt="Smart Invite" class="logo-img" />
+      <span class="logo-text hide-mobile">Smart Invite</span>
+    </a>
 
-        <!-- Mobile Menu Button -->
-        <button class="mobile-menu-btn show-mobile" (click)="toggleMobileMenu()">
-          <span *ngIf="!mobileMenuOpen()">☰</span>
-          <span *ngIf="mobileMenuOpen()">✕</span>
-        </button>
-      </div>
+    <!-- Desktop Navigation -->
+    <nav class="nav hide-mobile" *ngIf="!(isMobile | async)">
+      
+      <!-- Utilisateur NON connecté -->
+      <ng-container *ngIf="!isAuthenticated; else loggedInDesktop">
+        <a routerLink="/" class="nav-link">Accueil</a>
+        <a href="#features" class="nav-link">Fonctionnalités</a>
+        <a routerLink="/pricing" class="nav-link">Tarifs</a>
+        <a routerLink="/about" class="nav-link">À propos</a>
+        <button class="btn btn-primary" (click)="navigateToLogin()">Connexion</button>
+      </ng-container>
 
-      <!-- Mobile Navigation -->
-      <nav class="mobile-nav show-mobile" *ngIf="mobileMenuOpen()">
-        @if(!isAuthenticated){
-          <a routerLink="/" class="mobile-nav-link" (click)="mobileMenuOpen.set(false)">Accueil</a>
-          <a href="#features" class="mobile-nav-link" (click)="mobileMenuOpen.set(false)">Fonctionnalités</a>
-          <a href="#" class="mobile-nav-link">Tarifs</a>
-          <a href="#" class="mobile-nav-link">À propos</a>
-          <button class="btn btn-primary" style="width: 100%;">Connexion</button>
-        }@if(isAuthenticated){
-          <p class="mobile-nav-link">Bienvenue, {{ currentUser?.name }}!</p>
-          <a routerLink="/" class="nav-link">Accueil</a>
-          <a (click)="scanQrCode()" class="nav-link nav-link-cursor">Scanner</a>
-          <button class="btns btns-primary" style="width: 100%;" (click)="logout()">Déconnexion</button>
-        }
-      </nav>
-    </header>
+      <!-- Utilisateur connecté -->
+      <ng-template #loggedInDesktop>
+        <span class="welcome">Bienvenue, {{ currentUser?.name }} !</span>
+        <a *ngIf="isScanning" (click)="scanQrCode()" class="nav-link nav-link-cursor">Scanner</a>
+        <button class="btns btns-primary" (click)="logout()">Déconnexion</button>
+      </ng-template>
+
+    </nav>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn show-mobile" (click)="toggleMobileMenu()">
+      <span *ngIf="!mobileMenuOpen()">☰</span>
+      <span *ngIf="mobileMenuOpen()">✕</span>
+    </button>
+  </div>
+
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav show-mobile" *ngIf="mobileMenuOpen() && isMobile">
+
+    <!-- Utilisateur NON connecté -->
+    <ng-container *ngIf="!isAuthenticated; else loggedInMobile">
+      <a routerLink="/" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Accueil</a>
+      <a href="#features" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Fonctionnalités</a>
+      <a routerLink="/pricing" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Tarifs</a>
+      <a routerLink="/about" class="mobile-nav-link" (click)="toggleMobileMenu(false)">À propos</a>
+      <button class="btn btn-primary w-100" (click)="navigateToLogin()">Connexion</button>
+    </ng-container>
+
+    <!-- Utilisateur connecté -->
+    <ng-template #loggedInMobile>
+      <a *ngIf="isScanning" (click)="scanQrCode(); toggleMobileMenu(false)" class="mobile-nav-link">Scanner</a>
+      <p class="mobile-nav-link">Bienvenue, {{ currentUser?.name }}!</p>
+      <button class="btns btns-primary w-100" (click)="logout()">Déconnexion</button>
+    </ng-template>
+
+  </nav>
+</header>

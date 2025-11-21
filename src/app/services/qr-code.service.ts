@@ -55,4 +55,13 @@ export class QrCodeService {
     link.download = `qr-code-invitation-${guestId}.png`;
     link.click();
   }
+
+  viewPdfs(qrCode: string): Observable<any> {
+    return this.http.get(`${qrCode}`, {responseType: 'blob' as 'json'});
+  }
+
+  addCheckIn(data: any): Observable<any>{
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/checkin/scan`, data, { headers });
+  }
 }

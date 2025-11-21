@@ -1,0 +1,217 @@
+    <div class="user-dashboard">
+      <!-- Header -->
+      <div class="dashboard-header">
+        <div class="container">
+          <div class="header-content">
+            <div>
+              <h1>Bienvenue, {{ userName }}</h1>
+              <p>Gérez vos invitations et événements</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn btn-outline" (click)="openNotifications()">
+                🔔 Notifications
+                <span class="notification-badge" *ngIf="unreadNotifications > 0">
+                  {{ unreadNotifications }}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div class="container py-12">
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-content">
+              <p class="stat-label">Événements à venir</p>
+              <p class="stat-value">{{ upcomingEventsCount }}</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">✓</div>
+            <div class="stat-content">
+              <p class="stat-label">Confirmés</p>
+              <p class="stat-value">{{ confirmedCount }}</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-content">
+              <p class="stat-label">En attente</p>
+              <p class="stat-value">{{ pendingCount }}</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">✕</div>
+            <div class="stat-content">
+              <p class="stat-label">Refusés</p>
+              <p class="stat-value">{{ declinedCount }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-section">
+          <div class="tabs">
+            <button
+              type="button"
+              class="tab"
+              [class.active]="activeTab() === 'upcoming'"
+              (click)="activeTab.set('upcoming')"
+            >
+              📅 À venir
+            </button>
+            <button
+              type="button"
+              class="tab"
+              [class.active]="activeTab() === 'all'"
+              (click)="activeTab.set('all')"
+            >
+              📋 Tous les événements
+            </button>
+            <button
+              type="button"
+              class="tab"
+              [class.active]="activeTab() === 'past'"
+              (click)="activeTab.set('past')"
+            >
+              📚 Événements passés
+            </button>
+          </div>
+
+          <!-- Search and Filter -->
+          <div class="search-filter">
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="filterEvents()"
+              placeholder="Rechercher un événement..."
+              class="search-input"
+            />
+            <select
+              [(ngModel)]="filterStatus"
+              (ngModelChange)="filterEvents()"
+              class="filter-select"
+            >
+              <option value="">Tous les statuts</option>
+              <option value="confirmed">Confirmés</option>
+              <option value="pending">En attente</option>
+              <option value="declined">Refusés</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Events Grid -->
+        <div class="events-grid">
+          <div *ngFor="let event of filteredEvents" class="event-card" [class]="'status-' + event.status">
+            <!-- Event Image -->
+            <div class="event-image">
+              <img *ngIf="event.image" [src]="event.image" [alt]="event.title" />
+              <div *ngIf="!event.image" class="image-placeholder">
+                <span class="placeholder-icon">🎉</span>
+              </div>
+              <span class="event-status-badge" [class]="'status-' + event.status">
+                {{ getStatusLabel(event.status) }}
+              </span>
+            </div>
+
+            <!-- Event Content -->
+            <div class="event-content">
+              <h3>{{ event.title }}</h3>
+              <p class="organizer">Par {{ event.organizer }}</p>
+
+              <div class="event-details">
+                <div class="detail">
+                  <span class="icon">📅</span>
+                  <span>{{ formatDate(event.date) }}</span>
+                </div>
+                <div class="detail">
+                  <span class="icon">⏰</span>
+                  <span>{{ event.time }}</span>
+                </div>
+                <div class="detail">
+                  <span class="icon">📍</span>
+                  <span>{{ event.location }}</span>
+                </div>
+              </div>
+
+              <!-- Response Status -->
+              <div class="response-status" *ngIf="event.userResponse">
+                <span class="status-badge" [class]="'response-' + event.userResponse">
+                  {{ getResponseLabel(event.userResponse) }}
+                </span>
+              </div>
+
+              <!-- Guest Stats -->
+              <div class="guest-stats">
+                <div class="stat">
+                  <span class="label">Confirmés</span>
+                  <span class="value">{{ event.confirmedGuests }}/{{ event.totalGuests }}</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="(event.confirmedGuests / event.totalGuests) * 100"></div>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="event-actions">
+                <button class="btn btn-outline" [routerLink]="['/event-detail', event.id]">
+                  👁️ Détails
+                </button>
+                <button
+                  class="btn btn-primary"
+                  (click)="respondToEvent(event)"
+                  *ngIf="event.status === 'upcoming' && event.userResponse === 'pending'"
+                >
+                  ✓ Répondre
+                </button>
+                <button class="btn btn-outline" (click)="shareEvent(event)" *ngIf="event.status !== 'past'">
+                  🔗 Partager
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="filteredEvents.length === 0" class="empty-state">
+          <div class="empty-icon">📭</div>
+          <h3>Aucun événement trouvé</h3>
+          <p>Vous n'avez pas d'invitations pour le moment</p>
+        </div>
+
+        <!-- Notifications Panel -->
+        <div *ngIf="showNotifications()" class="notifications-panel">
+          <div class="notifications-header">
+            <h2>Notifications</h2>
+            <button class="close-btn" (click)="closeNotifications()">✕</button>
+          </div>
+
+          <div class="notifications-list">
+            <div *ngFor="let notification of notifications" class="notification-item" [class]="'type-' + notification.type">
+              <div class="notification-icon">
+                {{ getNotificationIcon(notification.type) }}
+              </div>
+              <div class="notification-content">
+                <p class="notification-title">{{ notification.title }}</p>
+                <p class="notification-message">{{ notification.message }}</p>
+                <p class="notification-date">{{ formatDate(notification.date) }}</p>
+              </div>
+              <button class="mark-read" (click)="markAsRead(notification)" *ngIf="!notification.read">
+                ✓
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="notifications.length === 0" class="no-notifications">
+            <p>Aucune notification</p>
+          </div>
+        </div>
+      </div>
+    </div>

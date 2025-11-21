@@ -39,6 +39,7 @@ export class DashboardComponent {
   ) {}
 
   ngOnInit(): void {
+    this.send(undefined);// Pour cacher le boutoun Scanner sur la nav-bar losque le user n'est plus la page event
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       this.organizerId = user?.id 

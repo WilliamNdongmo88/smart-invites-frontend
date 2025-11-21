@@ -101,6 +101,7 @@ export class EventDetailComponent implements OnInit{
     this.getOneEvent();
     this.getGuestsByEvent();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.sendEventIdToHeaderComponent(this.eventId);
   }
 
   getOneEvent(){
@@ -355,11 +356,15 @@ export class EventDetailComponent implements OnInit{
     alert('📈 Export Excel en cours...');
   }
 
+  sendEventIdToHeaderComponent(eventId: number){
+    this.send(eventId);
+  }
   navigateToInvitePage(){
     this.send(this.event.title)
     this.router.navigate(['/events', this.event.id, 'guests']);
   }
   send(message: any) {
+    console.log("message::", message)
     this.communicationService.sendMessage(message);
     //this.message = ""; // reset
   }

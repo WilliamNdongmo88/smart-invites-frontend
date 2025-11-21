@@ -2,6 +2,11 @@ import { Component, signal, ViewChild, ElementRef, OnInit, OnDestroy } from '@an
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import jsQR from 'jsqr';
+import { QrCodeService } from '../../services/qr-code.service';
+import { GuestService } from '../../services/guest.service';
+import { CommunicationService } from '../../services/share.service';
+import { EventService } from '../../services/event.service';
 
 interface ScanResult {
   success: boolean;
@@ -34,37 +39,79 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   private stream: MediaStream | null = null;
   private animationFrameId: number | null = null;
 
-  constructor(private router: Router) {}
+  guestId: number = 0;
+  eventId: number = 0;
+  isValid: boolean = false;
+  private isProcessing = false;
+  private isScanning = false;
+  datas: any[] = [];
+  data = {
+        eventTitle: '',
+        guestName: '',
+        hasPlusOne: '',
+        plusOneName: ''
+  };
+  constructor(
+    private router: Router,
+    private qrcodeService: QrCodeService,
+    private guestService: GuestService,
+    private eventService: EventService,
+    private communicationService: CommunicationService
+  ) {}
 
   ngOnInit() {
-    // Initialiser le composant
+    this.communicationService.message$.subscribe(msg => {
+        if(msg){
+            this.eventId = msg;
+        }else{
+            this.eventId = Number(localStorage.getItem('variable'));
+        }
+    });
+    this.getEventAndInvitationRelated();
   }
 
   ngOnDestroy() {
     this.stopCamera();
   }
 
-  async startCamera() {
-    try {
-      this.stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' },
-      });
-
-      const video = this.videoElement.nativeElement;
-      video.srcObject = this.stream;
-      video.play();
-
-      this.cameraActive.set(true);
-
-      // Commencer le scan
-      this.scanQRCode();
-    } catch (error) {
-      console.error('Erreur d\'accès à la caméra:', error);
-      alert('Impossible d\'accéder à la caméra. Veuillez vérifier les permissions.');
-    }
+  getEventAndInvitationRelated(){
+    this.eventService.getEventAndInvitationRelated(this.eventId).subscribe(
+        (response) => {
+            this.datas = response
+            console.log("###this.datas :: ", this.datas);
+        },
+        (error) => {
+            console.error('❌ [getEventAndInvitationRelated] Erreur :', error.message);
+            console.log("Message :: ", error.message);
+        }
+    );
   }
 
+  startCamera() {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+    .then(stream => {
+
+        this.stream = stream;
+
+        const video = this.videoElement.nativeElement;
+        video.srcObject = stream;
+
+        // Attendre que la caméra soit prête AVANT de scanner
+        video.onloadedmetadata = () => {
+            console.log("Activé camera ...");
+            this.cameraActive.set(true);
+            video.play();
+            this.isScanning = true;   // Activation du scan
+            this.scanQRCode();
+        };
+    })
+    .catch(err => {
+        console.error("Erreur d'accès à la caméra:", err);
+    });
+ }
+
   stopCamera() {
+    this.isScanning = false;   // Empêche toute nouvelle frame
     if (this.stream) {
       this.stream.getTracks().forEach(track => track.stop());
       this.stream = null;
@@ -79,31 +126,44 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   }
 
   scanQRCode() {
-    if (!this.cameraActive()) return;
+    if (!this.cameraActive() || !this.isScanning) return;
 
     const video = this.videoElement.nativeElement;
     const canvas = this.canvasElement.nativeElement;
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext("2d", { willReadFrequently: true });
 
     if (!context) return;
+
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+        this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
+        return;
+    }
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // Simuler la détection d'un code QR
-    // En production, utiliser une bibliothèque comme jsQR ou ZXing
-    if (this.autoCapture() && Math.random() > 0.95) {
-      this.processQRCode('QR_CODE_123456');
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    const qrCode = jsQR(imageData.data, canvas.width, canvas.height);
+
+    if (qrCode?.data) {
+        console.log('QR détecté:', qrCode.data);
+
+        this.isScanning = false;              // Stop immédiat de la boucle
+        cancelAnimationFrame(this.animationFrameId!);
+
+        this.processQRCode(qrCode.data);      // Un seul appel
+        return;                               
     }
 
     this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
   }
 
   captureFrame() {
+    console.log("Manuel...")
     const video = this.videoElement.nativeElement;
     const canvas = this.canvasElement.nativeElement;
-    const context = canvas.getContext('2d');
+    const context = canvas.getContext('2d', { willReadFrequently: true });
 
     if (!context) return;
 
@@ -118,36 +178,110 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   processQRCode(qrCode: string) {
     this.scannedCount.update(count => count + 1);
 
-    // Simuler la validation du code QR
-    const isValid = qrCode.startsWith('QR_CODE_');
+    console.log("qrcode:: ", qrCode);
+    this.guestId = Number(qrCode.split('view/')[1]);
+    console.log("this.guestId:: ", this.guestId);
+    this.qrcodeService.viewPdfs(qrCode).subscribe(
+    (response) => {
+        //console.log("###response :: ", response);
+        this.addCheckIn();
+    },
+    (error) => {
+        console.error('❌ [viewPdfs] Erreur :', error.message);
 
-    if (isValid) {
-      this.successCount.update(count => count + 1);
-      this.scanResult.set({
-        success: true,
-        guestId: qrCode,
-        guestName: 'Jean Dupont',
-        eventName: 'Mariage de Sophie et Pierre',
-        message: 'Code QR validé avec succès !',
-      });
-
-      if (this.soundEnabled()) {
-        this.playSuccessSound();
-      }
-
-      this.stopCamera();
-    } else {
-      this.errorCount.update(count => count + 1);
-      this.scanResult.set({
-        success: false,
-        message: 'Code QR invalide ou non reconnu',
-      });
-
-      if (this.soundEnabled()) {
-        this.playErrorSound();
-      }
-    }
+        if (this.soundEnabled()) this.playErrorSound();
+        this.errorCount.update(count => count + 1);
+        this.scanResult.set({
+            success: false,
+            message: 'Code QR invalide ou non reconnu',
+        });
+        }
+    );
   }
+
+  addCheckIn(){
+    const now = new Date().toISOString();
+    const checkinTime = now.split('.')[0].replace('T', ' ');
+    const data = {
+        eventId: 0,
+        invitationId: 0,
+        scannedBy: '',
+        scanStatus: 'VALID',
+        checkinTime: checkinTime
+    };
+    for (const elt of this.datas) {
+        if(elt.guestId == this.guestId){
+            data.eventId = elt.eventId;
+            data.invitationId = elt.invitationId;
+            data.scannedBy = elt.guestName;
+            this.data.eventTitle = elt.title;
+            this.data.guestName = elt.guestName;
+            this.data.hasPlusOne = elt.hasPlusOne;
+            this.data.plusOneName = elt.plusOneName;
+        }
+    }
+    console.log('data:: ', data);
+    this.qrcodeService.addCheckIn(data).subscribe(
+    (response) => {
+        //console.log("###response :: ", response);
+        this.successCount.update(count => count + 1);
+
+        this.isValid = true;
+
+        // 🎉 Son + message + stop caméra (comme avant)
+        if (this.soundEnabled()) this.playSuccessSound();
+
+        this.scanResult.set({
+            success: true,
+            guestName: this.data.hasPlusOne ? this.data.guestName+' et '+this.data.plusOneName : this.data.guestName,
+            eventName: this.data.eventTitle,
+            message: 'Code QR validé avec succès !'
+        });
+    },
+    (error) => {
+        console.error('❌ [getGuestById] Erreur :', error.message);
+        this.isValid = false;
+
+        if (this.soundEnabled()) this.playErrorSound();
+        this.errorCount.update(count => count + 1);
+        if(error.message.includes('409 Conflict'))console.warn(error.error.error);
+        this.scanResult.set({
+            success: false,
+            message: error.error.error ? error.error.error : 'Code QR invalide ou non reconnu',
+        });
+    });
+  }
+
+//   getGuestConcerned(){
+//     this.guestService.getGuestById(this.guestId).subscribe(
+//     (response) => {
+//         //console.log("###response :: ", response);
+//         this.successCount.update(count => count + 1);
+
+//         this.isValid = true;
+
+//         // 🎉 Son + message + stop caméra (comme avant)
+//         if (this.soundEnabled()) this.playSuccessSound();
+
+//         this.scanResult.set({
+//             success: true,
+//             guestName: response.has_plus_one ? response.full_name+' et '+response.plus_one_name : response.full_name,
+//             eventName: response.eventTitle,
+//             message: 'Code QR validé avec succès !'
+//         });
+//     },
+//     (error) => {
+//         console.error('❌ [getGuestById] Erreur :', error.message);
+//         this.isValid = false;
+
+//         if (this.soundEnabled()) this.playErrorSound();
+//         this.errorCount.update(count => count + 1);
+//         this.scanResult.set({
+//             success: false,
+//             message: 'Code QR invalide ou non reconnu',
+//         });
+//     });
+//   }
 
   processManualCode() {
     if (!this.manualCode.trim()) {
@@ -170,25 +304,33 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     }
 
   toggleSound() {
-    // Mise à jour du signal
-    alert('Mise à jour du signal');
+    console.log('Mise à jour du signal');
+    this.soundEnabled.set(false);
   }
 
-  playSuccessSound() {
-    // Créer et jouer un son de succès
-    const audioContext = new (window as any).AudioContext();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+  private playSuccessSound() {
+    try {
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+        oscillator.type = "sine";
 
-    oscillator.frequency.set(800);
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+        // ✔️ Bonne API
+        oscillator.frequency.setValueAtTime(700, audioContext.currentTime);
 
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.2);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        gainNode.gain.setValueAtTime(0.0001, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.5, audioContext.currentTime + 0.01);
+
+        oscillator.start();
+
+        oscillator.stop(audioContext.currentTime + 0.15);
+    } catch (e) {
+        console.error("Erreur audio :", e);
+    }
   }
 
   playErrorSound() {
@@ -210,6 +352,10 @@ export class QRScannerComponent implements OnInit, OnDestroy {
 
   goToDashboard() {
     this.router.navigate(['/dashboard']);
+  }
+
+  backToEvent(){
+    this.router.navigate(['/events', this.eventId]);
   }
 }
 

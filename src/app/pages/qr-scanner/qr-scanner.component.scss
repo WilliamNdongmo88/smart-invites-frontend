@@ -1,3 +1,6 @@
+@use "sass:color";
+$primary-gold: #d4af37;
+
 .qr-scanner {
     min-height: 100vh;
     background-color: #FFFFFF;
@@ -57,6 +60,19 @@
     border-radius: 0.5rem;
     overflow: hidden;
     margin-bottom: 1rem;
+}
+
+.back-link {
+    display: flex;
+    color: #D4AF37;
+    text-decoration: none;
+    margin-bottom: 0rem;
+    transition: color 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+    color: color.adjust($primary-gold, $lightness: -10%);
+    }
 }
 
 .video-stream {
@@ -292,7 +308,7 @@
     }
 
     .video-container {
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 12 / 10;
     }
 
     .result-actions {

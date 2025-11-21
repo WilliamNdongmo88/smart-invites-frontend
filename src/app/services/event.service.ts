@@ -74,6 +74,11 @@ export class EventService {
     return this.http.get<Event[]>(`${this.apiUrl}/event/${eventId}`);
   }
 
+  getEventAndInvitationRelated(eventId: number): Observable<Event[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<Event[]>(`${this.apiUrl}/event/${eventId}/invitation`, {headers});
+  }
+
   createEvent(request: CreateEventRequest[]): Observable<any> {
     console.log('Creating event with data:', request);
     const headers = this.getAuthHeaders();

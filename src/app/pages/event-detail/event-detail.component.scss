@@ -511,4 +511,18 @@ $primary-gold: #d4af37;
         display: block;
         overflow-x: auto;
       }
+
+      .event-header {
+        height: 250px;
+        width: 105%;
+      }
+
+      .card {
+        padding: 5px 5px;
+        width: 43%;
+
+        h2, h3 {
+          margin-bottom: 0.5rem;
+        }
+      }
     }

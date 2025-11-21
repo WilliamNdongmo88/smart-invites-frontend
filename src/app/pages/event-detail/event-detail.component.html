@@ -47,18 +47,18 @@
                     <div class="divider-gold"></div>
 
                     <button class="btn btn-primary" style="width: 100%;" (click)="sendInvitations()">
-                    ✉️ Envoyer les invitations
+                    Gérer vos invités
                     </button>
                 </div>
 
                 <!-- Guests List -->
-                <div class="card mt-8">
+                <!-- <div class="card mt-8">
                     <h2 class="clickable-title"(click)="navigateToInvitePage()">
                         Invités ({{ filteredGuests.length }})
-                    </h2>
+                    </h2> -->
 
                     <!-- Search and Filter -->
-                    <div class="search-filter">
+                    <!-- <div class="search-filter">
                         <div class="search-box">
                             <input
                             type="text"
@@ -75,15 +75,12 @@
                                 class="filter-btn"
                                 (click)="setFilterStatus(filter.value)">
                                 {{ getFilterLabel(filter.value) }}
-                                <!-- <span class="count">
-                                    {{ getStatusCount(filter.value) }}
-                                </span> -->
                             </button>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Guests Table -->
-                    <div class="guests-table">
+                    <!-- <div class="guests-table">
                         <table>
                             <thead>
                                 <tr>
@@ -115,10 +112,10 @@
                         <div *ngIf="filteredGuests.length === 0" class="no-guests">
                             <p>Aucun invité trouvé</p>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Pagination Controls -->
-                    <div class="pagination">
+                    <!-- <div class="pagination">
                         <button 
                             (click)="prevPage()" 
                             [disabled]="currentPage === 1"
@@ -141,13 +138,13 @@
                             ▶
                         </button>
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <!-- Right column - Stats -->
             <div class="right-column">
                 <!-- Quick Stats -->
-                <div class="card">
+                <!-- <div class="card">
                     <h3>Résumé</h3>
 
                     <div class="stats-list">
@@ -190,7 +187,7 @@
                     <p class="label">Taux de réponse</p>
                     <p class="value">{{ getResponseRate() }}%</p>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Actions 👤-->
                 <div class="card mt-6">
@@ -205,14 +202,11 @@
                     <button class="btn btn-primary" style="width: 100%;" (click)="sendReminder()">
                         ✉️ Envoyer rappel
                     </button>
-                    <!-- <button class="btn btn-outline" style="width: 100%;" (click)="shareLink()">
-                        🔗 Partager lien
-                    </button> -->
                     </div>
                 </div>
 
                 <!-- Export Options -->
-                <div class="card mt-6">
+                <!-- <div class="card mt-6">
                     <h3>Exporter</h3>
                     <p class="export-desc">Téléchargez vos données dans différents formats</p>
                     <div class="export-buttons">
@@ -226,7 +220,7 @@
                         📈 Exporter en Excel
                     </button>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

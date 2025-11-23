@@ -131,6 +131,18 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .logo-img {
+    height: 70px;
+    width: 70px;
+    margin-left: -18px;
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 1rem;

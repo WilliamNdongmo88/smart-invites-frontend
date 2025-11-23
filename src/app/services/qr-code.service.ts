@@ -56,6 +56,10 @@ export class QrCodeService {
     link.click();
   }
 
+  downloadGuestsPdf(data: any): Observable<Blob> {
+    return this.http.post(`${this.apiUrl}/event/guest-pdf`, data, {responseType: 'blob'});
+  }
+
   viewPdfs(qrCode: string): Observable<any> {
     return this.http.get(`${qrCode}`, {responseType: 'blob' as 'json'});
   }

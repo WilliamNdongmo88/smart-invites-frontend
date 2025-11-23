@@ -12,13 +12,14 @@ import { ImportGuestsModalComponent } from "../../components/import-guests-modal
 import { ImportedGuest } from '../../services/import-guest.service';
 import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
+import { FooterDetailComponent } from "../../components/footer/footer.component";
 
 interface Guest {
   id: number;
   name: string;
   email: string;
   phone?: string;
-  status: 'confirmed' | 'pending' | 'declined';
+  status: 'confirmed' | 'pending' | 'declined' | 'present';
   dietaryRestrictions?: string;
   plusOne?: boolean;
   responseDate?: string;
@@ -26,13 +27,13 @@ interface Guest {
   qrCodeUrl?: string;
 }
 
-type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined';
+type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
 
 @Component({
   selector: 'app-guest-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, SpinnerComponent, AddGuestModalComponent, 
-            ImportGuestsModalComponent, ErrorModalComponent, ConfirmDeleteModalComponent],
+  imports: [CommonModule, FormsModule, SpinnerComponent, AddGuestModalComponent,
+    ImportGuestsModalComponent, ErrorModalComponent, ConfirmDeleteModalComponent, FooterDetailComponent],
   templateUrl: 'guest-list.component.html',
   styleUrl: 'guest-list.component.scss',
 })
@@ -68,6 +69,7 @@ export class GuestListComponent implements OnInit{
     { label: 'Confirmés', value: 'confirmed' },
     { label: 'En attente', value: 'pending' },
     { label: 'Refusés', value: 'declined' },
+    // { label: 'Présent', value: 'present' },
   ];
 
   guests: Guest[] = [];
@@ -110,7 +112,7 @@ export class GuestListComponent implements OnInit{
                 name: res.full_name,
                 email: res.email,
                 phone: res.phone_number,  
-                status: uper.toLowerCase() as 'confirmed' | 'pending' | 'declined',
+                status: uper.toLowerCase() as 'confirmed' | 'pending' | 'declined' | 'present',
                 dietaryRestrictions: res.dietary_restrictions,
                 plusOne: res.has_plus_one ? true : false,
                 responseDate: res.response_date ? res.response_date.split('T')[0] : '',
@@ -144,7 +146,7 @@ export class GuestListComponent implements OnInit{
     });
   }
 
-  setFilterStatus(status: 'all' | 'confirmed' | 'pending' | 'declined') {
+  setFilterStatus(status: 'all' | 'confirmed' | 'pending' | 'declined' | 'present') {
     this.filterStatus.set(status);
     this.filterGuests();
   }
@@ -161,6 +163,8 @@ export class GuestListComponent implements OnInit{
         return '⏳';
       case 'declined':
         return '✕';
+      case 'present':
+        return '✓✓';
       default:
         return '';
     }
@@ -174,6 +178,8 @@ export class GuestListComponent implements OnInit{
         return 'En attente';
       case 'declined':
         return 'Refusé';
+      case 'present':
+        return 'Présent';
       default:
         return status;
     }
@@ -189,6 +195,8 @@ export class GuestListComponent implements OnInit{
         return 'En attente';
       case 'declined':
         return 'Refusés';
+      case 'present':
+        return 'Présent';
       default:
         return status;
     }
@@ -473,6 +481,10 @@ export class GuestListComponent implements OnInit{
 
   get declinedCount(): number {
     return this.guests.filter(g => g.status === 'declined').length;
+  }
+
+  get presentCount(): number {
+    return this.guests.filter(g => g.status === 'present').length;
   }
 
   // Logique error-modal

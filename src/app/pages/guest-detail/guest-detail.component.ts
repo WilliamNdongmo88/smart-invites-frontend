@@ -8,13 +8,14 @@ import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-mod
 import { QrCodeService } from '../../services/qr-code.service';
 import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 import { CommunicationService } from '../../services/share.service';
+import { FooterDetailComponent } from "../../components/footer/footer.component";
 
 interface Guest {
   id: number;
   name: string;
   email: string;
   phone?: string;
-  status: 'confirmed' | 'pending' | 'declined';
+  status: 'confirmed' | 'pending' | 'declined' | 'present';
   footRestriction?: boolean;
   dietaryRestrictions?: string;
   plusOne?: boolean;
@@ -31,7 +32,7 @@ interface Guest {
 @Component({
   selector: 'app-guest-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, SpinnerComponent, ConfirmDeleteModalComponent, ErrorModalComponent],
+  imports: [CommonModule, FormsModule, SpinnerComponent, ConfirmDeleteModalComponent, ErrorModalComponent, FooterDetailComponent],
   templateUrl:'guest-detail.component.html',
   styleUrl: 'guest-detail.component.scss'
 })
@@ -123,6 +124,8 @@ export class GuestDetailComponent implements OnInit{
         return '⏳';
       case 'declined':
         return '✕';
+      case 'present':
+        return '✓✓';
       default:
         return '';
     }
@@ -136,6 +139,8 @@ export class GuestDetailComponent implements OnInit{
         return 'En attente';
       case 'declined':
         return 'Refusé';
+      case 'present':
+        return 'Présent';
       default:
         return status;
     }

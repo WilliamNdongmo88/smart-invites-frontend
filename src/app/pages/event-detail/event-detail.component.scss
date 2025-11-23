@@ -75,9 +75,9 @@ $primary-gold: #d4af37;
     }
 
     .clickable-title {
-      cursor: pointer;
+      //cursor: pointer;
       color: #9f8636;
-      text-decoration: underline;
+      //text-decoration: underline;
     }
 
     .clickable-title:hover {
@@ -176,6 +176,10 @@ $primary-gold: #d4af37;
       }
     }
 
+    .btn-outline{
+      border: 2px solid #D4AF37;
+    }
+
     .count {
       background-color: rgba(0, 0, 0, 0.1);
       padding: 0.125rem 0.5rem;
@@ -229,6 +233,10 @@ $primary-gold: #d4af37;
         &.status-declined {
           border-left: 3px solid #EF4444;
         }
+
+        &.status-present {
+          border-left: 3px solid #219E4f;
+        }
       }
     }
 
@@ -258,6 +266,11 @@ $primary-gold: #d4af37;
       &.status-declined {
         background-color: rgba(239, 68, 68, 0.1);
         color: #EF4444;
+      }
+
+      &.status-present {
+        background-color: rgba(34, 197, 94, 0.1);
+        color: #219E4f;
       }
     }
 
@@ -324,6 +337,10 @@ $primary-gold: #d4af37;
       &.declined {
         color: #EF4444;
       }
+
+      &.status-present {
+        border-left: 3px solid #219E4f;
+      }
     }
 
     .stat-value {
@@ -355,6 +372,10 @@ $primary-gold: #d4af37;
 
       &.declined {
         background-color: #EF4444;
+      }
+
+      &.status-present {
+        border-left: 3px solid #219E4f;
       }
     }
 
@@ -513,16 +534,20 @@ $primary-gold: #d4af37;
       }
 
       .event-header {
-        height: 275px;
+        height: 230px;
         width: 100%;
       }
 
       .card {
-        padding: 10px 5px;
+        padding: 10px 7px;
         width: 100%;
         margin-top: -10px;
 
-        h2, h3 {
+        h2 {
+          margin-bottom: 10px;
+          margin-left: 0px;
+        }
+        h3 {
           margin-bottom: 0.5rem;
         }
       }

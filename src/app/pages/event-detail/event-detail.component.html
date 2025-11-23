@@ -52,20 +52,20 @@
 
                 <!-- Guests List -->
                 <div *ngIf="!(isMobile | async)" class="card mt-8">
-                    <h2 class="clickable-title"(click)="navigateToInvitePage()">
+                    <h2 class="clickable-title">
                         Invités ({{ filteredGuests.length }})
                     </h2>
 
                     <!-- Search and Filter -->
                     <div *ngIf="!(isMobile | async)" class="search-filter">
-                        <div class="search-box">
+                        <!-- <div class="search-box">
                             <input
                             type="text"
                             placeholder="Rechercher par nom ou email..."
                             [(ngModel)]="searchTerm"
                             (ngModelChange)="filterGuests()"
                             />
-                        </div>
+                        </div> -->
 
                         <div class="filter-buttons">
                             <button
@@ -75,6 +75,15 @@
                                 (click)="setFilterStatus(filter.value)">
                                 {{ getFilterLabel(filter.value) }}
                             </button>
+                            <!-- <button class="btn btn-outline filter-btn" style="width: 100%;" (click)="exportCSV()">
+                                📊 Exporter en CSV
+                            </button> -->
+                            <button class=" filter-btn btn-outline" style="width: 100%;" (click)="exportPDF()">
+                                📄 Exporter en PDF
+                            </button>
+                            <!-- <button class="btn btn-outline" style="width: 100%;" (click)="exportExcel()">
+                                📈 Exporter en Excel
+                            </button> -->
                         </div>
                     </div>
 
@@ -108,8 +117,11 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div *ngIf="filteredGuests.length === 0" class="no-guests">
+                        <div *ngIf="filteredGuests.length === 0 && isScanning" class="no-guests">
                             <p>Aucun invité trouvé</p>
+                        </div>
+                        <div *ngIf="filteredGuests.length === 0 && !isScanning" class="no-guests">
+                            <p>L'événement n'est pas encore passé</p>
                         </div>
                     </div>
 
@@ -209,22 +221,22 @@
                     <h3>Exporter</h3>
                     <p class="export-desc">Téléchargez vos données dans différents formats</p>
                     <div class="export-buttons">
-                    <button class="btn btn-outline" style="width: 100%;" (click)="exportCSV()">
-                        📊 Exporter en CSV
-                    </button>
-                    <button class="btn btn-outline" style="width: 100%;" (click)="exportPDF()">
-                        📄 Exporter en PDF
-                    </button>
-                    <button class="btn btn-outline" style="width: 100%;" (click)="exportExcel()">
-                        📈 Exporter en Excel
-                    </button>
+                        <button class="btn btn-outline" style="width: 100%;" (click)="exportCSV()">
+                            📊 Exporter en CSV
+                        </button>
+                        <button class="btn btn-outline" style="width: 100%;" (click)="exportPDF()">
+                            📄 Exporter en PDF
+                        </button>
+                        <button class="btn btn-outline" style="width: 100%;" (click)="exportExcel()">
+                            📈 Exporter en Excel
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+<app-footer></app-footer>
 <div>
     <!-- Add Guest Modal -->
     <app-add-guest-modal

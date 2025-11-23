@@ -28,7 +28,7 @@
     </div>
 
     <!-- Main content -->
-    <div class="container py-12">
+    <div class="container py-15">
         <!-- Search and Filter -->
         <div *ngIf="guests.length > 0" class="search-filter-section">
             <div class="search-box">
@@ -330,6 +330,8 @@
     </div>
 </div>
 <div>
+<app-footer></app-footer>
+
     <!-- Add Guest Modal -->
     <app-add-guest-modal
         *ngIf="showAddGuestModal()"

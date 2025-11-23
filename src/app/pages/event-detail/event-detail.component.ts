@@ -13,12 +13,14 @@ import { SpinnerComponent } from "../../components/spinner/spinner";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { map, Observable } from 'rxjs';
+import { FooterDetailComponent } from "../../components/footer/footer.component";
+import { QrCodeService } from '../../services/qr-code.service';
 
 interface Guest {
   id: string;
   name: string;
   email: string;
-  status: 'confirmed' | 'pending' | 'declined';
+  status: 'confirmed' | 'pending' | 'declined' | 'present';
   dietaryRestrictions?: string;
   plusOnedietaryRestrictions?: string;
   plusOne?: boolean;
@@ -39,12 +41,12 @@ interface Event {
   declinedGuests: number;
 }
 
-type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined';
+type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
 
 @Component({
   selector: 'app-event-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, AddGuestModalComponent, ErrorModalComponent, ImportGuestsModalComponent, SpinnerComponent, ConfirmDeleteModalComponent],
+  imports: [CommonModule, FormsModule, RouterLink, AddGuestModalComponent, ErrorModalComponent, ImportGuestsModalComponent, SpinnerComponent, ConfirmDeleteModalComponent, FooterDetailComponent],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.scss']
 })
@@ -60,20 +62,22 @@ export class EventDetailComponent implements OnInit{
   isLoading: boolean = false;
   showErrorModal = false;
   showDeleteModal = false;
+  isScanning = true
   modalAction: string | undefined;
   warningMessage: string = "";
+  rsvpStatus: string = "";
 
   itemsPerPage = 6;
   currentPage = 1;
 
   isMobile!: Observable<boolean>;
-  filterStatus = signal<FilterStatus>('all');
+  filterStatus = signal<FilterStatus>('confirmed');
 
   filters: { label: string; value: FilterStatus }[] = [
-    { label: 'Tous', value: 'all' },
     { label: 'Confirmés', value: 'confirmed' },
     { label: 'En attente', value: 'pending' },
     { label: 'Refusés', value: 'declined' },
+    { label: 'Présents', value: 'present' },
   ];
 
   event: Event = {
@@ -97,6 +101,7 @@ export class EventDetailComponent implements OnInit{
     private authService: AuthService,
     private eventService: EventService,
     private guestService: GuestService,
+    private qrcodeService: QrCodeService,
     private breakpointObserver: BreakpointObserver,
     private communicationService: CommunicationService
   ) {}
@@ -193,7 +198,11 @@ export class EventDetailComponent implements OnInit{
     console.log("this.filteredGuests  :: ", this.filteredGuests );
   }
 
-  setFilterStatus(status: 'all' | 'confirmed' | 'pending' | 'declined') {
+  setFilterStatus(status: 'all' | 'confirmed' | 'pending' | 'declined' | 'present') {
+    this.isScanning = true;
+    this.rsvpStatus = status;
+    console.log("rsvpStatus:: ", this.rsvpStatus);
+    if(status=='present') this.isScanning = false;
     this.filterStatus.set(status);
     this.filterGuests();
   }
@@ -211,6 +220,8 @@ export class EventDetailComponent implements OnInit{
         return '⏳';
       case 'declined':
         return '✕';
+      case 'present':
+        return '✓✓';
       default:
         return '';
     }
@@ -224,6 +235,8 @@ export class EventDetailComponent implements OnInit{
         return 'En attente';
       case 'declined':
         return 'Refusé';
+      case 'present':
+        return 'Présent';
       default:
         return status;
     }
@@ -239,6 +252,8 @@ export class EventDetailComponent implements OnInit{
         return 'En attente';
       case 'declined':
         return 'Refusés';
+      case 'present':
+        return 'Présent le jour j';
       default:
         return status;
     }
@@ -359,7 +374,34 @@ export class EventDetailComponent implements OnInit{
   }
 
   exportPDF() {
-    alert('📄 Export PDF en cours...');
+    console.log("rsvpStatus:: ", this.rsvpStatus);
+    const date = this.formatDate(this.event.date);
+    const data = {
+      event:{
+        eventTitle: this.event.title,
+        eventDate: date,
+        eventTime: this.event.time,
+        eventLocation: this.event.location,
+        guestRsvpStatus: this.rsvpStatus
+      },
+      filteredGuests: this.filteredGuests
+    };
+    console.log("data :: ", data);
+    this.qrcodeService.downloadGuestsPdf(data).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'invites-present.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Erreur téléchargement PDF', err);
+      }
+    });
   }
 
   exportExcel() {
@@ -426,6 +468,7 @@ export class EventDetailComponent implements OnInit{
 
   paginatedGuests() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    //console.log("this.filteredGuests.slice :: ", this.filteredGuests.slice(startIndex, startIndex + this.itemsPerPage))
     return this.filteredGuests.slice(startIndex, startIndex + this.itemsPerPage);
   }
 

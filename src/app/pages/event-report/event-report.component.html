@@ -1,0 +1,110 @@
+<div class="report-container">
+  <!-- En-tête -->
+  <div class="header">
+    <h1 class="title">{{ eventReport.title }}</h1>
+    <p class="subtitle">{{ eventReport.subtitle }}</p>
+  </div>
+
+  <!-- Grille des statistiques (3x2) -->
+  <div class="stats-grid">
+    <!-- Carte 1: Total Invités (bleu clair) -->
+    <div class="stat-card stat-blue">
+      <div class="stat-label">Total Invités</div>
+      <div class="stat-value-row">
+        <span class="stat-icon">👥</span>
+        <span class="stat-number">{{ eventReport.total_invited }}</span>
+      </div>
+    </div>
+
+    <!-- Carte 2: Confirmations (vert clair) -->
+    <div class="stat-card stat-green">
+      <div class="stat-label">Confirmations</div>
+      <div class="stat-value-row">
+        <span class="stat-number">{{ eventReport.total_confirmed }}</span>
+        <span class="stat-icon">✓</span>
+      </div>
+    </div>
+
+    <!-- Carte 3: Refus (rose/rouge clair) -->
+    <div class="stat-card stat-red">
+      <div class="stat-label">Refus</div>
+      <div class="stat-value-row">
+        <span class="stat-number">{{ eventReport.total_declined }}</span>
+        <span class="stat-icon">✗</span>
+      </div>
+    </div>
+
+    <!-- Carte 4: Présents (vert) -->
+    <div class="stat-card stat-green-dark">
+      <div class="stat-label">Présents (Scannés)</div>
+      <div class="stat-value-row">
+        <span class="stat-number">{{ eventReport.total_present }}</span>
+        <span class="stat-icon">👥</span>
+      </div>
+    </div>
+
+    <!-- Carte 5: Absents (orange clair) -->
+    <div class="stat-card stat-orange">
+      <div class="stat-label">Absents (No-show)</div>
+      <div class="stat-value-row">
+        <span class="stat-number">{{ eventReport.total_no_show }}</span>
+        <span class="stat-icon">⚠️</span>
+      </div>
+    </div>
+
+    <!-- Carte 6: Taux de Présence (violet clair) -->
+    <div class="stat-card stat-purple">
+      <div class="stat-label">Taux de Présence</div>
+      <div class="stat-value-row">
+        <span class="stat-number">{{ eventReport.attendance_rate.toFixed(1) }} %</span>
+        <span class="stat-icon">📈</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section des taux avec barres de progression -->
+  <div class="rates-section">
+    <!-- Taux de Confirmation -->
+    <div class="rate-card">
+      <div class="rate-header">
+        <h3 class="rate-title">Taux de Confirmation</h3>
+        <p class="rate-description">Pourcentage d'invités ayant accepté</p>
+      </div>
+      <div class="rate-content">
+        <div class="rate-percentage">{{ eventReport.confirmation_rate.toFixed(1) }}%</div>
+        <div class="rate-bar">
+          <div class="rate-fill" [style.width]="eventReport.confirmation_rate + '%'"></div>
+        </div>
+        <p class="rate-info">{{ eventReport.total_confirmed }} confirmations sur {{ eventReport.total_invited }} invités</p>
+      </div>
+    </div>
+
+    <!-- Taux de Présence -->
+    <div class="rate-card">
+      <div class="rate-header">
+        <h3 class="rate-title">Taux de Présence</h3>
+        <p class="rate-description">Pourcentage de participants présents</p>
+      </div>
+      <div class="rate-content">
+        <div class="rate-percentage">{{ eventReport.attendance_rate.toFixed(1) }}%</div>
+        <div class="rate-bar">
+          <div class="rate-fill" [style.width]="eventReport.attendance_rate + '%'"></div>
+        </div>
+        <p class="rate-info">{{ eventReport.total_present }} présents sur {{ eventReport.total_invited }} invités</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Résumé -->
+  <div class="summary-section">
+    <h2 class="summary-title">Résumé du Rapport</h2>
+    <p class="summary-subtitle">Vue d'ensemble générale de l'événement</p>
+    <p class="summary-text">{{ eventReport.summary }}</p>
+  </div>
+
+  <!-- Section Analyses (optionnel, en bas) -->
+  <div class="insights-section">
+    <h2 class="insights-title">Analyses et Recommandations</h2>
+    <p class="insights-text">{{ eventReport.insights }}</p>
+  </div>
+</div>

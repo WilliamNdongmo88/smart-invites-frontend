@@ -17,6 +17,7 @@ import { UserAccueilComponent } from './pages/user-accueil/user-accueil.componen
 import { FeaturesComponent } from './pages/features/features.component';
 import { PricingComponent } from './pages/pricing/pricing.component';
 import { ContactComponent } from './pages/contact/contact.component';
+import { EventReportComponent } from './pages/event-report/event-report.component';
 
 export const routes: Routes = [
   {
@@ -89,6 +90,10 @@ export const routes: Routes = [
   {
     path: 'contact',
     component: ContactComponent,
+  },
+  {
+    path: 'event-report',
+    component: EventReportComponent,
   },
   // {
   //   path: '/404',

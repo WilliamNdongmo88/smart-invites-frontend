@@ -20,7 +20,9 @@ interface Guest {
   email: string;
   status: 'confirmed' | 'pending' | 'declined';
   dietaryRestrictions?: string;
+  plusOnedietaryRestrictions?: string;
   plusOne?: boolean;
+  plusOneName?: string;
   responseDate?: string;
 }
 
@@ -148,7 +150,7 @@ export class EventDetailComponent implements OnInit{
       this.isLoading = true;
       this.guestService.getGuestsForEvent(this.eventId).subscribe(
         (response) => {
-          // console.log("Response :: ", response.guests);
+          console.log("Response :: ", response.guests);
           response.guests.map(res => {
             const uper = res.rsvp_status
             const data = {
@@ -157,9 +159,11 @@ export class EventDetailComponent implements OnInit{
                 email: res.email,
                 phoneNumber: res.phone_number,  
                 status: uper.toLowerCase() as 'confirmed' | 'pending' | 'declined',
-                dietaryRestrictions: res.notes,
+                dietaryRestrictions: res.dietary_restrictions,
+                plusOnedietaryRestrictions: res.plus_one_name_diet_restr,
                 plusOne: res.has_plus_one ? true : false,
-                responseDate: "2025-11-04"//res.response_date.split('T')[0],
+                plusOneName: res.plus_one_name,
+                responseDate: res.response_date.split('T')[0],
             };
             this.guests.push(data);
             return data;

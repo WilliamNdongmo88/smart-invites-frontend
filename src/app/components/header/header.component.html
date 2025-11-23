@@ -44,14 +44,14 @@
       <!-- <a routerLink="/features" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Fonctionnalités</a>
       <a routerLink="/pricing" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Tarifs</a>
       <a routerLink="/contact" class="mobile-nav-link" (click)="toggleMobileMenu(false)">À propos</a> -->
-      <button class="btn btn-primary w-100" (click)="navigateToLogin()">Connexion</button>
+      <button class="btn btn-primary w-100" (click)="navigateToLogin(); toggleMobileMenu(false)">Connexion</button>
     </ng-container>
 
     <!-- Utilisateur connecté -->
     <ng-template #loggedInMobile>
       <a *ngIf="isScanning" (click)="scanQrCode(); toggleMobileMenu(false)" class="mobile-nav-link">Scanner</a>
       <p class="mobile-nav-link">Bienvenue, {{ currentUser?.name }}!</p>
-      <button class="btns btns-primary w-100" (click)="logout()">Déconnexion</button>
+      <button class="btns btns-primary w-100" (click)="logout(); toggleMobileMenu(false)">Déconnexion</button>
     </ng-template>
 
   </nav>

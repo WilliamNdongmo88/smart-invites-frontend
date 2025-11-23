@@ -216,6 +216,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     const checkinTime = now.split('.')[0].replace('T', ' ');
     const data = {
         eventId: 0,
+        guestId: 0,
         invitationId: 0,
         scannedBy: '',
         scanStatus: 'VALID',
@@ -224,6 +225,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     for (const elt of this.datas) {
         if(elt.guestId == this.guestId){
             data.eventId = elt.eventId;
+            data.guestId = elt.guestId;
             data.invitationId = elt.invitationId;
             data.scannedBy = this.userConnected.name;
             this.data.eventTitle = elt.title;

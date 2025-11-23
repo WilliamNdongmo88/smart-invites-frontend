@@ -217,7 +217,7 @@ export class EditEventComponent implements OnInit {
     const types: { [key: string]: string } = {
       wedding: 'Mariage',
       engagement: 'Fiançailles',
-      anniversary: 'Anniversaire',
+      anniversary: 'Anniversaire de Mariage',
       birthday: 'Anniversaire',
       other: 'Autre',
     };

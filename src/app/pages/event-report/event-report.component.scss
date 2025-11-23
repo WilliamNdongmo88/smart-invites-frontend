@@ -1,0 +1,381 @@
+// Variables de couleur
+$bg-light: #F8F9FA;
+$bg-white: #FFFFFF;
+$text-dark: #333333;
+$text-gray: #666666;
+$text-light-gray: #999999;
+$border-color: #E0E0E0;
+$primary-gold: #D4AF37;
+
+// Couleurs des cartes
+$blue-light: #E3F2FD;
+$blue-text: #1976D2;
+$green-light: #E8F5E9;
+$green-text: #388E3C;
+$red-light: #FFEBEE;
+$red-text: #D32F2F;
+$green-dark: #C8E6C9;
+$green-dark-text: #2E7D32;
+$orange-light: #FFF3E0;
+$orange-text: #F57C00;
+$purple-light: #F3E5F5;
+$purple-text: #7B1FA2;
+
+// Conteneur principal
+.report-container {
+  background-color: $bg-light;
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: $text-dark;
+  line-height: 1.6;
+  min-height: 100vh;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+// En-tête
+.header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+
+  .title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 0 0 0.5rem 0;
+    letter-spacing: -0.5px;
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    color: $text-gray;
+    margin: 0;
+    font-weight: 400;
+  }
+}
+
+// Grille des statistiques (3 colonnes)
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+// Carte de statistique
+.stat-card {
+  background-color: $bg-white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid $border-color;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: $text-gray;
+    margin: 0 0 1rem 0;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+
+  .stat-value-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    justify-content: space-between;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $text-dark;
+  }
+
+  .stat-icon {
+    font-size: 1.75rem;
+    display: flex;
+    align-items: center;
+  }
+}
+
+// Variantes de couleur pour les cartes
+.stat-blue {
+  background-color: $blue-light;
+
+  .stat-label {
+    color: $blue-text;
+  }
+
+  .stat-number {
+    color: $blue-text;
+  }
+
+  .stat-icon {
+    color: $blue-text;
+  }
+}
+
+.stat-green {
+  background-color: $green-light;
+
+  .stat-label {
+    color: $green-text;
+  }
+
+  .stat-number {
+    color: $green-text;
+  }
+
+  .stat-icon {
+    color: $green-text;
+  }
+}
+
+.stat-red {
+  background-color: $red-light;
+
+  .stat-label {
+    color: $red-text;
+  }
+
+  .stat-number {
+    color: $red-text;
+  }
+
+  .stat-icon {
+    color: $red-text;
+  }
+}
+
+.stat-green-dark {
+  background-color: $green-dark;
+
+  .stat-label {
+    color: $green-dark-text;
+  }
+
+  .stat-number {
+    color: $green-dark-text;
+  }
+
+  .stat-icon {
+    color: $green-dark-text;
+  }
+}
+
+.stat-orange {
+  background-color: $orange-light;
+
+  .stat-label {
+    color: $orange-text;
+  }
+
+  .stat-number {
+    color: $orange-text;
+  }
+
+  .stat-icon {
+    color: $orange-text;
+  }
+}
+
+.stat-purple {
+  background-color: $purple-light;
+
+  .stat-label {
+    color: $purple-text;
+  }
+
+  .stat-number {
+    color: $purple-text;
+  }
+
+  .stat-icon {
+    color: $purple-text;
+  }
+}
+
+// Section des taux
+.rates-section {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+// Carte de taux
+.rate-card {
+  background-color: $bg-white;
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid $border-color;
+  border-left: 4px solid $purple-text;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  .rate-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .rate-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $text-dark;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .rate-description {
+    font-size: 0.85rem;
+    color: $text-gray;
+    margin: 0;
+  }
+
+  .rate-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .rate-percentage {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $purple-text;
+  }
+
+  .rate-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #E0E0E0;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .rate-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6B46C1 0%, #7C3AED 100%);
+    border-radius: 5px;
+    transition: width 0.6s ease;
+  }
+
+  .rate-info {
+    font-size: 0.85rem;
+    color: $text-gray;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+// Section Résumé
+.summary-section {
+  background-color: $bg-white;
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid $border-color;
+  border-top: 4px solid #2196F3;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  .summary-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $text-dark;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .summary-subtitle {
+    font-size: 0.85rem;
+    color: $text-gray;
+    margin: 0 0 1rem 0;
+    font-weight: 400;
+  }
+
+  .summary-text {
+    font-size: 0.95rem;
+    color: $text-dark;
+    line-height: 1.8;
+    margin: 0;
+    text-align: justify;
+
+    @media (max-width: 640px) {
+      text-align: left;
+    }
+  }
+}
+
+// Section Analyses
+.insights-section {
+  background-color: $bg-white;
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid $border-color;
+  border-left: 4px solid $primary-gold;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  .insights-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $text-dark;
+    margin: 0 0 1rem 0;
+  }
+
+  .insights-text {
+    font-size: 0.95rem;
+    color: $text-dark;
+    line-height: 1.8;
+    margin: 0;
+    text-align: justify;
+
+    @media (max-width: 640px) {
+      text-align: left;
+    }
+  }
+}
+
+// Animations
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.report-container {
+  animation: slideUp 0.5s ease-out;
+}
+
+// Accessibilité
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

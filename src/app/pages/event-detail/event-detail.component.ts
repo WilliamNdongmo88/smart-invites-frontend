@@ -15,6 +15,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { map, Observable } from 'rxjs';
 import { FooterDetailComponent } from "../../components/footer/footer.component";
 import { QrCodeService } from '../../services/qr-code.service';
+import { AlertConfig, ConditionalAlertComponent } from "../../components/conditional-alert/conditional-alert.component";
 
 interface Guest {
   id: string;
@@ -46,7 +47,11 @@ type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
 @Component({
   selector: 'app-event-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, AddGuestModalComponent, ErrorModalComponent, ImportGuestsModalComponent, SpinnerComponent, ConfirmDeleteModalComponent, FooterDetailComponent],
+  imports: [CommonModule, FormsModule, RouterLink,
+    AddGuestModalComponent, ErrorModalComponent,
+    ImportGuestsModalComponent, SpinnerComponent,
+    ConfirmDeleteModalComponent, FooterDetailComponent,
+    ConditionalAlertComponent],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.scss']
 })
@@ -79,6 +84,18 @@ export class EventDetailComponent implements OnInit{
     { label: 'Refusés', value: 'declined' },
     { label: 'Présents', value: 'present' },
   ];
+
+    // Configuration de l'alerte conditionnelle
+  alertConfig: AlertConfig = {
+    condition: false,
+    type: 'success',
+    title: '',
+    message: '',
+    icon: '',
+    dismissible: true,
+    autoClose: false,
+    duration: 5000,
+  };
 
   event: Event = {
     id: 0,
@@ -114,7 +131,7 @@ export class EventDetailComponent implements OnInit{
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.sendEventIdToHeaderComponent(this.eventId);
     this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
-    console.log("this.isMobile::", this.isMobile)
+    //console.log("this.isMobile::", this.isMobile)
   }
 
   getOneEvent(){
@@ -171,6 +188,7 @@ export class EventDetailComponent implements OnInit{
                 responseDate: res.response_date.split('T')[0],
             };
             this.guests.push(data);
+            this.loadEventData();
             return data;
           });
           // console.log(" this.guests :: ",  this.guests);
@@ -184,6 +202,53 @@ export class EventDetailComponent implements OnInit{
           this.errorMessage = error.message || 'Erreur de connexion';
         }
       );
+    }
+  }
+
+  loadEventData() {
+    // Simuler le chargement des données du backend
+    // En production, faire un appel API
+    console.log("rsvp status :: ", this.guests);
+    // Exemple 1 : Notification si RSVP confirmé
+    if (this.guests[0].status === 'confirmed') {
+      this.alertConfig = {
+        condition: true,
+        type: 'success',
+        title: '✓ Présence confirmée',
+        message: 'Merci d\'avoir confirmé votre présence à cet événement !',
+        icon: '✓',
+        dismissible: true,
+        autoClose: true,
+        duration: 5000,
+      };
+    }
+
+    // Exemple 2 : Notification si RSVP en attente
+    if (this.guests[0].status === 'pending') {
+      this.alertConfig = {
+        condition: true,
+        type: 'warning',
+        title: '⏳ En attente de réponse',
+        message: 'Veuillez confirmer ou refuser votre présence à cet événement',
+        icon: '⏳',
+        dismissible: true,
+        autoClose: false, // Ne pas fermer automatiquement
+        duration: 0,
+      };
+    }
+
+    // Exemple 3 : Notification si RSVP refusé
+    if (this.guests[0].status === 'declined') {
+      this.alertConfig = {
+        condition: true,
+        type: 'error',
+        title: '✕ Présence refusée',
+        message: 'Vous avez refusé l\'invitation à cet événement',
+        icon: '✕',
+        dismissible: true,
+        autoClose: true,
+        duration: 5000,
+      };
     }
   }
 
@@ -381,6 +446,7 @@ export class EventDetailComponent implements OnInit{
         eventTitle: this.event.title,
         eventDate: date,
         eventTime: this.event.time,
+        eventDateTime: this.event.date+'T'+this.event.time+':00.000Z',// 2025-11-25T01:08:00.000Z
         eventLocation: this.event.location,
         guestRsvpStatus: this.rsvpStatus
       },

@@ -10,7 +10,7 @@ $primary-gold: #d4af37;
       background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
       border-bottom: 1px solid #E0E0E0;
       padding: 1rem 0;
-      height: 220px;
+      height: 140px;
     }
 
     .back-link {
@@ -499,6 +499,11 @@ $primary-gold: #d4af37;
       }
 
       .header-actions {
+        width: 100%;
+      }
+
+      .event-header {
+        height: 220px;
         width: 100%;
       }
 

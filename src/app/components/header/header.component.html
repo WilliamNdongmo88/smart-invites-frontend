@@ -90,9 +90,14 @@
         <p class="notification-message">{{ notification.message }}</p>
         <p class="notification-date">{{ formatDate(notification.date) }}</p>
       </div>
-      <button class="mark-read" (click)="markAsRead(notification)" *ngIf="!notification.read">
-        ✓
-      </button>
+      <div class="icon">
+        <button class="mark-read" (click)="markAsRead(notification)" *ngIf="!notification.is_read">
+          <span>✓</span>
+        </button>
+        <button class="mark-read" (click)="markAsReadAndDelete(notification)">
+          <span>✕</span>
+        </button>
+      </div>
     </div>
   </div>
 

@@ -1,4 +1,7 @@
 import { Injectable, signal } from '@angular/core';
+import { environment } from '../../environment/environment';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export interface NotificationConfig {
   title: string;
@@ -12,6 +15,15 @@ export interface NotificationConfig {
   duration?: number; // en millisecondes
 }
 
+interface Notifications {
+  id: number;
+  title: string;
+  message: string;
+  type: 'invitation' | 'reminder' | 'update' | 'info';
+  date: string;
+  is_read: boolean;
+}
+
 export interface Notification extends NotificationConfig {
   id: string;
 }
@@ -21,6 +33,25 @@ export interface Notification extends NotificationConfig {
 })
 export class NotificationService {
   notifications = signal<Notification[]>([]);
+  private apiUrl: string | undefined;
+  private isProd = environment.production;
+
+  constructor(private http: HttpClient) { 
+    // Définir l'URL de l'API selon l'environnement
+    if (this.isProd) {
+      this.apiUrl = environment.apiUrlProd;
+    } else {
+      this.apiUrl = environment.apiUrlDev;
+    }
+  }
+
+  getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('accessToken');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
 
   show(config: NotificationConfig): string {
     const id = Math.random().toString(36).substr(2, 9);
@@ -94,6 +125,18 @@ export class NotificationService {
       onNo,
       autoClose: false,
     });
+  }
+
+  getNotifications(): Observable<Notifications[]> {
+    return this.http.get<Notifications[]>(`${this.apiUrl}/notification/notifications`);
+  }
+
+  updateNotificationReading(notifId: number, isRead: boolean): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/notification/read/${notifId}`, {isRead} );
+  }
+
+  deleteNotificationReading(notifId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/notification/delete/${notifId}`);
   }
 }
 

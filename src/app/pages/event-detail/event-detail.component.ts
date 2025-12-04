@@ -208,7 +208,7 @@ export class EventDetailComponent implements OnInit{
   loadEventData() {
     // Simuler le chargement des données du backend
     // En production, faire un appel API
-    console.log("rsvp status :: ", this.guests);
+    //console.log("rsvp status :: ", this.guests);
     // Exemple 1 : Notification si RSVP confirmé
     if (this.guests[0].status === 'present') {
       this.alertConfig = {

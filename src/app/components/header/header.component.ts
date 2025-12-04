@@ -5,14 +5,15 @@ import { AuthService, User } from '../../services/auth.service';
 import { map, Observable, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommunicationService } from '../../services/share.service';
+import { NotificationService } from '../../services/notification.service';
 
 interface Notification {
-  id: string;
+  id: number;
   title: string;
   message: string;
   type: 'invitation' | 'reminder' | 'update' | 'info';
   date: string;
-  read: boolean;
+  is_read: boolean;
 }
 @Component({
   selector: 'app-header',
@@ -30,45 +31,14 @@ export class HeaderComponent implements OnInit {
   private authSub!: Subscription;
   isMobile!: Observable<boolean>;
   eventId: number = 0;
+  errorMessage = '';
 
-  notifications: Notification[] = [
-    {
-      id: '1',
-      title: 'Nouvelle invitation',
-      message: 'Vous avez reçu une invitation pour le mariage de Sophie et Pierre',
-      type: 'invitation',
-      date: '2025-01-15',
-      read: false,
-    },
-    {
-      id: '2',
-      title: 'Rappel',
-      message: 'N\'oubliez pas de répondre à l\'invitation des fiançailles de Jean et Marie',
-      type: 'reminder',
-      date: '2025-01-10',
-      read: false,
-    },
-    {
-      id: '3',
-      title: 'Mise à jour d\'événement',
-      message: 'Les détails du mariage de Sophie et Pierre ont été mis à jour',
-      type: 'update',
-      date: '2025-01-08',
-      read: true,
-    },
-    {
-      id: '4',
-      title: 'Information',
-      message: 'Merci d\'avoir confirmé votre présence au mariage de Claire et Thomas',
-      type: 'info',
-      date: '2024-12-20',
-      read: true,
-    },
-  ];
+  notifications: Notification[] = [];
 
   constructor(private router: Router, 
               private authService: AuthService,
               private breakpointObserver: BreakpointObserver,
+              private notificationService: NotificationService,
               private communicationService: CommunicationService
             ) {}
 
@@ -95,8 +65,21 @@ export class HeaderComponent implements OnInit {
         this.isScanning = false;
       }
     });
+    this.loadNotifications();
   }
 
+  loadNotifications(){
+    this.notificationService.getNotifications().subscribe({
+      next: (response: any) => {
+        console.log('[loadNotifications] response :: ', response);
+        this.notifications = response;
+      },
+      error: (err) => {
+        this.errorMessage = err.error.error || 'Erreur lors du chargement des notifications.';
+        console.error('[loadNotifications] Erreur :', err.error.error);
+      }
+    });
+  }
   navigateToAccueil() {
     this.router.navigate(['/user-accueil']);
   }
@@ -134,7 +117,7 @@ export class HeaderComponent implements OnInit {
   }
 
   get unreadNotifications(): number {
-    return this.notifications.filter(n => !n.read).length;
+    return this.notifications.filter(n => !n.is_read).length;
   }
 
   getNotificationIcon(type: string): string {
@@ -162,7 +145,30 @@ export class HeaderComponent implements OnInit {
   }
 
   markAsRead(notification: Notification) {
-    notification.read = true;
+    notification.is_read = true;
+    this.notificationService.updateNotificationReading(notification.id, notification.is_read).subscribe({
+      next: (response: any) => {
+        console.log('[markAsRead] response :: ', response);
+      },
+      error: (err) => {
+        this.errorMessage = err.error.error || 'Erreur lors de la mise a jour.';
+        console.error('[markAsRead] Erreur :', err.error.error);
+      }
+    });
+  }
+
+  markAsReadAndDelete(notification: Notification){
+    notification.is_read = true;
+    this.notificationService.deleteNotificationReading(notification.id).subscribe({
+      next: (response: any) => {
+        console.log('[markAsReadAndDelete] response :: ', response);
+        this.notifications = this.notifications.filter(n => n.id != notification.id);
+      },
+      error: (err) => {
+        this.errorMessage = err.error.error || 'Erreur lors de la mise a jour.';
+        console.error('[markAsReadAndDelete] Erreur :', err.error.error);
+      }
+    });
   }
 
   openNotifications() {

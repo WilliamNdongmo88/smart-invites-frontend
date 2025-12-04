@@ -210,7 +210,7 @@ export class EventDetailComponent implements OnInit{
     // En production, faire un appel API
     console.log("rsvp status :: ", this.guests);
     // Exemple 1 : Notification si RSVP confirmé
-    if (this.guests[0].status === 'confirmed') {
+    if (this.guests[0].status === 'present') {
       this.alertConfig = {
         condition: true,
         type: 'success',

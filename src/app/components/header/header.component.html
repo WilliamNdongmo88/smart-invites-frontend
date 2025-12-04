@@ -21,6 +21,14 @@
 
       <!-- Utilisateur connecté -->
       <ng-template #loggedInDesktop>
+        <div class="header-actions">
+          <div class="notification-icon" role="button" (click)="openNotifications()">
+            🔔
+            <span class="notification-badge" *ngIf="unreadNotifications > 0">
+              {{ unreadNotifications }}
+            </span>
+          </div>
+        </div>
         <span class="welcome">Bienvenue, {{ currentUser?.name }} !</span>
         <a *ngIf="isScanning" (click)="scanQrCode()" class="nav-link nav-link-cursor">Scanner</a>
         <button class="btns btns-primary" (click)="logout()">Déconnexion</button>
@@ -29,6 +37,14 @@
     </nav>
 
     <!-- Mobile Menu Button -->
+    <div *ngIf="isMobile | async" class="header-actions">
+      <div class="notification-icon" role="button" (click)="openNotifications()">
+        🔔
+        <span class="notification-badge" *ngIf="unreadNotifications > 0">
+          {{ unreadNotifications }}
+        </span>
+      </div>
+    </div>
     <button class="mobile-menu-btn show-mobile" (click)="toggleMobileMenu()">
       <span *ngIf="!mobileMenuOpen()">☰</span>
       <span *ngIf="mobileMenuOpen()">✕</span>
@@ -56,3 +72,31 @@
 
   </nav>
 </header>
+
+<!-- Notifications Panel -->
+<div *ngIf="showNotifications()" class="notifications-panel">
+  <div class="notifications-header">
+    <h2>Notifications</h2>
+    <button class="close-btn" (click)="closeNotifications()">✕</button>
+  </div>
+
+  <div class="notifications-list">
+    <div *ngFor="let notification of notifications" class="notification-item" [class]="'type-' + notification.type">
+      <div class="notification-icon-panel">
+        {{ getNotificationIcon(notification.type) }}
+      </div>
+      <div class="notification-content">
+        <p class="notification-title">{{ notification.title }}</p>
+        <p class="notification-message">{{ notification.message }}</p>
+        <p class="notification-date">{{ formatDate(notification.date) }}</p>
+      </div>
+      <button class="mark-read" (click)="markAsRead(notification)" *ngIf="!notification.read">
+        ✓
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="notifications.length === 0" class="no-notifications">
+    <p>Aucune notification</p>
+  </div>
+</div>

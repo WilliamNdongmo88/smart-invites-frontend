@@ -131,6 +131,180 @@
   }
 }
 
+//Start Notifications Panel
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 1rem;
+}
+
+.notification-icon {
+  position: relative;
+  cursor: pointer;
+  font-size: 15px; // Le 🔔 sera joli à cette taille
+  line-height: 1;
+  color: #333;
+  transition: transform 0.2s ease, color 0.2s ease;
+  user-select: none;
+
+  &:hover {
+    transform: scale(1.1);
+    color: #2f6eff;
+  }
+}
+
+.notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background-color: #ff3b30; // Rouge iOS
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 50%;
+  min-width: 15px;
+  height: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(255, 59, 48, 0.4);
+}
+
+.notifications-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    height: 100vh;
+    background-color: #FFFFFF;
+    border-left: 1px solid #E0E0E0;
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    animation: slideIn 0.3s ease-out;
+}
+.notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.notification-icon-panel {
+  position: relative;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  color: #333;
+  transition: transform 0.2s ease, color 0.2s ease;
+  user-select: none;
+  margin-top: 7px;
+
+  &:hover {
+    transform: scale(1.1);
+    color: #2f6eff;
+  }
+}
+
+.notifications-header h2 {
+    margin: 0;
+}
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666666;
+    transition: color 0.2s ease;
+
+    &:hover {
+    color: #1A1A1A;
+    }
+}
+.notifications-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.notification-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #F5F5F5;
+    transition: all 0.2s ease;
+
+    &:hover {
+    background-color: #E0E0E0;
+    }
+
+    &.type-invitation {
+    border-left: 3px solid #D4AF37;
+    }
+
+    &.type-reminder {
+    border-left: 3px solid #EAB308;
+    }
+
+    &.type-update {
+    border-left: 3px solid #3B82F6;
+    }
+
+    &.type-info {
+    border-left: 3px solid #666666;
+    }
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+    color: #1A1A1A;
+    font-size: 0.875rem;
+}
+
+.notification-message {
+    margin: 0 0 0.5rem 0;
+    color: #666666;
+    font-size: 0.75rem;
+}
+
+.notification-date {
+    margin: 0;
+    color: #999999;
+    font-size: 0.7rem;
+}
+.mark-read {
+    background: none;
+    border: none;
+    color: #D4AF37;
+    cursor: pointer;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+
+    &:hover {
+    color: darken(#D4AF37, 10%);
+    }
+}
+
+.no-notifications {
+    text-align: center;
+    padding: 2rem;
+    color: #999999;
+}
+//End Notifications Panel
+
 @media (max-width: 1024px) {
   .container {
     padding: 1.5rem;
@@ -152,5 +326,10 @@
     height: 70px;
     width: 70px;
     margin-left: -18px;
+  }
+
+  .notification-icon {
+    margin-left: 12rem;
+    margin-top: 10px;
   }
 }

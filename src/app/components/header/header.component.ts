@@ -6,6 +6,14 @@ import { map, Observable, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommunicationService } from '../../services/share.service';
 
+interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  type: 'invitation' | 'reminder' | 'update' | 'info';
+  date: string;
+  read: boolean;
+}
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -14,6 +22,7 @@ import { CommunicationService } from '../../services/share.service';
   styleUrls: ['./header.component.scss']
   })
 export class HeaderComponent implements OnInit {
+  showNotifications = signal(false);
   isAuthenticated = false;
   isShowHeader = true;
   isScanning = false;
@@ -21,6 +30,41 @@ export class HeaderComponent implements OnInit {
   private authSub!: Subscription;
   isMobile!: Observable<boolean>;
   eventId: number = 0;
+
+  notifications: Notification[] = [
+    {
+      id: '1',
+      title: 'Nouvelle invitation',
+      message: 'Vous avez reçu une invitation pour le mariage de Sophie et Pierre',
+      type: 'invitation',
+      date: '2025-01-15',
+      read: false,
+    },
+    {
+      id: '2',
+      title: 'Rappel',
+      message: 'N\'oubliez pas de répondre à l\'invitation des fiançailles de Jean et Marie',
+      type: 'reminder',
+      date: '2025-01-10',
+      read: false,
+    },
+    {
+      id: '3',
+      title: 'Mise à jour d\'événement',
+      message: 'Les détails du mariage de Sophie et Pierre ont été mis à jour',
+      type: 'update',
+      date: '2025-01-08',
+      read: true,
+    },
+    {
+      id: '4',
+      title: 'Information',
+      message: 'Merci d\'avoir confirmé votre présence au mariage de Claire et Thomas',
+      type: 'info',
+      date: '2024-12-20',
+      read: true,
+    },
+  ];
 
   constructor(private router: Router, 
               private authService: AuthService,
@@ -87,6 +131,46 @@ export class HeaderComponent implements OnInit {
 
   send(message: any) {
     this.communicationService.sendMessage(message);
+  }
+
+  get unreadNotifications(): number {
+    return this.notifications.filter(n => !n.read).length;
+  }
+
+  getNotificationIcon(type: string): string {
+    switch (type) {
+      case 'invitation':
+        return '📧';
+      case 'reminder':
+        return '🔔';
+      case 'update':
+        return '📝';
+      case 'info':
+        return 'ℹ️';
+      default:
+        return '📬';
+    }
+  }
+
+  formatDate(date: string): string {
+    return new Date(date).toLocaleDateString('fr-FR', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  }
+
+  markAsRead(notification: Notification) {
+    notification.read = true;
+  }
+
+  openNotifications() {
+    this.showNotifications.set(true);
+  }
+
+  closeNotifications() {
+    this.showNotifications.set(false);
   }
 }
 

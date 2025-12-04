@@ -284,7 +284,10 @@
     color: #999999;
     font-size: 0.7rem;
 }
-.mark-read {
+.icon{
+  display: grid;
+
+  .mark-read {
     background: none;
     border: none;
     color: #D4AF37;
@@ -296,7 +299,9 @@
     &:hover {
     color: darken(#D4AF37, 10%);
     }
+  }
 }
+
 
 .no-notifications {
     text-align: center;

@@ -347,6 +347,10 @@ export class EventDetailComponent implements OnInit{
     this.router.navigate(['/events', this.event.id, 'guests']);
   }
 
+  shareEventLink(){
+    console.log("Partage du lien d'invitation de l'événement");
+  }
+
   sendReminder() {
     this.send(this.event.title)
     this.router.navigate(['/events', this.event.id, 'guests']);

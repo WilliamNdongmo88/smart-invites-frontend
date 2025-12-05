@@ -48,9 +48,14 @@
 
                     <div class="divider-gold"></div>
 
-                    <button class="btn btn-primary" style="width: 100%;" (click)="sendInvitations()">
-                    Gérer vos invités
-                    </button>
+                    <div class="btn-both">
+                        <button class="btn btn-primary" style="width: 100%;" (click)="sendInvitations()">
+                            Gérer vos invités
+                        </button>
+                        <button class="btn btn-outline" style="width: 100%;" (click)="shareEventLink()">
+                            Partager le lien d'invitation de l'événement
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Guests List -->

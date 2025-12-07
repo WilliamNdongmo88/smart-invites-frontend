@@ -16,6 +16,7 @@ import { map, Observable } from 'rxjs';
 import { FooterDetailComponent } from "../../components/footer/footer.component";
 import { QrCodeService } from '../../services/qr-code.service';
 import { AlertConfig, ConditionalAlertComponent } from "../../components/conditional-alert/conditional-alert.component";
+import { AddLinkModalComponent } from "../../components/add-invitation-link-modal/add-link-modal";
 
 interface Guest {
   id: string;
@@ -43,6 +44,7 @@ interface Event {
 }
 
 type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
+type LinkTypes = 'unique' | 'couple';
 
 @Component({
   selector: 'app-event-detail',
@@ -51,12 +53,13 @@ type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
     AddGuestModalComponent, ErrorModalComponent,
     ImportGuestsModalComponent, SpinnerComponent,
     ConfirmDeleteModalComponent, FooterDetailComponent,
-    ConditionalAlertComponent],
+    ConditionalAlertComponent, AddLinkModalComponent],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.scss']
 })
 export class EventDetailComponent implements OnInit{
   showAddGuestModal = signal(false);
+  showAddLinkModal = signal(false);
   showImportModal = signal(false);
   searchTerm = '';
   filteredGuests: Guest[] = [];
@@ -77,6 +80,7 @@ export class EventDetailComponent implements OnInit{
 
   isMobile!: Observable<boolean>;
   filterStatus = signal<FilterStatus>('confirmed');
+  linkTypes = signal<LinkTypes>('unique');
 
   filters: { label: string; value: FilterStatus }[] = [
     { label: 'Confirmés', value: 'confirmed' },
@@ -85,7 +89,12 @@ export class EventDetailComponent implements OnInit{
     { label: 'Présents', value: 'present' },
   ];
 
-    // Configuration de l'alerte conditionnelle
+  links: { label: string; value: LinkTypes }[] = [
+    { label: '🔗 Partagé le lien unique (limite d\'utilisation 2)', value: 'unique' },
+    { label: '🔗 Partagé le lien couple (limite d\'utilisation  2)', value: 'couple' }
+  ];
+
+  // Configuration de l'alerte conditionnelle
   alertConfig: AlertConfig = {
     condition: false,
     type: 'success',
@@ -188,7 +197,7 @@ export class EventDetailComponent implements OnInit{
                 responseDate: res.response_date.split('T')[0],
             };
             this.guests.push(data);
-            this.loadEventData();
+            //this.loadEventData();
             return data;
           });
           // console.log(" this.guests :: ",  this.guests);
@@ -206,9 +215,6 @@ export class EventDetailComponent implements OnInit{
   }
 
   loadEventData() {
-    // Simuler le chargement des données du backend
-    // En production, faire un appel API
-    //console.log("rsvp status :: ", this.guests);
     // Exemple 1 : Notification si RSVP confirmé
     if (this.guests[0].status === 'present') {
       this.alertConfig = {
@@ -237,7 +243,7 @@ export class EventDetailComponent implements OnInit{
       };
     }
 
-    // Exemple 3 : Notification si RSVP refusé
+    // Exemple 3 : Notification si token expiré
     if (this.guests[0].status === 'declined') {
       this.alertConfig = {
         condition: true,
@@ -356,8 +362,16 @@ export class EventDetailComponent implements OnInit{
     this.router.navigate(['/events', this.event.id, 'guests']);
   }
 
-  shareEvent() {
-    alert('🔗 Lien de partage copié dans le presse-papiers !');
+  shareEvent(event: Event) {
+    const text = `Vous êtes invité à: ${event.title} - ${this.formatDate(event.date)} à ${event.time}`;
+    if (navigator.share) {
+      navigator.share({
+        title: event.title,
+        text: text,
+      });
+    } else {
+      alert('Événement: ' + text);
+    }
   }
 
   editEvent() {
@@ -420,6 +434,33 @@ export class EventDetailComponent implements OnInit{
         if(error.message.includes("409 Conflict")){
           this.triggerError();
           this.errorMessage = "Vous essayez d'enregistrer un invités qui existe déjà";
+          console.log("Message :: ", this.errorMessage);
+        }  
+      }
+    );
+  }
+
+  onLinkAdded(newLink: any) {
+    const data = {
+      eventId: this.eventId,
+      type: newLink.type,
+      usedLimitCount: newLink.used_limit_count
+    };
+    console.log("data :: ", data);
+    this.isLoading = true;
+    this.eventService.addLink(data).subscribe(
+      (response) => {
+        console.log("Response :: ", response);
+        this.isLoading = false;
+        this.closeAddLinkModal();
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('❌ Erreur :', error.message);
+        console.error('❌ Erreur :', error.message.split(':')[1]);
+        if(error.message.includes("409 Conflict")){
+          this.triggerError();
+          this.errorMessage = "Erreur lors de la génération du lien";
           console.log("Message :: ", this.errorMessage);
         }  
       }
@@ -497,6 +538,14 @@ export class EventDetailComponent implements OnInit{
 
   closeAddGuestModal() {
     this.showAddGuestModal.set(false);
+  }
+
+  openAddLinkModal() {
+    this.showAddLinkModal.set(true);
+  }
+
+  closeAddLinkModal() {
+    this.showAddLinkModal.set(false);
   }
 
   openImportModal() {

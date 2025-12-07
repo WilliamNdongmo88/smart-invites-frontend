@@ -52,10 +52,27 @@
                         <button class="btn btn-primary" style="width: 100%;" (click)="sendInvitations()">
                             Gérer vos invités
                         </button>
-                        <button class="btn btn-outline" style="width: 100%;" (click)="shareEventLink()">
-                            Partager le lien d'invitation de l'événement
+                        <button class="btn btn-outline" style="width: 100%;" (click)="openAddLinkModal()">
+                            Générer le lien d'invitation de l'événement
                         </button>
                     </div>
+                </div>
+
+                <!-- Liens d'invitation -->
+                <div class="card mt-6">
+                    <h3>Liens d'invitations</h3>
+                    <p class="export-desc">Partagé le lien d'invitation a vos contact</p>
+                    <button
+                        *ngFor="let link of links"
+                        class="btn link-btn btn-outline"
+                        (click)="shareEvent(event)">
+                        {{ getFilterLabel(link.label) }}
+                    </button>
+                    <!-- <div class="export-buttons">
+                        <button class="btn btn-outline" (click)="shareEvent(event)">
+                            🔗 Partager
+                        </button>
+                    </div> -->
                 </div>
 
                 <!-- Guests List -->
@@ -252,6 +269,12 @@
         (guestAdded)="onGuestAdded($event)"
         (closed)="closeAddGuestModal()"
     ></app-add-guest-modal>
+
+    <app-link-modal
+        *ngIf="showAddLinkModal()"
+        (linkAdded)="onLinkAdded($event)"
+        (closed)="closeAddLinkModal()"
+    ></app-link-modal>
 
     <app-error-modal
         [visible]="showErrorModal"

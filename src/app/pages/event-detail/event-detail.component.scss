@@ -181,6 +181,29 @@ $primary-gold: #d4af37;
       }
     }
 
+    .link-btn {
+      display: inline;
+      padding: 10px 2rem;
+      margin: 5px 5px;
+      border: 1px solid #E0E0E0;
+      border-radius: 0.5rem;
+      background-color: #FFFFFF;
+      color: #1A1A1A;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.875rem;
+
+      &:hover {
+        background-color: #F4E4C1;
+      }
+
+      &.active {
+        background-color: #D4AF37;
+        color: #1A1A1A;
+        border-color: #D4AF37;
+      }
+    }
+
     .btn-outline{
       border: 2px solid #D4AF37;
     }

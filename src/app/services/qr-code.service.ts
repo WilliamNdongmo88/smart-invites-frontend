@@ -37,9 +37,9 @@ export class QrCodeService {
     return this.http.post<any>(`${this.apiUrl}/invitation/generate-several`, idList, { headers });
   }
 
-  viewQrCode(id: number): Observable<any> {
+  viewQrCode(token: string): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.get(`${this.apiUrl}/invitation/qrcode/view/${id}`, { headers });
+    return this.http.get(`${this.apiUrl}/invitation/qrcode/view/${token}`, { headers });
   }
 
   downloadQrCode(guestId: number, qrUrl: string) {

@@ -39,6 +39,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   private stream: MediaStream | null = null;
   private animationFrameId: number | null = null;
 
+  token: string = '';
   guestId: number = 0;
   eventId: number = 0;
   isValid: boolean = false;
@@ -191,8 +192,10 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     this.scannedCount.update(count => count + 1);
 
     console.log("qrcode:: ", qrCode);
-    this.guestId = Number(qrCode.split('view/')[1]);
+    this.guestId = Number(qrCode.split('view/')[1].split(':')[0]);
+    this.token = qrCode.split('view/')[1].split(':')[1]+':'+qrCode.split('view/')[1].split(':')[2];
     console.log("this.guestId:: ", this.guestId);
+    console.log("this.token:: ", this.token);
     this.qrcodeService.viewPdfs(qrCode).subscribe(
     (response) => {
         console.log("###response :: ", response);
@@ -219,6 +222,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         eventId: 0,
         guestId: 0,
         invitationId: 0,
+        token: '',
         scannedBy: '',
         scanStatus: 'VALID',
         checkinTime: checkinTime
@@ -227,6 +231,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         if(elt.guestId == this.guestId){
             data.eventId = elt.eventId;
             data.guestId = elt.guestId;
+            data.token = this.token;
             data.invitationId = elt.invitationId;
             data.scannedBy = this.userConnected.name;
             this.data.eventTitle = elt.title;

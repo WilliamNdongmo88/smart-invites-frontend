@@ -56,6 +56,7 @@ export interface Event{
   eventDate: string;
   eventTime: string;
   eventLocation: string;
+  emailOrganizer: string;
 }
 
 @Injectable({
@@ -85,6 +86,12 @@ export class GuestService {
     console.log("guests :: ",guests);
     const headers = this.getAuthHeaders();
     return this.http.post<any>(`${this.apiUrl}/guest/add-guest`, guests, { headers })
+  }
+
+  addGuestFromGenerateLink(guest: any): Observable<any> {
+    console.log("guest :: ",guest);
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/guest/add-guest-from-link`, guest, { headers })
   }
 
   getGuests(): Observable<{ guests: Guests[] }> {

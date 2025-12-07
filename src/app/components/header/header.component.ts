@@ -6,6 +6,7 @@ import { map, Observable, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommunicationService } from '../../services/share.service';
 import { NotificationService } from '../../services/notification.service';
+import { AlertConfig, ConditionalAlertComponent } from "../conditional-alert/conditional-alert.component";
 
 interface Notification {
   id: number;
@@ -18,7 +19,7 @@ interface Notification {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ConditionalAlertComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
   })
@@ -32,6 +33,17 @@ export class HeaderComponent implements OnInit {
   isMobile!: Observable<boolean>;
   eventId: number = 0;
   errorMessage = '';
+  // Configuration de l'alerte conditionnelle
+  alertConfig: AlertConfig = {
+    condition: false,
+    type: 'error',
+    title: '',
+    message: '',
+    icon: '',
+    dismissible: true,
+    autoClose: true,
+    duration: 10000,
+  };
 
   notifications: Notification[] = [];
 
@@ -69,6 +81,8 @@ export class HeaderComponent implements OnInit {
   }
 
   loadNotifications(){
+    const token = localStorage.getItem('accessToken');
+    if(!token) return;
     this.notificationService.getNotifications().subscribe({
       next: (response: any) => {
         console.log('[loadNotifications] response :: ', response);
@@ -77,6 +91,7 @@ export class HeaderComponent implements OnInit {
       error: (err) => {
         this.errorMessage = err.error.error || 'Erreur lors du chargement des notifications.';
         console.error('[loadNotifications] Erreur :', err.error.error);
+        this.loadEventData();
       }
     });
   }
@@ -177,6 +192,23 @@ export class HeaderComponent implements OnInit {
 
   closeNotifications() {
     this.showNotifications.set(false);
+  }
+
+  loadEventData() {
+    console.log("### Message :: ", this.errorMessage);
+    // Notification si token expiré
+    if (this.errorMessage.includes(`Token invalide ou expiré`)) {
+      this.alertConfig = {
+        condition: true,
+        type: 'error',
+        title: 'Token invalide ou expiré',
+        message: 'Veuillez vous reconnecter s\'il vous plaît',
+        icon: '✕',
+        dismissible: true,
+        autoClose: true,
+        duration: 5000,
+      };
+    }
   }
 }
 

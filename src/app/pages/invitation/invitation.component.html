@@ -22,7 +22,7 @@
           <!-- Content -->
           <div class="invitation-content">
             <!-- Greeting -->
-            <div class="greeting">
+            <div *ngIf="!isFromGeneratedLink" class="greeting">
               <p>Cher(e) {{ data.guestName }},</p>
               <h2>{{ data.eventTitle }}</h2>
             </div>
@@ -99,8 +99,59 @@
                   ></textarea>
                 </div>
 
+                <!-- Info guest from link-->
+                <div *ngIf="isFromGeneratedLink" class="form-group">
+                  <!-- NOM -->
+                  <label>Nom *</label>
+                  <input
+                    type="text"
+                    placeholder="Entrez votre nom"
+                    [(ngModel)]="name"
+                    name="name"
+                    #nameCtrl="ngModel"
+                    required
+                    (ngModelChange)="checkField()"
+                  />
+                  <div class="error" *ngIf="nameCtrl.invalid && nameCtrl.touched">
+                    Le nom est obligatoire.
+                  </div>
+
+                  <!-- EMAIL -->
+                  <label>Email *</label>
+                  <input
+                    type="email"
+                    placeholder="Adresse email"
+                    [(ngModel)]="email"
+                    name="email"
+                    #emailCtrl="ngModel"
+                    required
+                    email
+                    (ngModelChange)="checkField()"
+                  />
+                  <div class="error" *ngIf="emailCtrl.invalid && emailCtrl.touched">
+                    <span *ngIf="emailCtrl.errors?.['required']">L’email est obligatoire.</span>
+                    <span *ngIf="emailCtrl.errors?.['email']">Format email invalide.</span>
+                  </div>
+
+                  <!-- TELEPHONE -->
+                  <label>Téléphone</label>
+                  <input
+                    type="text"
+                    placeholder="+237655002318"
+                    [(ngModel)]="phone"
+                    name="phone"
+                    #phoneCtrl="ngModel"
+                    pattern="^(\+?\d{6,15})$"
+                    (ngModelChange)="checkField()"
+                  />
+                  <div class="error" *ngIf="phoneCtrl.invalid && phoneCtrl.touched">
+                    Le numéro doit comporter 6 à 15 chiffres (optionnellement précédé de +).
+                  </div>
+
+                </div>
+
                 <label *ngIf="data.eventHasPlusOne && data.guestHasPlusOneAutoriseByAdmin" class="checkbox-label">
-                  <input type="checkbox" [(ngModel)]="plusOne" (change)="boxChecked()" />
+                  <input type="checkbox" name="plusOne" [(ngModel)]="plusOne" (ngModelChange)="boxChecked()" />
                   <span>Je souhaite amener un accompagnant (+1)</span>
                 </label>
               </div>
@@ -109,9 +160,10 @@
               <div *ngIf="plusOne" class="form-group">
                 <label>Nom de votre accompagnant *</label>
                 <input
+                  type="text"
                   [(ngModel)]="plusOneName"
-                  (input)="checkField()"
-                >
+                  (ngModelChange)="checkField()"
+                />
                 <label *ngIf="data.footRestriction" class="label-mt">Restrictions alimentaires (optionnel)</label>
                 <textarea
                   *ngIf="data.footRestriction"
@@ -121,12 +173,10 @@
                 ></textarea>
               </div>
 
-              <!-- Submit button -->
               <button
                 class="btn btn-primary submit-btn"
-                [disabled]="!response()"
+                [disabled]="!response() || isValidating"
                 (click)="submitResponse()"
-                [disabled]="isValidating"
               >
                 {{loading ? '⏳ Confirmation...' :'❤️ Confirmer ma réponse'}}
               </button>
@@ -141,7 +191,7 @@
                 <p>Nous attendons votre réponse avant le <strong>{{ formatDate(data.eventDate) }}</strong></p>
                 <p class="footer-contact">
                   Pour toute question, contactez-nous à
-                  <a href="mailto:contact@example.com">contactexample.com</a>
+                  <a href="mailto:contact@example.com">{{data.emailOrganizer}}</a>
                 </p>
               </div>
             </div>

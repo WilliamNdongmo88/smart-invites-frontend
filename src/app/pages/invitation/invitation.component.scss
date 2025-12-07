@@ -337,6 +337,16 @@
       font-size: 0.875rem;
     }
 
+    input.ng-invalid.ng-touched {
+      border: 1px solid #e74c3c;
+    }
+
+    .error {
+      color: #e74c3c;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
     @media (max-width: 768px) {
       .details-grid {
         grid-template-columns: 1fr !important;

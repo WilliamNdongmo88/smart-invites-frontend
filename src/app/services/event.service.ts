@@ -107,4 +107,9 @@ export class EventService {
     const headers = this.getAuthHeaders();
     return this.http.post<any>(`${this.apiUrl}/link/add-link`, data, { headers })
   }
+
+  getLink(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(`${this.apiUrl}/link/get-links`, { headers })
+  }
 }

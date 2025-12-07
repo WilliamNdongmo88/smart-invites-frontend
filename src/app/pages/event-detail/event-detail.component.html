@@ -65,7 +65,7 @@
                     <button
                         *ngFor="let link of links"
                         class="btn link-btn btn-outline"
-                        (click)="shareEvent(event)">
+                        (click)="shareEvent(event, link)">
                         {{ getFilterLabel(link.label) }}
                     </button>
                     <!-- <div class="export-buttons">

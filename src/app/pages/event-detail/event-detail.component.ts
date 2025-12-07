@@ -44,7 +44,7 @@ interface Event {
 }
 
 type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
-type LinkTypes = 'unique' | 'couple';
+//type LinkTypes = 'unique' | 'couple';
 
 @Component({
   selector: 'app-event-detail',
@@ -80,7 +80,7 @@ export class EventDetailComponent implements OnInit{
 
   isMobile!: Observable<boolean>;
   filterStatus = signal<FilterStatus>('confirmed');
-  linkTypes = signal<LinkTypes>('unique');
+  //linkTypes = signal<LinkTypes>('unique');
 
   filters: { label: string; value: FilterStatus }[] = [
     { label: 'Confirmés', value: 'confirmed' },
@@ -89,9 +89,9 @@ export class EventDetailComponent implements OnInit{
     { label: 'Présents', value: 'present' },
   ];
 
-  links: { label: string; value: LinkTypes }[] = [
-    { label: '🔗 Partagé le lien unique (limite d\'utilisation 2)', value: 'unique' },
-    { label: '🔗 Partagé le lien couple (limite d\'utilisation  2)', value: 'couple' }
+  links: { label: string; value: string }[] = [
+    // { label: '🔗 Partagé le lien unique (limite d\'utilisation 2)', value: 'unique' },
+    // { label: '🔗 Partagé le lien couple (limite d\'utilisation  2)', value: 'couple' }
   ];
 
   // Configuration de l'alerte conditionnelle
@@ -141,6 +141,7 @@ export class EventDetailComponent implements OnInit{
     this.sendEventIdToHeaderComponent(this.eventId);
     this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
     //console.log("this.isMobile::", this.isMobile)
+    this.getLinks();
   }
 
   getOneEvent(){
@@ -362,15 +363,21 @@ export class EventDetailComponent implements OnInit{
     this.router.navigate(['/events', this.event.id, 'guests']);
   }
 
-  shareEvent(event: Event) {
-    const text = `Vous êtes invité à: ${event.title} - ${this.formatDate(event.date)} à ${event.time}`;
+  shareEvent(event: Event, link: any) {
+    console.log("link:: ", link);
+
+    const message =
+      `Vous êtes invité à : ${event.title}\n` +
+      `📅 Date : ${this.formatDate(event.date)}\n` +
+      `⏰ Heure : ${event.time}\n\n` +
+      `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
+      `${link.value}`;
+
     if (navigator.share) {
       navigator.share({
         title: event.title,
-        text: text,
+        text: message,
       });
-    } else {
-      alert('Événement: ' + text);
     }
   }
 
@@ -453,11 +460,36 @@ export class EventDetailComponent implements OnInit{
         console.log("Response :: ", response);
         this.isLoading = false;
         this.closeAddLinkModal();
+        this.getLinks();
       },
       (error) => {
         this.isLoading = false;
         console.error('❌ Erreur :', error.message);
         console.error('❌ Erreur :', error.message.split(':')[1]);
+        if(error.message.includes("409 Conflict")){
+          this.triggerError();
+          this.errorMessage = "Erreur lors de la génération du lien";
+          console.log("Message :: ", this.errorMessage);
+        }  
+      }
+    );
+  }
+
+  getLinks(){
+    this.eventService.getLink().subscribe(
+      (response) => {
+        console.log("Response :: ", response);
+        for (const link of response) {
+          const data = {
+            label: `🔗 Partagé le lien ${link.type} (limite d'utilisation ${link.limit_count})`, 
+            value:`${link.link}`,
+          };
+          this.links.push(data);
+        }
+      },
+      (error) => {
+        this.isLoading = false;
+        console.error('❌ Erreur :', error.message);
         if(error.message.includes("409 Conflict")){
           this.triggerError();
           this.errorMessage = "Erreur lors de la génération du lien";

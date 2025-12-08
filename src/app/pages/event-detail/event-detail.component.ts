@@ -141,7 +141,7 @@ export class EventDetailComponent implements OnInit{
     this.sendEventIdToHeaderComponent(this.eventId);
     this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
     //console.log("this.isMobile::", this.isMobile)
-    this.getLinks();
+    //this.getLinks();
   }
 
   getOneEvent(){

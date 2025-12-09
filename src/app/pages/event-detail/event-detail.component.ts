@@ -17,6 +17,7 @@ import { FooterDetailComponent } from "../../components/footer/footer.component"
 import { QrCodeService } from '../../services/qr-code.service';
 import { AlertConfig, ConditionalAlertComponent } from "../../components/conditional-alert/conditional-alert.component";
 import { AddLinkModalComponent } from "../../components/add-invitation-link-modal/add-link-modal";
+import { environment } from '../../../environment/environment';
 
 interface Guest {
   id: string;
@@ -121,7 +122,8 @@ export class EventDetailComponent implements OnInit{
   };
 
   guests: Guest[] = [];
-
+  private apiUrl: string | undefined;
+  private isProd = environment.production;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -131,7 +133,13 @@ export class EventDetailComponent implements OnInit{
     private qrcodeService: QrCodeService,
     private breakpointObserver: BreakpointObserver,
     private communicationService: CommunicationService
-  ) {}
+  ) {
+        if (this.isProd) {
+          this.apiUrl = environment.apiUrlProd;
+        } else {
+          this.apiUrl = environment.apiUrlDev;
+        }
+  }
 
   ngOnInit(){
     const result = this.route.snapshot.paramMap.get('eventId') || '';
@@ -397,7 +405,7 @@ async shareEvent(event: Event, link: any) {
   try {
     // Récupération de l'image via ton backend proxy
     const imageUrl = await this.getQrCodeImageUrl();
-    const proxyUrl = `http://localhost:3000/api/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+    const proxyUrl = `${this.apiUrl}/image-proxy?url=${encodeURIComponent(imageUrl)}`;
 
     const response = await fetch(proxyUrl);
     if (!response.ok) throw new Error(`Erreur proxy : ${response.status}`);

@@ -389,42 +389,58 @@ export class EventDetailComponent implements OnInit{
     });
   }
 
-async shareEvent(event: Event, link: any) {
-  const message =
-    `Vous êtes invité au : ${event.title}\n` +
-    `📅 Date : ${this.formatDate(event.date)}\n` +
-    `⏰ Heure : ${event.time}\n\n` +
-    `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
-    `${link.value}`;
+  shareEvent(event: Event, link: any) {
+    console.log("link:: ", link);
 
-  if (!navigator.share || !navigator.canShare) {
-    alert("Votre appareil ne supporte pas le partage natif.");
-    return;
+    const message =
+      `Vous êtes invité au : ${event.title}\n` +
+      `📅 Date : ${this.formatDate(event.date)}\n` +
+      `⏰ Heure : ${event.time}\n\n` +
+      `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
+      `${link.value}`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: event.title,
+        text: message,
+      });
+    }
   }
+// async shareEvent(event: Event, link: any) {
+//   const message =
+//     `Vous êtes invité au : ${event.title}\n` +
+//     `📅 Date : ${this.formatDate(event.date)}\n` +
+//     `⏰ Heure : ${event.time}\n\n` +
+//     `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
+//     `${link.value}`;
 
-  try {
-    // Récupération de l'image via ton backend proxy
-    const imageUrl = await this.getQrCodeImageUrl();
-    const proxyUrl = `${this.apiUrl}/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+//   if (!navigator.share || !navigator.canShare) {
+//     alert("Votre appareil ne supporte pas le partage natif.");
+//     return;
+//   }
 
-    const response = await fetch(proxyUrl);
-    if (!response.ok) throw new Error(`Erreur proxy : ${response.status}`);
+//   try {
+//     // Récupération de l'image via ton backend proxy
+//     const imageUrl = await this.getQrCodeImageUrl();
+//     const proxyUrl = `${this.apiUrl}/image-proxy?url=${encodeURIComponent(imageUrl)}`;
 
-    const blob = await response.blob();
-    const file = new File([blob], "invitation.jpg", { type: blob.type });
+//     const response = await fetch(proxyUrl);
+//     if (!response.ok) throw new Error(`Erreur proxy : ${response.status}`);
 
-    // 👉 1 seul share obligatoire
-    await navigator.share({
-      // files: [file],
-      text: message
-    });
+//     const blob = await response.blob();
+//     const file = new File([blob], "invitation.jpg", { type: blob.type });
 
-    console.log("🎉 Invitation partagée avec succès !");
-  } catch (err) {
-    console.error("Erreur lors du partage : ", err);
-  }
-}
+//     // 👉 1 seul share obligatoire
+//     await navigator.share({
+//       // files: [file],
+//       text: message
+//     });
 
+//     console.log("🎉 Invitation partagée avec succès !");
+//   } catch (err) {
+//     console.error("Erreur lors du partage : ", err);
+//   }
+// }
 
   editEvent() {
     //alert('✏️ Édition de l\'événement...');

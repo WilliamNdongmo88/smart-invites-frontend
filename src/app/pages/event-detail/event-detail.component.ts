@@ -436,12 +436,6 @@ export class EventDetailComponent implements OnInit{
 //       text: message
 //     });
 
-//     console.log("🎉 Invitation partagée avec succès !");
-//   } catch (err) {
-//     console.error("Erreur lors du partage : ", err);
-//   }
-// }
-
   editEvent() {
     //alert('✏️ Édition de l\'événement...');
     this.router.navigate(['/events/edit-event', this.event.id]);

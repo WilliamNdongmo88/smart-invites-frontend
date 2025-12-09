@@ -5,17 +5,17 @@
           <div class="grid grid-2">
             <!-- Left content -->
             <div class="hero-content">
-              <h1>
+              <h1 class="title-size">
                 Célébrez votre
                 <span class="text-gold"> moment magique</span>
               </h1>
-              <p>
+              <p class="text-size">
                 Smart Invite rend la gestion de vos invitations de mariage simple, élégante et mémorable. 
                 Créez, partagez et suivez vos invitations en quelques clics.
               </p>
               <div *ngIf="!(isMobile | async)" class="hero-buttons">
-                <button class="btn btn-primary" (click)="navigateToLogin()">
-                  Commencer maintenant →
+                <button class="btn btn-primary btn-align" (click)="navigateToLogin()">
+                  🚀Commencer maintenant
                 </button>
                 <!-- <button class="btn btn-outline">
                   En savoir plus
@@ -31,13 +31,13 @@
               </div> -->
             </div>
 
-            <!-- Right side - Image -->
+            <!-- Right side - Image Commencer maintenant → -->
             <div class="hero-image">
               <img src="img/wedding-theme.jpg" alt="Wedding theme" />
             </div>
             <div *ngIf="isMobile | async" class="hero-buttons">
-                <button class="btn btn-primary" (click)="navigateToLogin()">
-                  Commencer maintenant →
+                <button class="btn btn-primary btn-align" (click)="navigateToLogin()">
+                  🚀Commencer maintenant
                 </button>
             </div>
           </div>

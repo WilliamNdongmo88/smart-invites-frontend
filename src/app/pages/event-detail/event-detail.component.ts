@@ -74,6 +74,7 @@ export class EventDetailComponent implements OnInit{
   modalAction: string | undefined;
   warningMessage: string = "";
   rsvpStatus: string = "";
+  url = '';
 
   itemsPerPage = 6;
   currentPage = 1;
@@ -141,7 +142,8 @@ export class EventDetailComponent implements OnInit{
     this.sendEventIdToHeaderComponent(this.eventId);
     this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
     //console.log("this.isMobile::", this.isMobile)
-    //this.getLinks();
+    this.getLinks();
+    //this.getQrCodeImageUrl();
   }
 
   getOneEvent(){
@@ -363,23 +365,61 @@ export class EventDetailComponent implements OnInit{
     this.router.navigate(['/events', this.event.id, 'guests']);
   }
 
-  shareEvent(event: Event, link: any) {
-    console.log("link:: ", link);
-
-    const message =
-      `Vous êtes invité à : ${event.title}\n` +
-      `📅 Date : ${this.formatDate(event.date)}\n` +
-      `⏰ Heure : ${event.time}\n\n` +
-      `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
-      `${link.value}`;
-
-    if (navigator.share) {
-      navigator.share({
-        title: event.title,
-        text: message,
+  getQrCodeImageUrl(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.qrcodeService.viewQrCode('71c39ddd-ceb3-a11a-a88b-d88a7bf0ee6b').subscribe({
+        next: (response: any) => {
+          console.log('###response :: ', response);
+          const url = response.qrCodeUrl ?? response.imageUrl;
+          resolve(url); 
+        },
+        error: (err) => {
+          console.error('Erreur lors du chargement du QR code :', err);
+          reject(err);
+        }
       });
-    }
+    });
   }
+
+async shareEvent(event: Event, link: any) {
+  const message =
+    `Vous êtes invité au : ${event.title}\n` +
+    `📅 Date : ${this.formatDate(event.date)}\n` +
+    `⏰ Heure : ${event.time}\n\n` +
+    `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
+    `${link.value}`;
+
+  if (!navigator.share || !navigator.canShare) {
+    alert("Votre appareil ne supporte pas le partage natif.");
+    return;
+  }
+
+  try {
+    // Récupération de l'image via ton backend proxy
+    const imageUrl = await this.getQrCodeImageUrl();
+    const proxyUrl = `http://localhost:3000/api/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+
+    const response = await fetch(proxyUrl);
+    if (!response.ok) throw new Error(`Erreur proxy : ${response.status}`);
+
+    const blob = await response.blob();
+    const file = new File([blob], "invitation.jpg", { type: blob.type });
+
+    // 👉 Copier le texte AVANT le partage (pour les apps qui l’ignorent)
+    await navigator.clipboard.writeText(message);
+
+    // 👉 1 seul share obligatoire
+    await navigator.share({
+      files: [file],
+      text: message
+    });
+
+    console.log("🎉 Invitation partagée avec succès !");
+  } catch (err) {
+    console.error("Erreur lors du partage : ", err);
+  }
+}
+
 
   editEvent() {
     //alert('✏️ Édition de l\'événement...');

@@ -164,7 +164,7 @@ export class InvitationComponent implements OnInit{
     if (this.token && this.guestId || this.token && this.eventId) {
       this.qrCodeService.viewQrCode(this.token).subscribe({
         next: (response: any) => {
-          //console.log('###response :: ', response);
+          console.log('###response :: ', response);
           if(response.qrCodeUrl){
             this.url = response.qrCodeUrl;
           }else{

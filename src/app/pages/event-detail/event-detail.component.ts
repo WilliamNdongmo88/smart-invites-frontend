@@ -413,12 +413,9 @@ async shareEvent(event: Event, link: any) {
     const blob = await response.blob();
     const file = new File([blob], "invitation.jpg", { type: blob.type });
 
-    // 👉 Copier le texte AVANT le partage (pour les apps qui l’ignorent)
-    await navigator.clipboard.writeText(message);
-
     // 👉 1 seul share obligatoire
     await navigator.share({
-      files: [file],
+      // files: [file],
       text: message
     });
 

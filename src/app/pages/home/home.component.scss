@@ -14,10 +14,18 @@
       gap: 2rem;
     }
 
+    .title-size{
+      font-size: 3.25rem;
+    }
+    .text-size{
+      font-size: 1.425rem;
+    }
+
     .hero-buttons {
       display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
+      justify-content: center;   // centre horizontalement
+      align-items: center;
+      gap: 1rem;                  // si tu rajoutes d’autres boutons
     }
 
     .trust-indicators {
@@ -167,6 +175,21 @@
       }
 
       .hero-buttons {
-        margin-left: 4.2rem;
+        justify-content: center !important;
+        text-align: center;
+      }
+
+      .hero-buttons .btn-align {
+        margin: 0 auto;          // centre le bouton
+        display: block;
+      }
+
+      .title-size{
+        font-size: 3rem;
+        text-align: center;
+      }
+      .text-size{
+        font-size: 1.125rem;
+        text-align: center;
       }
     }

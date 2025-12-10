@@ -170,35 +170,53 @@
       padding: 3rem 2rem;
     }
 
-    @media (max-width: 768px) {
-      .grid-2 {
-        grid-template-columns: 1fr !important;
-      }
+/* 📌 Styles mobiles généraux (≤ 768px) */
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr !important;
+  }
 
-      .event-header {
-        flex-direction: column;
-      }
+  .event-header {
+    flex-direction: column;
+  }
 
-      .event-actions {
-        width: 100%;
-        flex-direction: row;
-        gap: 73px;
-      }
+  .event-actions {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
 
-      .c-mtop{
-        margin-top: 14px;
-        margin-left: 13.5rem;
-      }
+  /* Bouton aligné à droite par défaut */
+  .c-mtop {
+    margin-left: auto;
+    display: block;
+    margin-top: 2.5rem;
+  }
 
-      .c-ml{
-        margin-left: 15px;
-      }
+  .c-ml {
+    margin-left: 15px;
+  }
 
-      .icon-add {
-        font-size: 13px;
-        font-weight: bold;
-        color: #666;
-        cursor: pointer;
-        user-select: none;
-      }
-    }
+  .icon-add {
+    font-size: 13px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    user-select: none;
+  }
+}
+
+/* 📌 Smartphones moyens (360px – 369px) */
+@media (min-width: 360px) and (max-width: 369px) {
+  .c-mtop {
+    margin-top: 2rem;   /* plus compact */
+  }
+}
+
+/* 📌 Petits smartphones (≤ 360px) */
+@media (max-width: 360px) {
+  .c-mtop {
+    margin-top: 0.5rem;  /* très compact */
+  }
+}

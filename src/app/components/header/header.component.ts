@@ -86,7 +86,7 @@ export class HeaderComponent implements OnInit {
     this.notificationService.getNotifications().subscribe({
       next: (response: any) => {
         console.log('[loadNotifications] response :: ', response);
-        this.notifications = response;
+        this.notifications = response.reverse();
       },
       error: (err) => {
         this.errorMessage = err.error.error || 'Erreur lors du chargement des notifications.';
@@ -95,6 +95,7 @@ export class HeaderComponent implements OnInit {
       }
     });
   }
+
   navigateToAccueil() {
     this.router.navigate(['/user-accueil']);
   }
@@ -164,6 +165,7 @@ export class HeaderComponent implements OnInit {
     this.notificationService.updateNotificationReading(notification.id, notification.is_read).subscribe({
       next: (response: any) => {
         console.log('[markAsRead] response :: ', response);
+        //this.getBgColor(notification);
       },
       error: (err) => {
         this.errorMessage = err.error.error || 'Erreur lors de la mise a jour.';
@@ -184,6 +186,10 @@ export class HeaderComponent implements OnInit {
         console.error('[markAsReadAndDelete] Erreur :', err.error.error);
       }
     });
+  }
+
+  onSwipe(notification: any) {
+    this.markAsReadAndDelete(notification);
   }
 
   openNotifications() {

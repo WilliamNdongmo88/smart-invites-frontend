@@ -77,6 +77,15 @@ $primary-gold: #d4af37;
         display: flex;
         gap: 10px;
       }
+
+      .btn-text {
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        width: 100%;
+        color: #2d2c2c;
+        //font-weight: bold;
+      }
     }
 
     .clickable-title {

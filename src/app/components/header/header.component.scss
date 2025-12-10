@@ -233,33 +233,37 @@
 }
 
 .notification-item {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    margin-bottom: 0.5rem;
-    background-color: #F5F5F5;
-    transition: all 0.2s ease;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: #F5F5F5;
+  transition: all 0.2s ease;
 
-    &:hover {
-    background-color: #E0E0E0;
-    }
+  &:hover {
+  background-color: #E0E0E0;
+  }
 
-    &.type-invitation {
-    border-left: 3px solid #D4AF37;
-    }
+  &.type-invitation {
+  border-left: 3px solid #D4AF37;
+  }
 
-    &.type-reminder {
-    border-left: 3px solid #EAB308;
-    }
+  &.type-reminder {
+  border-left: 3px solid #EAB308;
+  }
 
-    &.type-update {
-    border-left: 3px solid #3B82F6;
-    }
+  &.type-update {
+  border-left: 3px solid #3B82F6;
+  }
 
-    &.type-info {
-    border-left: 3px solid #666666;
-    }
+  &.type-info {
+  border-left: 3px solid #666666;
+  }
+}
+
+.notification-item.notif-read {
+  background-color: #fefefe !important;
 }
 
 .notification-content {

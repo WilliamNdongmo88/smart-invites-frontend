@@ -521,6 +521,7 @@ async shareEvent(event: Event, link: any) {
         console.log("Response :: ", response);
         this.isLoading = false;
         this.closeAddLinkModal();
+        this.links = [];
         this.getLinks();
       },
       (error) => {

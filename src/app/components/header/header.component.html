@@ -81,23 +81,37 @@
   </div>
 
   <div class="notifications-list">
-    <div *ngFor="let notification of notifications" class="notification-item" [class]="'type-' + notification.type">
+    <div 
+      *ngFor="let notification of notifications" 
+      (click)="markAsRead(notification)"
+      (swipeleft)="onSwipe(notification)"
+      (swiperight)="onSwipe(notification)"
+      class="notification-item"
+      [ngClass]="[
+        'type-' + notification.type,
+        notification.is_read ? 'notif-read' : ''
+      ]"
+    >
       <div class="notification-icon-panel">
         {{ getNotificationIcon(notification.type) }}
       </div>
+
       <div class="notification-content">
         <p class="notification-title">{{ notification.title }}</p>
         <p class="notification-message">{{ notification.message }}</p>
         <p class="notification-date">{{ formatDate(notification.date) }}</p>
       </div>
+
       <div class="icon">
         <button class="mark-read" (click)="markAsRead(notification)" *ngIf="!notification.is_read">
           <span>✓</span>
         </button>
+
         <button class="mark-read" (click)="markAsReadAndDelete(notification)">
           <span>✕</span>
         </button>
       </div>
+
     </div>
   </div>
 

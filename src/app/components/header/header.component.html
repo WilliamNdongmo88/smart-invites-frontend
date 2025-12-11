@@ -83,6 +83,7 @@
   <div class="notifications-list">
     <div *ngFor="let notification of notifications"
         class="notification-item"
+        (click)="!isSwiping && markAsRead(notification)"
         [class.notif-read]="notification.is_read"
         (touchstart)="startTouch($event, notification)"
         (touchmove)="moveTouch($event, notification)"

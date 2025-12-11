@@ -47,7 +47,7 @@ export class HeaderComponent implements OnInit {
 
   touchStartX = 0;
   touchEndX = 0;
-  swipeThreshold = 200; // pixels pour déclencher la suppression
+  swipeThreshold = 250; // pixels pour déclencher la suppression
   isSwiping = false;
 
   notifications: Notification[] = [];
@@ -170,7 +170,6 @@ export class HeaderComponent implements OnInit {
     this.notificationService.updateNotificationReading(notification.id, notification.is_read).subscribe({
       next: (response: any) => {
         console.log('[markAsRead] response :: ', response);
-        //this.getBgColor(notification);
       },
       error: (err) => {
         this.errorMessage = err.error.error || 'Erreur lors de la mise a jour.';
@@ -208,7 +207,7 @@ moveTouch(event: TouchEvent, notification: any) {
   }
 
   // Si le mouvement dépasse un petit seuil, on considère que c'est un swipe
-  if (Math.abs(deltaX) > 200) {
+  if (Math.abs(deltaX) > 250) {
     this.isSwiping = true;
   }
   

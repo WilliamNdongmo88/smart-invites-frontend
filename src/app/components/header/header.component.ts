@@ -47,7 +47,7 @@ export class HeaderComponent implements OnInit {
 
   touchStartX = 0;
   touchEndX = 0;
-  swipeThreshold = 250; // pixels pour déclencher la suppression
+  swipeThreshold = 150; // pixels pour déclencher la suppression
   isSwiping = false;
 
   notifications: Notification[] = [];
@@ -193,12 +193,12 @@ export class HeaderComponent implements OnInit {
   }
 
 startTouch(event: TouchEvent, notification: any) {
-  this.touchStartX = event.touches[0].clientX;
+  this.touchStartX = event.touches[0].clientX - 150;
   this.isSwiping = false;
 }
 
 moveTouch(event: TouchEvent, notification: any) {
-  const deltaX = event.touches[0].clientX - this.touchStartX;
+  const deltaX = event.touches[0].clientX - (this.touchStartX + 150);
   const notifItem = (event.target as HTMLElement).closest('.notification-item') as HTMLElement;
 
   if (notifItem) {
@@ -207,7 +207,7 @@ moveTouch(event: TouchEvent, notification: any) {
   }
 
   // Si le mouvement dépasse un petit seuil, on considère que c'est un swipe
-  if (Math.abs(deltaX) > 250) {
+  if (Math.abs(deltaX) > 150) {
     this.isSwiping = true;
   }
   
@@ -215,7 +215,7 @@ moveTouch(event: TouchEvent, notification: any) {
 }
 
 endTouch(event: TouchEvent, notification: any) {
-  const deltaX = this.touchEndX - this.touchStartX;
+  const deltaX = this.touchEndX - (this.touchStartX + 150);
   const notifItem = (event.target as HTMLElement).closest('.notification-item') as HTMLElement;
 
   if (notifItem) {
@@ -226,9 +226,9 @@ endTouch(event: TouchEvent, notification: any) {
   // On supprime seulement si c'est un vrai swipe
   console.log("this.touchStartX ::", this.touchStartX);
   console.log("this.touchEndX ::", this.touchEndX);
-  console.log("deltaX ::", Math.abs(deltaX));
+  console.log("Math.abs(deltaX) ::", Math.abs(deltaX));
   console.log("this.swipeThreshold ::", this.swipeThreshold);
-  if (Math.abs(deltaX) > this.swipeThreshold) {
+  if (this.touchEndX != 0 && Math.abs(deltaX) > this.swipeThreshold) {
     this.markAsReadAndDelete(notification);
     this.touchEndX = 0;
   }

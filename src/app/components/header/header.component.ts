@@ -47,6 +47,8 @@ export class HeaderComponent implements OnInit {
 
   touchStartX = 0;
   touchEndX = 0;
+  swipeThreshold = 500; // pixels pour déclencher la suppression
+  isSwiping = false;
 
   notifications: Notification[] = [];
 
@@ -191,35 +193,47 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  startTouch(event: TouchEvent, notification: any) {
-    this.touchStartX = event.touches[0].clientX;
+startTouch(event: TouchEvent, notification: any) {
+  this.touchStartX = event.touches[0].clientX;
+  this.isSwiping = false;
+}
+
+moveTouch(event: TouchEvent, notification: any) {
+  const deltaX = event.touches[0].clientX - this.touchStartX;
+  const notifItem = (event.target as HTMLElement).closest('.notification-item') as HTMLElement;
+
+  if (notifItem) {
+    notifItem.style.transform = `translateX(${deltaX}px)`;
+    notifItem.style.transition = 'none';
   }
 
-  moveTouch(event: TouchEvent, notification: any) {
-    const deltaX = event.touches[0].clientX - this.touchStartX;
-    const el = event.target as HTMLElement;
+  // Si le mouvement dépasse un petit seuil, on considère que c'est un swipe
+  if (Math.abs(deltaX) > 500) {
+    this.isSwiping = true;
+  }
+  
+  this.touchEndX = event.touches[0].clientX;
+}
 
-    // Appliquer translation seulement si c'est bien la div notification
-    const notifItem = el.closest('.notification-item') as HTMLElement;
-    if (notifItem) {
-      notifItem.style.transform = `translateX(${deltaX}px)`;
-      notifItem.style.transition = 'none';
-    }
+endTouch(event: TouchEvent, notification: any) {
+  const deltaX = this.touchEndX - this.touchStartX;
+  const notifItem = (event.target as HTMLElement).closest('.notification-item') as HTMLElement;
 
-    this.touchEndX = event.touches[0].clientX;
+  if (notifItem) {
+    notifItem.style.transition = 'transform 0.3s ease';
+    notifItem.style.transform = 'translateX(0)';
   }
 
-  endTouch(event: TouchEvent, notification: any) {
-    const deltaX = this.touchEndX - this.touchStartX;
-    const notifItem = (event.target as HTMLElement).closest('.notification-item') as HTMLElement;
-
-    if (Math.abs(deltaX) > 100) {
-      this.markAsReadAndDelete(notification);
-    } else if (notifItem) {
-      notifItem.style.transform = 'translateX(0)';
-      notifItem.style.transition = 'transform 0.3s ease';
-    }
+  // On supprime seulement si c'est un vrai swipe
+  console.log("this.touchStartX ::", this.touchStartX);
+  console.log("this.touchEndX ::", this.touchEndX);
+  console.log("deltaX ::", Math.abs(deltaX));
+  console.log("this.swipeThreshold ::", this.swipeThreshold);
+  if (Math.abs(deltaX) > this.swipeThreshold) {
+    this.markAsReadAndDelete(notification);
+    this.touchEndX = 0;
   }
+}
 
   openNotifications() {
     this.showNotifications.set(true);

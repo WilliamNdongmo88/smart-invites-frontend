@@ -45,6 +45,9 @@ export class HeaderComponent implements OnInit {
     duration: 10000,
   };
 
+  touchStartX = 0;
+  touchEndX = 0;
+
   notifications: Notification[] = [];
 
   constructor(private router: Router, 
@@ -188,14 +191,33 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  onPan(event: any, notification: any) {
-    console.log('PAN', event.deltaX); // Debug : mouvement horizontal
+  startTouch(event: TouchEvent, notification: any) {
+    this.touchStartX = event.touches[0].clientX;
   }
 
-  onPanEnd(event: any, notification: any) {
-    if (Math.abs(event.deltaX) > 100) { // seuil
-      console.log('SWIPE detected, deleting:', notification);
+  moveTouch(event: TouchEvent, notification: any) {
+    const deltaX = event.touches[0].clientX - this.touchStartX;
+    const el = event.target as HTMLElement;
+
+    // Appliquer translation seulement si c'est bien la div notification
+    const notifItem = el.closest('.notification-item') as HTMLElement;
+    if (notifItem) {
+      notifItem.style.transform = `translateX(${deltaX}px)`;
+      notifItem.style.transition = 'none';
+    }
+
+    this.touchEndX = event.touches[0].clientX;
+  }
+
+  endTouch(event: TouchEvent, notification: any) {
+    const deltaX = this.touchEndX - this.touchStartX;
+    const notifItem = (event.target as HTMLElement).closest('.notification-item') as HTMLElement;
+
+    if (Math.abs(deltaX) > 100) {
       this.markAsReadAndDelete(notification);
+    } else if (notifItem) {
+      notifItem.style.transform = 'translateX(0)';
+      notifItem.style.transition = 'transform 0.3s ease';
     }
   }
 

@@ -81,39 +81,32 @@
   </div>
 
   <div class="notifications-list">
-    <div 
-      *ngFor="let notification of notifications" 
-      (click)="markAsRead(notification)"
-      (pan)="onPan($event, notification)"
-      (panend)="onPanEnd($event, notification)"
-      class="notification-item"
-      [ngClass]="[
-        'type-' + notification.type,
-        notification.is_read ? 'notif-read' : ''
-      ]"
-    >
+    <div *ngFor="let notification of notifications"
+        class="notification-item"
+        [class.notif-read]="notification.is_read"
+        (touchstart)="startTouch($event, notification)"
+        (touchmove)="moveTouch($event, notification)"
+        (touchend)="endTouch($event, notification)">
+        
       <div class="notification-icon-panel">
         {{ getNotificationIcon(notification.type) }}
       </div>
-
       <div class="notification-content">
         <p class="notification-title">{{ notification.title }}</p>
         <p class="notification-message">{{ notification.message }}</p>
         <p class="notification-date">{{ formatDate(notification.date) }}</p>
       </div>
-
       <div class="icon">
         <button class="mark-read" (click)="markAsRead(notification)" *ngIf="!notification.is_read">
           <span>✓</span>
         </button>
-
         <button class="mark-read" (click)="markAsReadAndDelete(notification)">
           <span>✕</span>
         </button>
       </div>
-
     </div>
   </div>
+
 
   <div *ngIf="notifications.length === 0" class="no-notifications">
     <p>Aucune notification</p>

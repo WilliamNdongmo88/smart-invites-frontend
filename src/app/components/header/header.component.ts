@@ -47,7 +47,7 @@ export class HeaderComponent implements OnInit {
 
   touchStartX = 0;
   touchEndX = 0;
-  swipeThreshold = 500; // pixels pour déclencher la suppression
+  swipeThreshold = 300; // pixels pour déclencher la suppression
   isSwiping = false;
 
   notifications: Notification[] = [];
@@ -208,7 +208,7 @@ moveTouch(event: TouchEvent, notification: any) {
   }
 
   // Si le mouvement dépasse un petit seuil, on considère que c'est un swipe
-  if (Math.abs(deltaX) > 500) {
+  if (Math.abs(deltaX) > 300) {
     this.isSwiping = true;
   }
   

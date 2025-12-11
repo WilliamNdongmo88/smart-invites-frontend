@@ -38,7 +38,7 @@
 
     <!-- Mobile Menu Button -->
     <div *ngIf="isMobile | async" class="header-actions">
-      <div class="notification-icon" role="button" (click)="openNotifications()">
+      <div *ngIf="isAuthenticated" class="notification-icon" role="button" (click)="openNotifications()">
         🔔
         <span class="notification-badge" *ngIf="unreadNotifications > 0">
           {{ unreadNotifications }}

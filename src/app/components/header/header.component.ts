@@ -188,8 +188,15 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  onSwipe(notification: any) {
-    this.markAsReadAndDelete(notification);
+  onPan(event: any, notification: any) {
+    console.log('PAN', event.deltaX); // Debug : mouvement horizontal
+  }
+
+  onPanEnd(event: any, notification: any) {
+    if (Math.abs(event.deltaX) > 100) { // seuil
+      console.log('SWIPE detected, deleting:', notification);
+      this.markAsReadAndDelete(notification);
+    }
   }
 
   openNotifications() {

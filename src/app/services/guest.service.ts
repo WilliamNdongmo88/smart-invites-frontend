@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from '../../environment/environment';
 
 export interface Guest {
@@ -66,6 +66,9 @@ export class GuestService {
     private apiUrl: string | undefined;
     private isProd = environment.production;
   
+    private guestsCache = new Map<number, { expiresAt: number, data: Guests[] }>();
+    private cacheTTL = 5 * 60 * 1000; // 5 minutes
+
     constructor(private http: HttpClient) { 
       if (this.isProd) {
         this.apiUrl = environment.apiUrlProd;
@@ -102,11 +105,51 @@ export class GuestService {
     console.log("guestId :: ",guestId);
     return this.http.get<Event>(`${this.apiUrl}/guest/${guestId}/event/`);
   }
+  // getEventByGuest(guestId: number): Observable<Event> {
+  //   const cacheEntry = this.guestsCache.get(guestId);
+
+  //   // Vérifier si le cache est valide
+  //   if (cacheEntry && cacheEntry.expiresAt > Date.now()) {
+  //     return of(cacheEntry.data);
+  //   }
+
+  //   // Sinon → fetch et stocke
+  //   return this.http
+  //   .get<Event>(`${this.apiUrl}/guest/${guestId}/event/`)
+  //   .pipe(
+  //     tap(response => {
+  //       this.guestsCache.set(guestId, {
+  //         expiresAt: Date.now() + this.cacheTTL,
+  //         data: response
+  //       });
+  //     })
+  //   );
+  // }
 
   getGuestsForEvent(eventId: number): Observable<{ guests: Guests[] }> {
     console.log("eventId :: ",eventId);
     return this.http.get<{ guests: Guests[] }>(`${this.apiUrl}/guest/event/${eventId}`);
   }
+  // getGuestsForEvent(eventId: number): Observable<{ guests: Guests[] }> {
+  //   const cacheEntry = this.guestsCache.get(eventId);
+
+  //   // Vérifier si le cache est valide
+  //   if (cacheEntry && cacheEntry.expiresAt > Date.now()) {
+  //     return of({ guests: cacheEntry.data });
+  //   }
+
+  //   // Sinon → fetch et stocke
+  //   return this.http
+  //   .get<{ guests: Guests[] }>(`${this.apiUrl}/guest/event/${eventId}`)
+  //   .pipe(
+  //     tap(response => {
+  //       this.guestsCache.set(eventId, {
+  //         expiresAt: Date.now() + this.cacheTTL,
+  //         data: response.guests
+  //       });
+  //     })
+  //   );
+  // }
 
   getGuestById(guestId: number): Observable<any> {
     console.log("guestId :: ", guestId);
@@ -159,3 +202,7 @@ export class GuestService {
     return this.http.post<any>(`${this.apiUrl}/guest/${guestId}/send-file`, { headers })
   }
 }
+function tap(arg0: (response: any) => void): import("rxjs").OperatorFunction<Event[], Event[]> {
+  throw new Error('Function not implemented.');
+}
+

@@ -48,6 +48,7 @@ export class DashboardComponent {
       this.currentUser = user;
       this.organizerId = user?.id 
     });
+    this.triggerBAction();
     this.getAllEvent();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
@@ -135,6 +136,11 @@ export class DashboardComponent {
   send(message: any) {
     this.communicationService.sendMessage(message);
     //this.message = ""; // reset
+  }
+
+  triggerBAction() {
+    console.log("DashboardCmp → Je demande à HeaderCmp d’exécuter une action !");
+    this.communicationService.triggerSenderAction();
   }
 }
 

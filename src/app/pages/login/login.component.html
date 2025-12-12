@@ -89,7 +89,7 @@
 
             <!-- Submit button -->
             <button type="submit" class="btn btn-primary submit-btn" [disabled]="!loginForm.valid">
-              Se connecter
+              {{ isLoading ? '⏳ Connexion ...' :'Se connecter' }}
             </button>
           </form>
 

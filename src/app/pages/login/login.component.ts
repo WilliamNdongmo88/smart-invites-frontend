@@ -14,7 +14,7 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent {
   email = '';
   password = '';
-  loading = false;
+  isLoading = false;
   errorMessage: string | null = null;
   rememberMe = false;
   showPassword = signal(false);
@@ -40,7 +40,7 @@ export class LoginComponent {
 
     // Si valide, exécute ta logique d’authentification
     console.log('Formulaire valide :', form.value);
-    this.loading = true;
+    this.isLoading = true;
     const loginRequest = {
       email: form.value.email,
       password: form.value.password,
@@ -49,11 +49,11 @@ export class LoginComponent {
     this.authService.login(loginRequest).subscribe(
       (response) => {
         console.log("Message :: ", response.message)
-        this.loading = false;
+        this.isLoading = false;
         this.router.navigate(['/dashboard']);
       },
       (error) => {
-        this.loading = false;
+        this.isLoading = false;
         console.error('❌ Erreur de connexion :', error.message.split(':')[4]);
         console.log("Message :: ", error.message.split(':')[4])
         if (error.message.includes('429 Too Many Requests')) {

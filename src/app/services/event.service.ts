@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { environment } from '../../environment/environment';
 
 export interface Event {
@@ -49,6 +49,10 @@ export class EventService {
   private apiUrl: string | undefined;
   private isProd = environment.production;
 
+  private eventsCache = new Map<number, { expiresAt: number, data: Event[] }>();
+  private cacheTTL = 5 * 60 * 1000; // 5 minutes
+
+
   constructor(private http: HttpClient) { 
     if (this.isProd) {
       this.apiUrl = environment.apiUrlProd;
@@ -66,17 +70,74 @@ export class EventService {
   }
 
   getEvents(organizerId: number): Observable<{ events: Event[] }> {
-    return this.http.get<{ events: Event[] }>(`${this.apiUrl}/event/organizer/${organizerId}`);
+    const cacheEntry = this.eventsCache.get(organizerId);
+
+    // Vérifier si le cache est valide
+    if (cacheEntry && cacheEntry.expiresAt > Date.now()) {
+      return of({ events: cacheEntry.data });
+    }
+
+    // Sinon → fetch et stocke
+    return this.http
+    .get<{ events: Event[] }>(`${this.apiUrl}/event/organizer/${organizerId}`)
+    .pipe(
+      tap(response => {
+        this.eventsCache.set(organizerId, {
+          expiresAt: Date.now() + this.cacheTTL,
+          data: response.events
+        });
+      })
+    );
   }
 
+  // getEventById(eventId: number): Observable<Event[]> {
+  //   console.log("eventId :: ",eventId);
+  //   return this.http.get<Event[]>(`${this.apiUrl}/event/${eventId}`);
+  // }
   getEventById(eventId: number): Observable<Event[]> {
-    console.log("eventId :: ",eventId);
-    return this.http.get<Event[]>(`${this.apiUrl}/event/${eventId}`);
+    const cacheEntry = this.eventsCache.get(eventId);
+
+    // Vérifier si le cache est valide
+    if (cacheEntry && cacheEntry.expiresAt > Date.now()) {
+      return of(cacheEntry.data);
+    }
+
+    // Sinon → fetch et stocke
+    return this.http
+    .get<Event[]>(`${this.apiUrl}/event/${eventId}`)
+    .pipe(
+      tap(response => {
+        this.eventsCache.set(eventId, {
+          expiresAt: Date.now() + this.cacheTTL,
+          data: response
+        });
+      })
+    );
   }
 
+  // getEventAndInvitationRelated(eventId: number): Observable<Event[]> {
+  //   const headers = this.getAuthHeaders();
+  //   return this.http.get<Event[]>(`${this.apiUrl}/event/${eventId}/invitation`, {headers});
+  // }
   getEventAndInvitationRelated(eventId: number): Observable<Event[]> {
-    const headers = this.getAuthHeaders();
-    return this.http.get<Event[]>(`${this.apiUrl}/event/${eventId}/invitation`, {headers});
+    const cacheEntry = this.eventsCache.get(eventId);
+
+    // Vérifier si le cache est valide
+    if (cacheEntry && cacheEntry.expiresAt > Date.now()) {
+      return of(cacheEntry.data);
+    }
+
+    // Sinon → fetch et stocke
+    return this.http
+    .get<Event[]>(`${this.apiUrl}/event/${eventId}/invitation`)
+    .pipe(
+      tap(response => {
+        this.eventsCache.set(eventId, {
+          expiresAt: Date.now() + this.cacheTTL,
+          data: response
+        });
+      })
+    );
   }
 
   createEvent(request: CreateEventRequest[]): Observable<any> {

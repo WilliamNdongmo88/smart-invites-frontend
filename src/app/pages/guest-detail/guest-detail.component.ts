@@ -181,7 +181,7 @@ export class GuestDetailComponent implements OnInit{
 
   deleteGuest() {
     this.isLoading = true;
-    this.guestService.deleteGuest(this.guestId).subscribe(
+    this.guestService.deleteGuest(this.guestId, this.eventId).subscribe(
       (response) => {
         console.log("response :: ", response);
         this.isLoading = false;

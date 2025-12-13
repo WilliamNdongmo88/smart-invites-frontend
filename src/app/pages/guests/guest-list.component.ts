@@ -302,7 +302,7 @@ export class GuestListComponent implements OnInit{
 
   deleteGuest(guestId: number) {
     this.isLoading = true;
-    this.guestService.deleteGuest(Number(guestId)).subscribe(
+    this.guestService.deleteGuest(Number(guestId), Number(this.eventId)).subscribe(
       (response) => {
         console.log("response :: ", response);
         this.guests = this.guests.filter(g => g.id !== guestId);
@@ -324,7 +324,7 @@ export class GuestListComponent implements OnInit{
   deleteSeveralGuests(guestIdList: number[]) {
     this.loadingDelete = true;
     
-    this.guestService.deleteSeveralGuests(guestIdList).subscribe(
+    this.guestService.deleteSeveralGuests(guestIdList, Number(this.eventId)).subscribe(
       (response) => {
         console.log("response :: ", response);
         // Filtrer les guests pour ne garder que ceux non sélectionnés

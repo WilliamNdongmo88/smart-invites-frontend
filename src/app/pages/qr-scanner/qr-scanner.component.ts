@@ -318,10 +318,10 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     this.startCamera();
   }
 
-    toggleAutoCapture(event: Event) {
-        const target = event.target as HTMLInputElement;
-        this.autoCapture.set(target.checked);
-    }
+  toggleAutoCapture(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.autoCapture.set(target.checked);
+  }
 
   toggleSound() {
     console.log('Mise à jour du signal');

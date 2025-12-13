@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, filter, Observable, of, shareReplay, startWith, Subject, switchMap, tap } from 'rxjs';
 import { environment } from '../../environment/environment';
 
 export interface Guest {
@@ -65,9 +65,9 @@ export interface Event{
 export class GuestService {
     private apiUrl: string | undefined;
     private isProd = environment.production;
-  
-    private guestsCache = new Map<number, { expiresAt: number, data: Guests[] }>();
-    private cacheTTL = 5 * 60 * 1000; // 5 minutes
+
+    private cache = new Map<number, Observable<{ guests: Guests[] }>>();
+    private refresh$ = new Subject<number>();
 
     constructor(private http: HttpClient) { 
       if (this.isProd) {
@@ -85,71 +85,64 @@ export class GuestService {
     });
   }
 
+  // addGuest(guests: any): Observable<any> {
+  //   console.log("guests :: ",guests);
+  //   const headers = this.getAuthHeaders();
+  //   return this.http.post<any>(`${this.apiUrl}/guest/add-guest`, guests, { headers })
+  // }
   addGuest(guests: any): Observable<any> {
-    console.log("guests :: ",guests);
     const headers = this.getAuthHeaders();
     return this.http.post<any>(`${this.apiUrl}/guest/add-guest`, guests, { headers })
+      .pipe(
+        tap(() => this.clearGuestsCache(guests[0].eventId))
+      );
   }
 
   addGuestFromGenerateLink(guest: any): Observable<any> {
     console.log("guest :: ",guest);
     const headers = this.getAuthHeaders();
     return this.http.post<any>(`${this.apiUrl}/guest/add-guest-from-link`, guest, { headers })
+    .pipe(
+      tap(() => this.clearGuestsCache(guest.eventId))
+    );
   }
 
-  getGuests(): Observable<{ guests: Guests[] }> {
-    return this.http.get<{ guests: Guests[] }>(`${this.apiUrl}/guest/all-guests`);
-  }
+  // getGuests(): Observable<{ guests: Guests[] }> {
+  //   return this.http.get<{ guests: Guests[] }>(`${this.apiUrl}/guest/all-guests`);
+  // }
 
   getEventByGuest(guestId: number): Observable<Event> {
     console.log("guestId :: ",guestId);
     return this.http.get<Event>(`${this.apiUrl}/guest/${guestId}/event/`);
   }
-  // getEventByGuest(guestId: number): Observable<Event> {
-  //   const cacheEntry = this.guestsCache.get(guestId);
 
-  //   // Vérifier si le cache est valide
-  //   if (cacheEntry && cacheEntry.expiresAt > Date.now()) {
-  //     return of(cacheEntry.data);
-  //   }
-
-  //   // Sinon → fetch et stocke
-  //   return this.http
-  //   .get<Event>(`${this.apiUrl}/guest/${guestId}/event/`)
-  //   .pipe(
-  //     tap(response => {
-  //       this.guestsCache.set(guestId, {
-  //         expiresAt: Date.now() + this.cacheTTL,
-  //         data: response
-  //       });
-  //     })
-  //   );
-  // }
-
-  getGuestsForEvent(eventId: number): Observable<{ guests: Guests[] }> {
-    console.log("eventId :: ",eventId);
-    return this.http.get<{ guests: Guests[] }>(`${this.apiUrl}/guest/event/${eventId}`);
-  }
   // getGuestsForEvent(eventId: number): Observable<{ guests: Guests[] }> {
-  //   const cacheEntry = this.guestsCache.get(eventId);
-
-  //   // Vérifier si le cache est valide
-  //   if (cacheEntry && cacheEntry.expiresAt > Date.now()) {
-  //     return of({ guests: cacheEntry.data });
-  //   }
-
-  //   // Sinon → fetch et stocke
-  //   return this.http
-  //   .get<{ guests: Guests[] }>(`${this.apiUrl}/guest/event/${eventId}`)
-  //   .pipe(
-  //     tap(response => {
-  //       this.guestsCache.set(eventId, {
-  //         expiresAt: Date.now() + this.cacheTTL,
-  //         data: response.guests
-  //       });
-  //     })
-  //   );
+  //   console.log("eventId :: ",eventId);
+  //   return this.http.get<{ guests: Guests[] }>(`${this.apiUrl}/guest/event/${eventId}`);
   // }
+  getGuestsForEvent(eventId: number): Observable<{ guests: Guests[] }> {
+    return this.refresh$.pipe(
+      startWith(eventId), // première charge
+      filter(id => id === eventId),
+      switchMap(() => {
+        if (!this.cache.has(eventId)) {
+          console.log('GUEST API CALL for eventId:', eventId);
+
+          this.cache.set(
+            eventId,
+            this.http
+              .get<{ guests: Guests[] }>(`${this.apiUrl}/guest/event/${eventId}`)
+              .pipe(shareReplay(1))
+          );
+        }
+        return this.cache.get(eventId)!;
+      })
+    );
+  }
+
+  clearGuestsCache(eventId: number) {
+    this.cache.delete(eventId);
+  }
 
   getGuestById(guestId: number): Observable<any> {
     console.log("guestId :: ", guestId);
@@ -157,6 +150,7 @@ export class GuestService {
   }
 
   updateGuest(guestId: number, guest: any): Observable<Guest> {
+    this.clearGuestsCache(guest.eventId)
     return this.http.put<Guest>(`${this.apiUrl}/guest/${guestId}`, guest );
   }
 
@@ -164,15 +158,21 @@ export class GuestService {
     return this.http.put<any>(`${this.apiUrl}/guest/rsvp/${guestId}`, {rsvpStatus} );
   }
 
-  deleteGuest(guestId: number): Observable<void> {
+  deleteGuest(guestId: number, eventId: number): Observable<void> {
     const headers = this.getAuthHeaders();
-    return this.http.delete<void>(`${this.apiUrl}/guest/${guestId}`, { headers });
+    return this.http.delete<void>(`${this.apiUrl}/guest/${guestId}`, { headers })
+    .pipe(
+      tap(() => this.clearGuestsCache(eventId))
+    );
   }
 
-  deleteSeveralGuests(guestIdList: number[]): Observable<void> {
+  deleteSeveralGuests(guestIdList: number[], eventId: number): Observable<void> {
     const headers = this.getAuthHeaders();
     console.log("### guestIdList :: ", guestIdList);
-    return this.http.post<void>(`${this.apiUrl}/guest/delete`, guestIdList, {headers});
+    return this.http.post<void>(`${this.apiUrl}/guest/delete`, guestIdList, {headers})
+    .pipe(
+      tap(() => this.clearGuestsCache(eventId))
+    );
   }
 
 
@@ -201,8 +201,5 @@ export class GuestService {
     const headers = this.getAuthHeaders();
     return this.http.post<any>(`${this.apiUrl}/guest/${guestId}/send-file`, { headers })
   }
-}
-function tap(arg0: (response: any) => void): import("rxjs").OperatorFunction<Event[], Event[]> {
-  throw new Error('Function not implemented.');
 }
 

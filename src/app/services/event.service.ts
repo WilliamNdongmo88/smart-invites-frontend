@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, Observable, shareReplay, startWith, Subject, switchMap, tap } from 'rxjs';
 import { environment } from '../../environment/environment';
 
 export interface Event {
@@ -49,9 +49,13 @@ export class EventService {
   private apiUrl: string | undefined;
   private isProd = environment.production;
 
-  private eventsCache = new Map<number, { expiresAt: number, data: Event[] }>();
-  private cacheTTL = 5 * 60 * 1000; // 5 minutes
+  private cache = new Map<number, Observable<{ events: Event[] }>>();
+  private cachedEvent = new Map<number, Observable<Event[]>>();
 
+  private linksSubject = new BehaviorSubject<any | null>(null);
+  links$ = this.linksSubject.asObservable();
+  private linkCache$?: Observable<any>;
+  private refresh$ = new Subject<void>();
 
   constructor(private http: HttpClient) { 
     if (this.isProd) {
@@ -69,25 +73,25 @@ export class EventService {
     });
   }
 
+  // getEvents(organizerId: number): Observable<{ events: Event[] }> {
+  //   return this.http.get<{ events: Event[] }>(`${this.apiUrl}/event/organizer/${organizerId}`);
+  // }
   getEvents(organizerId: number): Observable<{ events: Event[] }> {
-    const cacheEntry = this.eventsCache.get(organizerId);
-
-    // Vérifier si le cache est valide
-    if (cacheEntry && cacheEntry.expiresAt > Date.now()) {
-      return of({ events: cacheEntry.data });
+    if (this.cache.has(organizerId)) {
+      console.log('CACHE HIT for organizerId:', organizerId);
+      return this.cache.get(organizerId)!;
     }
 
-    // Sinon → fetch et stocke
-    return this.http
-    .get<{ events: Event[] }>(`${this.apiUrl}/event/organizer/${organizerId}`)
-    .pipe(
-      tap(response => {
-        this.eventsCache.set(organizerId, {
-          expiresAt: Date.now() + this.cacheTTL,
-          data: response.events
-        });
-      })
-    );
+    console.log('API CALL for organizerId:', organizerId);
+
+    const request$ = this.http
+      .get<{ events: Event[] }>(`${this.apiUrl}/event/organizer/${organizerId}`)
+      .pipe(
+        shareReplay(1)
+      );
+
+    this.cache.set(organizerId, request$);
+    return request$;
   }
 
   // getEventById(eventId: number): Observable<Event[]> {
@@ -95,49 +99,37 @@ export class EventService {
   //   return this.http.get<Event[]>(`${this.apiUrl}/event/${eventId}`);
   // }
   getEventById(eventId: number): Observable<Event[]> {
-    const cacheEntry = this.eventsCache.get(eventId);
-
-    // Vérifier si le cache est valide
-    if (cacheEntry && cacheEntry.expiresAt > Date.now()) {
-      return of(cacheEntry.data);
+    if (this.cachedEvent.has(eventId)) {
+      console.log('CACHE HIT for eventId:', eventId);
+      return this.cachedEvent.get(eventId)!;
     }
 
-    // Sinon → fetch et stocke
-    return this.http
-    .get<Event[]>(`${this.apiUrl}/event/${eventId}`)
-    .pipe(
-      tap(response => {
-        this.eventsCache.set(eventId, {
-          expiresAt: Date.now() + this.cacheTTL,
-          data: response
-        });
-      })
-    );
+    console.log('API CALL for eventId:', eventId);
+
+    const request$ = this.http
+      .get<Event[]>(`${this.apiUrl}/event/${eventId}`)
+      .pipe(
+        shareReplay(1)
+      );
+
+    this.cachedEvent.set(eventId, request$);
+    return request$;
   }
 
-  // getEventAndInvitationRelated(eventId: number): Observable<Event[]> {
-  //   const headers = this.getAuthHeaders();
-  //   return this.http.get<Event[]>(`${this.apiUrl}/event/${eventId}/invitation`, {headers});
-  // }
-  getEventAndInvitationRelated(eventId: number): Observable<Event[]> {
-    const cacheEntry = this.eventsCache.get(eventId);
-
-    // Vérifier si le cache est valide
-    if (cacheEntry && cacheEntry.expiresAt > Date.now()) {
-      return of(cacheEntry.data);
+  // Vider le cache pour un event
+  clearCache(eventId?: number) {
+    if (eventId) {
+      this.cache.delete(eventId);
+      this.cachedEvent.delete(eventId);
+    } else {
+      this.cache.clear();
+      this.cachedEvent.clear();
     }
+  }
 
-    // Sinon → fetch et stocke
-    return this.http
-    .get<Event[]>(`${this.apiUrl}/event/${eventId}/invitation`)
-    .pipe(
-      tap(response => {
-        this.eventsCache.set(eventId, {
-          expiresAt: Date.now() + this.cacheTTL,
-          data: response
-        });
-      })
-    );
+  getEventAndInvitationRelated(eventId: number): Observable<Event[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<Event[]>(`${this.apiUrl}/event/${eventId}/invitation`, {headers});
   }
 
   createEvent(request: CreateEventRequest[]): Observable<any> {
@@ -148,7 +140,11 @@ export class EventService {
 
   updateEvent(eventId: number, request: Partial<CreateEventRequest>): Observable<Event> {
     const headers = this.getAuthHeaders();
-    return this.http.put<Event>(`${this.apiUrl}/event/${eventId}`, request, { headers });
+    return this.http
+    .put<Event>(`${this.apiUrl}/event/${eventId}`, request, { headers })
+    .pipe(
+      tap(() => this.clearCache(eventId))
+    );
   }
 
   updateEventStatus(eventId: number, status: string): Observable<Event> {
@@ -156,21 +152,50 @@ export class EventService {
       `${this.apiUrl}/${eventId}/status`,
       {},
       { params: { status } }
+    ).pipe(
+      tap(() => this.clearCache(eventId))
     );
   }
   
   deleteEvent(eventId: number): Observable<void> {
     const headers = this.getAuthHeaders();
-    return this.http.delete<void>(`${this.apiUrl}/event/${eventId}`, { headers });
+    return this.http.delete<void>(`${this.apiUrl}/event/${eventId}`, { headers })
+    .pipe(
+      tap(() => this.clearCache(eventId))
+    );
   }
 
   addLink(data: any): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.post<any>(`${this.apiUrl}/link/add-link`, data, { headers })
+    .pipe(
+      tap(() => this.clearLinkCache())
+    );;
   }
 
+  // getLink(): Observable<any> {
+  //   const headers = this.getAuthHeaders();
+  //   return this.http.get<any>(`${this.apiUrl}/link/get-links`, { headers })
+  // }
   getLink(): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.http.get<any>(`${this.apiUrl}/link/get-links`, { headers })
+    return this.refresh$.pipe(
+      startWith(void 0), // première exécution
+      switchMap(() => {
+        if (!this.linkCache$) {
+          console.log('LINK API CALL');
+          const headers = this.getAuthHeaders();
+
+          this.linkCache$ = this.http
+            .get<any>(`${this.apiUrl}/link/get-links`, { headers })
+            .pipe(shareReplay(1));
+        }
+        console.log('CACHE LINK CALL');
+        return this.linkCache$;
+      })
+    );
+  }
+
+  clearLinkCache() {
+    this.linkCache$ = undefined;
   }
 }

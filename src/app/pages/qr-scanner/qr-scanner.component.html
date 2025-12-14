@@ -24,6 +24,12 @@
                   [style.display]="cameraActive() ? 'block' : 'none'"
                 ></video>
 
+                <!-- Overlay + cadre -->
+                <div class="scan-overlay" *ngIf="cameraActive()">
+                  <div class="scan-frame"></div>
+                  <p class="scan-hint">Place le QR code dans le cadre</p>
+                </div>
+
                 <div *ngIf="!cameraActive()" class="camera-placeholder">
                   <div class="placeholder-icon">📷</div>
                   <p>Caméra non active</p>

@@ -1,6 +1,12 @@
 @use "sass:color";
 $primary-gold: #d4af37;
 
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 0.5rem;
+}
+
 .qr-scanner {
     min-height: 100vh;
     background-color: #FFFFFF;
@@ -22,15 +28,19 @@ $primary-gold: #d4af37;
 }
 
 .scanner-wrapper {
-    display: grid;
+    display: flex;
     grid-template-columns: 2fr 1fr;
     gap: 2rem;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
 }
 
 .scanner-section {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    width: 50%;
 }
 
 .scanner-card,
@@ -119,7 +129,7 @@ $primary-gold: #d4af37;
 
 /* Cadre de scan */
 .scan-frame {
-  width: 50%;
+  width: 65%;
   aspect-ratio: 1;
   border: 3px solid $primary-gold;
   border-radius: 12px;
@@ -361,5 +371,9 @@ $primary-gold: #d4af37;
     .detail-item .label {
         font-weight: 600;
         margin-right: 51px;
+    }
+
+    .scanner-section {
+        width: 100%;
     }
 }

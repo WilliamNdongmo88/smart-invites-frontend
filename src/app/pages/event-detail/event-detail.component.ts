@@ -373,7 +373,7 @@ export class EventDetailComponent implements OnInit{
     this.router.navigate(['/events', this.event.id, 'guests']);
   }
 
-  getQrCodeImageUrl(): Promise<string> {
+  getQrCodeImageUrl(): Promise<string> {// Attention token en dur, à travailler dans cette methode getLinks()
     return new Promise((resolve, reject) => {
       this.qrcodeService.viewQrCode('71c39ddd-ceb3-a11a-a88b-d88a7bf0ee6b').subscribe({
         next: (response: any) => {
@@ -389,58 +389,58 @@ export class EventDetailComponent implements OnInit{
     });
   }
 
-  // shareEvent(event: Event, link: any) {
-  //   console.log("link:: ", link);
+  shareEvent(event: Event, link: any) {
+    console.log("link:: ", link);
 
-  //   const message =
-  //     `Vous êtes invité au : ${event.title}\n` +
-  //     `📅 Date : ${this.formatDate(event.date)}\n` +
-  //     `⏰ Heure : ${event.time}\n\n` +
-  //     `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
-  //     `${link.value}`;
+    const message =
+      `Vous êtes invité au : ${event.title}\n` +
+      `📅 Date : ${this.formatDate(event.date)}\n` +
+      `⏰ Heure : ${event.time}\n\n` +
+      `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
+      `${link.value}`;
 
-  //   if (navigator.share) {
-  //     navigator.share({
-  //       title: event.title,
-  //       text: message,
-  //     });
-  //   }
-  // }
-async shareEvent(event: Event, link: any) {
-  const message =
-    `Vous êtes invité au : ${event.title}\n` +
-    `📅 Date : ${this.formatDate(event.date)}\n` +
-    `⏰ Heure : ${event.time}\n\n` +
-    `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
-    `${link.value}`;
-
-  if (!navigator.share || !navigator.canShare) {
-    alert("Votre appareil ne supporte pas le partage natif.");
-    return;
+    if (navigator.share) {
+      navigator.share({
+        title: event.title,
+        text: message,
+      });
+    }
   }
+// async shareEvent(event: Event, link: any) {// Echec, partage sans texte
+//   const message =
+//     `Vous êtes invité au : ${event.title}\n` +
+//     `📅 Date : ${this.formatDate(event.date)}\n` +
+//     `⏰ Heure : ${event.time}\n\n` +
+//     `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
+//     `${link.value}`;
 
-  try {
-    // Récupération de l'image via ton backend proxy
-    const imageUrl = await this.getQrCodeImageUrl();
-    //const proxyUrl = `${this.apiUrl}/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+//   if (!navigator.share || !navigator.canShare) {
+//     alert("Votre appareil ne supporte pas le partage natif.");
+//     return;
+//   }
 
-    //const response = await fetch(proxyUrl);
-    // if (!response.ok) throw new Error(`Erreur proxy : ${response.status}`);
+//   try {
+//     // Récupération de l'image via ton backend proxy
+//     const imageUrl = await this.getQrCodeImageUrl();
+//     const proxyUrl = `${this.apiUrl}/image-proxy?url=${encodeURIComponent(imageUrl)}`;
 
-    // const blob = await response.blob();
-    // const file = new File([blob], "invitation.jpg", { type: blob.type });
+//     const response = await fetch(proxyUrl);
+//     if (!response.ok) throw new Error(`Erreur proxy : ${response.status}`);
 
-    // 👉 1 seul share obligatoire
-    await navigator.share({
-      // files: [file],
-      text: message
-    });
+//     const blob = await response.blob();
+//     const file = new File([blob], "invitation.jpg", { type: blob.type });
 
-    console.log("🎉 Invitation partagée avec succès !");
-  } catch (err) {
-    console.error("Erreur lors du partage : ", err);
-  }
-}
+//     // 👉 1 seul share obligatoire
+//     await navigator.share({
+//       files: [file],
+//       text: message
+//     });
+
+//     console.log("🎉 Invitation partagée avec succès !");
+//   } catch (err) {
+//     console.error("Erreur lors du partage : ", err);
+//   }
+// }
 
   editEvent() {
     //alert('✏️ Édition de l\'événement...');
@@ -491,7 +491,7 @@ async shareEvent(event: Event, link: any) {
       this.isLoading = true;
       this.guestService.addGuest(datas).subscribe(
       (response) => {
-        console.log("Response :: ", response.guests);
+        console.log("[onGuestAdded] Response :: ", response.guests);
         this.isLoading = false;
         this.getGuestsByEvent();
         this.closeAddGuestModal();
@@ -518,7 +518,7 @@ async shareEvent(event: Event, link: any) {
     this.isLoading = true;
     this.eventService.addLink(data).subscribe(
       (response) => {
-        console.log("Response :: ", response);
+        console.log("[onLinkAdded] Response :: ", response);
         this.isLoading = false;
         this.closeAddLinkModal();
         this.links = [];

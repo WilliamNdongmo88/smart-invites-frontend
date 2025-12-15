@@ -43,7 +43,6 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   guestId: number = 0;
   eventId: number = 0;
   isValid: boolean = false;
-  private isProcessing = false;
   private isScanning = false;
   datas: any[] = [];
   data = {
@@ -81,6 +80,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         }
     });
     this.getEventAndInvitationRelated();
+    this.getCheckInParam();
   }
 
   ngOnDestroy() {
@@ -115,7 +115,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
             this.cameraActive.set(true);
             video.play();
             this.isScanning = true;   // Activation du scan
-            this.scanQRCode();
+            if(this.autoCapture()) this.scanQRCode();
         };
     })
     .catch(err => {
@@ -174,24 +174,43 @@ export class QRScannerComponent implements OnInit, OnDestroy {
 
   captureFrame() {
     console.log("Manuel...")
+    if (!this.cameraActive() || !this.isScanning) return;
+
     const video = this.videoElement.nativeElement;
     const canvas = this.canvasElement.nativeElement;
-    const context = canvas.getContext('2d', { willReadFrequently: true });
+    const context = canvas.getContext("2d", { willReadFrequently: true });
 
     if (!context) return;
+
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+        this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
+        return;
+    }
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // Simuler la détection d'un code QR à partir de la capture
-    this.processQRCode('QR_CODE_' + Math.random().toString(36).substr(2, 9));
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    const qrCode = jsQR(imageData.data, canvas.width, canvas.height);
+
+    if (qrCode?.data) {
+        console.log('QR détecté:', qrCode.data);
+
+        this.isScanning = false;              // Stop immédiat de la boucle
+        cancelAnimationFrame(this.animationFrameId!);
+
+        this.processQRCode(qrCode.data);      // Un seul appel
+        return;                               
+    }
+
+    this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
   }
 
   processQRCode(qrCode: string) {
     this.scannedCount.update(count => count + 1);
 
-    console.log("qrcode:: ", qrCode);
+    //console.log("qrcode:: ", qrCode);
     this.guestId = Number(qrCode.split('view/')[1].split(':')[0]);
     this.token = qrCode.split('view/')[1].split(':')[1]+':'+qrCode.split('view/')[1].split(':')[2];
     console.log("this.guestId:: ", this.guestId);
@@ -257,13 +276,14 @@ export class QRScannerComponent implements OnInit, OnDestroy {
             eventName: this.data.eventTitle,
             message: 'Code QR validé avec succès !'
         });
+      this.manageCheckInParameter();
     },
     (error) => {
         console.error('❌ [getGuestById] Erreur :', error.message);
         this.isValid = false;
-
         if (this.soundEnabled()) this.playErrorSound();
         this.errorCount.update(count => count + 1);
+        this.manageCheckInParameter();
         if(error.message.includes('409 Conflict'))console.warn(error.error.error);
         this.scanResult.set({
             success: false,
@@ -272,36 +292,58 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     });
   }
 
-//   getGuestConcerned(){
-//     this.guestService.getGuestById(this.guestId).subscribe(
-//     (response) => {
-//         //console.log("###response :: ", response);
-//         this.successCount.update(count => count + 1);
+  manageCheckInParameter(){
+    const data = {
+      eventId: this.eventId,
+      automaticCapture: this.autoCapture(),
+      confirmationSound: this.soundEnabled(),
+      scannedCodes: this.scannedCount(),
+      scannedSuccess: this.successCount(),
+      scannedErrors: this.errorCount(),
+   }
+    console.log('[manageCheckInParameter] data:: ', data);
+    this.qrcodeService.createCheckInParam(data).subscribe(
+    (response) => {
+        console.log("###response :: ", response);
+    },
+    (error) => {
+        console.error('❌ [manageCheckInParameter] Erreur :', error.message);
+    });
+  }
 
-//         this.isValid = true;
+  getCheckInParam(){
+    this.qrcodeService.getCheckInParam(this.eventId).subscribe(
+    (response) => {
+        console.log("[getCheckInParam] response :: ", response);
+        this.autoCapture.set(response.automatic_capture);
+        this.soundEnabled.set(response.confirmation_sound);
+        this.scannedCount.set(response.scanned_codes);
+        this.successCount.set(response.scanned_success);
+        this.errorCount.set(response.scanned_errors);
+    },
+    (error) => {
+        console.error('❌ [getCheckInParam] Erreur :', error.message);
+    });
+  }
 
-//         // 🎉 Son + message + stop caméra (comme avant)
-//         if (this.soundEnabled()) this.playSuccessSound();
-
-//         this.scanResult.set({
-//             success: true,
-//             guestName: response.has_plus_one ? response.full_name+' et '+response.plus_one_name : response.full_name,
-//             eventName: response.eventTitle,
-//             message: 'Code QR validé avec succès !'
-//         });
-//     },
-//     (error) => {
-//         console.error('❌ [getGuestById] Erreur :', error.message);
-//         this.isValid = false;
-
-//         if (this.soundEnabled()) this.playErrorSound();
-//         this.errorCount.update(count => count + 1);
-//         this.scanResult.set({
-//             success: false,
-//             message: 'Code QR invalide ou non reconnu',
-//         });
-//     });
-//   }
+  updateCheckInParam(){
+    const data = {
+      eventId: this.eventId,
+      automaticCapture: this.autoCapture(),
+      confirmationSound: this.soundEnabled(),
+      scannedCodes: this.scannedCount(),
+      scannedSuccess: this.successCount(),
+      scannedErrors: this.errorCount(),
+   }
+    console.log('[updateCheckInParam] data:: ', data);
+    this.qrcodeService.updateCheckInParam(data).subscribe(
+    (response) => {
+        console.log("###response :: ", response);
+    },
+    (error) => {
+        console.error('❌ [updateCheckInParam] Erreur :', error.message);
+    });
+  }
 
   processManualCode() {
     if (!this.manualCode.trim()) {
@@ -321,11 +363,13 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   toggleAutoCapture(event: Event) {
     const target = event.target as HTMLInputElement;
     this.autoCapture.set(target.checked);
+    this.updateCheckInParam();
   }
 
   toggleSound() {
     console.log('Mise à jour du signal');
     this.soundEnabled.set(false);
+    this.updateCheckInParam();
   }
 
   private playSuccessSound() {

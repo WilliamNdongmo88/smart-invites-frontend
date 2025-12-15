@@ -68,4 +68,19 @@ export class QrCodeService {
     const headers = this.getAuthHeaders();
     return this.http.post<any>(`${this.apiUrl}/checkin/scan`, data, { headers });
   }
+
+  createCheckInParam(data: any): Observable<any>{
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/checkin-param`, data, { headers });
+  }
+
+  getCheckInParam(eventId: number): Observable<any>{
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(`${this.apiUrl}/checkin-param/${eventId}`, { headers });
+  }
+
+  updateCheckInParam(data: any): Observable<any>{
+    const headers = this.getAuthHeaders();
+    return this.http.put<any>(`${this.apiUrl}/checkin-param`, data, { headers });
+  }
 }

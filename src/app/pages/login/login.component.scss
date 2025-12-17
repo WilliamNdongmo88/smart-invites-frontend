@@ -164,6 +164,7 @@
   border-radius: 8px;
   font-weight: 600;
   transition: background-color 0.3s;
+  justify-content: center;
 
   &:hover {
     background-color: #b9962d;
@@ -252,7 +253,8 @@
 .divider {
   display: flex;
   align-items: center;
-  margin-top: -10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
   color: #999999;
   font-size: 0.875rem;
 
@@ -291,6 +293,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  width: 100%;
 
   &:hover {
     background-color: #F5F5F5;

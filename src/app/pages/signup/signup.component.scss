@@ -240,6 +240,7 @@
       font-size: 1rem;
       font-weight: 600;
       margin-bottom: 1.5rem;
+      justify-content: center;
 
       &:disabled {
         opacity: 0.5;
@@ -270,7 +271,8 @@
     .divider {
       display: flex;
       align-items: center;
-      margin-top: 1px;
+      margin-top: 0px;
+      margin-bottom: 0px;
       color: #999999;
       font-size: 0.875rem;
 
@@ -309,6 +311,7 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+      width: 100%;
 
       &:hover {
         background-color: #F5F5F5;

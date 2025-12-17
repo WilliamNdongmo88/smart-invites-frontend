@@ -219,12 +219,16 @@ export class GuestDetailComponent implements OnInit{
   resendInvitation() {
     //alert(`✉️ Invitation renvoyée à ${this.guest.name}`);
     this.loading = true;
-    console.log("this.guest :: ", this.guest);
+    console.log("[resendInvitation] guest :: ", this.guest);
     if(this.guest.qrCodeUrl == null){
       this.triggerError();
       this.errorMessage = "✉️ L'invitation n'a pas encore été envoyée à cet invité.";
       this.loading = false;
-    }else{
+    }else if(this.guest.status != 'pending'){
+      this.triggerError();
+      this.errorMessage = "✉️ Le status de l'invité doit être en attente.";
+      this.loading = false;
+    }else if(this.guest.status == 'pending'){
       this.guestService.sendReminderMail([this.guest.id]).subscribe(
       (response) => {
         this.loading = false;

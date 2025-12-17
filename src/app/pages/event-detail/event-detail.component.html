@@ -52,20 +52,21 @@
                         <button class="btn btn-primary" style="width: 100%;" (click)="sendInvitations()">
                             <p class="btn-text">Gérer vos invités</p>
                         </button>
-                        <button class="btn btn-outline" style="width: 100%;" (click)="openAddLinkModal()">
+                        <button class="btn btn-outline" style="width: 100%;" (click)="openAddLinkModal('create')">
                             <p class="btn-text">Générer le lien d'invitation de l'événement</p>
                         </button>
                     </div>
                 </div>
 
-                <!-- Liens d'invitation -->
+                <!-- Liens d'invitation (click)="shareEventLink(event, link)"-->
                 <div class="card mt-6">
                     <h3>Liens d'invitations</h3>
                     <p class="export-desc">Partagé le lien d'invitation a vos contact</p>
                     <button
                         *ngFor="let link of links"
                         class="btn link-btn btn-outline"
-                        (click)="shareEvent(event, link)">
+                        (click)="openAddLinkModal('partage', event, link)"
+                        >
                         {{ getFilterLabel(link.label) }}
                     </button>
                     <!-- <div class="export-buttons">
@@ -272,7 +273,11 @@
 
     <app-link-modal
         *ngIf="showAddLinkModal()"
+        [mode]="selectedMode"
+        [link]="linkToEdit"
+        [event]="eventToShare"
         (linkAdded)="onLinkAdded($event)"
+        (resetLinks)="resetTabLinks()"
         (closed)="closeAddLinkModal()"
     ></app-link-modal>
 

@@ -131,6 +131,62 @@
   }
 }
 
+// Style pour edit mode
+.link-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+  gap: 12px;
+  padding: 12px 0;
+  margin-top: 0px;
+  margin-bottom: 20px;
+
+  /* 🔽 Trait de séparation */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+
+    span {
+      white-space: nowrap;
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* 🎨 Boutons */
+.btn-outline {
+  background: transparent;
+  border: 1px solid #ccc;
+  color: #333;
+
+  &:hover {
+    background-color: #f3f3f3;
+  }
+}
+
+.btn-danger {
+  background-color: #fff;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+
+  &:hover {
+    background-color: #e74c3c;
+    color: #fff;
+  }
+}
+
 @media (max-width: 768px) {
   .modal-content {
     max-width: 100%;
@@ -142,6 +198,17 @@
 
     .btn {
       width: 100%;
+    }
+  }
+
+  .link-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+
+    .action-btn {
+      flex: 1;
+      justify-content: center;
     }
   }
 }

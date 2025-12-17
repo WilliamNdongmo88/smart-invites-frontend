@@ -306,7 +306,7 @@
                     <img [src]="guest.qrCodeUrl" alt="QR Code" class="qr-code-image" />
                     <p class="qr-description">Scannez ce code pour accéder à l'invitation</p>
                     </div>
-                    <button class="btn btn-outline" (click)="downloadQRCode()">📥 Télécharger le QR Code</button>
+                    <button class="btn btn-outline" (click)="downloadQRCode(guest)">📥 Télécharger le QR Code</button>
                 </div>
 
                 <ng-template #noQr>

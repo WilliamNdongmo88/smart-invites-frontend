@@ -423,8 +423,15 @@ export class GuestListComponent implements OnInit{
     );
   }
 
-  downloadQRCode() {
-    alert('📥 Téléchargement du QR Code...');
+  downloadQRCode(guest: any) {
+    console.log("Guest : ", guest);
+    if (!guest.qrCodeUrl) {
+      this.triggerError();
+      this.errorMessage = "Le QR code n'est pas disponible pour cet invité.";
+      return;
+    }
+
+    this.qrCodeService.downloadQrCode(guest.id, guest.qrCodeUrl);
   }
 
   openAddGuestModal() {

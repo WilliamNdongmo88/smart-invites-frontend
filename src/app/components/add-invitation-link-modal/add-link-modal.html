@@ -1,10 +1,14 @@
-<div class="modal-overlay" (click)="closeModal()">
+<div *ngIf="mode=='create' || mode=='edit'" class="modal-overlay" (click)="closeModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
         <button class="modal-close" (click)="closeModal()">✕</button>
 
-        <div class="modal-header">
+        <div *ngIf="mode=='create'" class="modal-header">
             <h2>Générer un lien d'invitation</h2>
             <p>Définissez les caractéristiques de votre lien</p>
+        </div>
+        <div *ngIf="mode=='edit'" class="modal-header">
+            <h2>Mettre à jour le lien d'invitation</h2>
+            <p>Modifier les caractéristiques de votre lien</p>
         </div>
 
         <form (ngSubmit)="onSubmit()" #addLinkForm="ngForm" class="modal-form">
@@ -57,9 +61,36 @@
                     class="btn btn-primary"
                     [disabled]="!addLinkForm.valid"
                     >
-                    ✓ Générer le lien
+                    {{ mode === 'edit' ? '✓ Mettre à jour' : '✓ Générer le lien' }}
                 </button>
             </div>
         </form>
+    </div>
+</div>
+<div *ngIf="mode=='partage'" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="modal-close" (click)="closeModal()">✕</button>
+
+        <div class="modal-header">
+            <h2>Action à mener</h2>
+            <p>Partagé, modifié ou supprimé le lien d'invitation.</p>
+        </div>
+
+        <div class="link-actions">
+            <button class="btn btn-outline action-btn"
+                (click)="shareEventLinkHandle()">
+                🔗 <span>Partager</span>
+            </button>
+
+            <button class="btn btn-outline action-btn"
+                (click)="openEditLinkModal('edit')">
+                ✏️ <span>Modifier</span>
+            </button>
+
+            <button class="btn btn-danger action-btn"
+                (click)="deleteLinkHandle()">
+                🗑️ <span>Supprimer</span>
+            </button>
+        </div>
     </div>
 </div>

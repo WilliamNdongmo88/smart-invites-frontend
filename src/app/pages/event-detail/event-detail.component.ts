@@ -83,6 +83,10 @@ export class EventDetailComponent implements OnInit{
   isMobile!: Observable<boolean>;
   filterStatus = signal<FilterStatus>('confirmed');
   //linkTypes = signal<LinkTypes>('unique');
+  selectedMode: 'create' | 'edit' | 'partage' = 'create';
+  eventToShare: Event | undefined;
+  linkToEdit: any;
+  allLinks: any[] = [];
 
   filters: { label: string; value: FilterStatus }[] = [
     { label: 'Confirmés', value: 'confirmed' },
@@ -91,7 +95,7 @@ export class EventDetailComponent implements OnInit{
     { label: 'Présents', value: 'present' },
   ];
 
-  links: { label: string; value: string }[] = [
+  links: { id?: number; label: string; value: string }[] = [
     // { label: '🔗 Partagé le lien unique (limite d\'utilisation 2)', value: 'unique' },
     // { label: '🔗 Partagé le lien couple (limite d\'utilisation  2)', value: 'couple' }
   ];
@@ -364,10 +368,6 @@ export class EventDetailComponent implements OnInit{
     this.router.navigate(['/events', this.event.id, 'guests']);
   }
 
-  shareEventLink(){
-    console.log("Partage du lien d'invitation de l'événement");
-  }
-
   sendReminder() {
     this.send(this.event.title)
     this.router.navigate(['/events', this.event.id, 'guests']);
@@ -389,7 +389,7 @@ export class EventDetailComponent implements OnInit{
     });
   }
 
-  shareEvent(event: Event, link: any) {
+  shareEventLink(event: Event, link: any) {
     console.log("link:: ", link);
 
     const message =
@@ -406,7 +406,7 @@ export class EventDetailComponent implements OnInit{
       });
     }
   }
-// async shareEvent(event: Event, link: any) {// Echec, partage sans texte
+// async shareEventLink(event: Event, link: any) {// Echec, partage sans texte
 //   const message =
 //     `Vous êtes invité au : ${event.title}\n` +
 //     `📅 Date : ${this.formatDate(event.date)}\n` +
@@ -509,6 +509,7 @@ export class EventDetailComponent implements OnInit{
   }
 
   onLinkAdded(newLink: any) {
+    console.log("newLink :: ", newLink);
     const data = {
       eventId: this.eventId,
       type: newLink.type,
@@ -516,18 +517,66 @@ export class EventDetailComponent implements OnInit{
     };
     console.log("data :: ", data);
     this.isLoading = true;
-    this.eventService.addLink(data).subscribe(
+    if(newLink.mode=='create'){
+      this.eventService.addLink(data).subscribe(
+        (response) => {
+          console.log("[onLinkAdded] Response :: ", response);
+          this.isLoading = false;
+          this.closeAddLinkModal();
+          this.links = [];
+          this.getLinks();
+        },
+        (error) => {
+          this.isLoading = false;
+          console.error('❌ Erreur :', error.message);
+          console.error('❌ Erreur :', error.message.split(':')[1]);
+          if(error.message.includes("409 Conflict")){
+            this.triggerError();
+            this.errorMessage = "Erreur lors de la génération du lien";
+            console.log("Message :: ", this.errorMessage);
+          }  
+        }
+      );
+    }else if(newLink.mode=='edit'){
+      this.eventService.updateLink(this.linkToEdit.id, data).subscribe(
+        (response) => {
+          console.log("[onLinkAdded] Response :: ", response);
+          this.isLoading = false;
+          this.closeAddLinkModal();
+          this.links = [];
+          this.getLinks();
+        },
+        (error) => {
+          this.isLoading = false;
+          console.error('❌ Erreur :', error.message);
+          console.error('❌ Erreur :', error.message.split(':')[1]);
+          if(error.message.includes("409 Conflict")){
+            this.triggerError();
+            this.errorMessage = "Erreur lors de la mise à jour du lien";
+            console.log("Message :: ", this.errorMessage);
+          }
+        }
+      );
+    }
+  }
+
+  getLinks(){
+    this.eventService.getLink().subscribe(
       (response) => {
-        console.log("[onLinkAdded] Response :: ", response);
-        this.isLoading = false;
-        this.closeAddLinkModal();
-        this.links = [];
-        this.getLinks();
+        console.log("[getLinks] Response :: ", response);
+        for (const link of response) {
+          const data = {
+            id: link.id,
+            label: `🔗 Partagé le lien ${link.type} (utilisé ${link.used_count}/${link.limit_count})`, 
+            value:`${link.link}`,
+          };
+          this.links.push(data);
+        }
+        this.allLinks = response;
       },
       (error) => {
         this.isLoading = false;
         console.error('❌ Erreur :', error.message);
-        console.error('❌ Erreur :', error.message.split(':')[1]);
         if(error.message.includes("409 Conflict")){
           this.triggerError();
           this.errorMessage = "Erreur lors de la génération du lien";
@@ -537,28 +586,9 @@ export class EventDetailComponent implements OnInit{
     );
   }
 
-  getLinks(){
-    this.eventService.getLink().subscribe(
-      (response) => {
-        console.log("Response :: ", response);
-        for (const link of response) {
-          const data = {
-            label: `🔗 Partagé le lien ${link.type} (limite d'utilisation ${link.limit_count})`, 
-            value:`${link.link}`,
-          };
-          this.links.push(data);
-        }
-      },
-      (error) => {
-        this.isLoading = false;
-        console.error('❌ Erreur :', error.message);
-        if(error.message.includes("409 Conflict")){
-          this.triggerError();
-          this.errorMessage = "Erreur lors de la génération du lien";
-          console.log("Message :: ", this.errorMessage);
-        }  
-      }
-    );
+  resetTabLinks(){
+    this.links = [];
+    this.getLinks();
   }
 
   editGuest(guest: Guest) {
@@ -634,8 +664,24 @@ export class EventDetailComponent implements OnInit{
     this.showAddGuestModal.set(false);
   }
 
-  openAddLinkModal() {
-    this.showAddLinkModal.set(true);
+  openAddLinkModal(mode: any, event?: any, link?: any) {
+    // console.log("mode:: ", mode);
+    // console.log("this.allLinks:: ", this.allLinks);
+    if(mode=='partage'){
+      for (const elt of this.allLinks) {
+        if(elt.id==link.id){
+          // console.log("link trouvé:: ", link);
+          this.linkToEdit = link;
+          this.eventToShare = event;
+        }
+      }
+      this.selectedMode = mode;
+      
+      this.showAddLinkModal.set(true);
+    }else{
+      this.selectedMode = mode;
+      this.showAddLinkModal.set(true);
+    }
   }
 
   closeAddLinkModal() {

@@ -173,6 +173,15 @@ export class EventService {
     );;
   }
 
+  updateLink(linkId: number, data: any): Observable<any> {
+    console.log("updateLink data :: ", data);
+    const headers = this.getAuthHeaders();
+    return this.http.put<any>(`${this.apiUrl}/link/edit-link/${linkId}`, data, { headers })
+    .pipe(
+      tap(() => this.clearLinkCache())
+    );;
+  }
+
   // getLink(): Observable<any> {
   //   const headers = this.getAuthHeaders();
   //   return this.http.get<any>(`${this.apiUrl}/link/get-links`, { headers })
@@ -193,6 +202,32 @@ export class EventService {
         return this.linkCache$;
       })
     );
+  }
+
+  getLinkById(linkId: number): Observable<any> {
+    return this.refresh$.pipe(
+      startWith(void 0), // première exécution
+      switchMap(() => {
+        if (!this.linkCache$) {
+          console.log('LINK API CALL');
+          const headers = this.getAuthHeaders();
+
+          this.linkCache$ = this.http
+            .get<any>(`${this.apiUrl}/link/${linkId}`, { headers })
+            .pipe(shareReplay(1));
+        }
+        console.log('CACHE LINK CALL');
+        return this.linkCache$;
+      })
+    );
+  }
+
+  deleteLink(linkId: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.delete<any>(`${this.apiUrl}/link/delete-link/${linkId}`, { headers })
+    .pipe(
+      tap(() => this.clearLinkCache())
+    );;
   }
 
   clearLinkCache() {

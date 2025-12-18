@@ -57,6 +57,8 @@ export class GuestListComponent implements OnInit{
   loadingDelete: boolean = false;
   isModalLoading: boolean = false;
   showDeleteModal = false;
+  canSend: boolean = true;
+  canDelete: boolean = true;
   selectedGuestId: number | null = null;
   itemsPerPage = 10;
   currentPage = 1;
@@ -149,6 +151,7 @@ export class GuestListComponent implements OnInit{
   setFilterStatus(status: 'all' | 'confirmed' | 'pending' | 'declined' | 'present') {
     this.filterStatus.set(status);
     this.filterGuests();
+    this.toggleSelectAll({ target: { checked: true } });
   }
 
   goToGuestDetail(guestId: number){
@@ -252,9 +255,42 @@ export class GuestListComponent implements OnInit{
   toggleSelectAll(event: any) {
     this.isAllSelected = event.target.checked;
     if (this.isAllSelected) {
-      this.guestIdList = this.filteredGuests
-        .filter(g => !g.qrCodeGenerated)
-        .map(g => g.id);
+      console.log('[toggleSelectAll] this.filteredGuests : ', this.filteredGuests);
+      if(this.filterStatus()==='all'){
+        let valid = true;
+        for (const guest of this.filteredGuests) {
+          if (guest.status !== 'pending') {
+            valid = false;
+          }
+        }
+        this.canDelete = valid;
+        this.guestIdList = this.guests.map(guest => Number(guest.id));
+        console.log('Tous les invités sélectionnés : ', this.guestIdList);
+      }else if(this.filterStatus()==='confirmed'){
+        this.guestIdList = [];
+        this.canSend = true;
+        this.canDelete = false;
+        this.guestIdList = this.filteredGuests
+                          .filter(g => g.status === 'confirmed')
+                          .map(g => g.id);
+        console.log('Tous les invités sélectionnés : ', this.guestIdList);
+      }else if(this.filterStatus()==='pending'){
+        this.guestIdList = [];
+        this.canSend = false;
+        this.canDelete = false;
+        this.guestIdList = this.filteredGuests
+                          .filter(g => g.status === 'pending')
+                          .map(g => g.id);
+        console.log('Tous les invités sélectionnés : ', this.guestIdList);
+      }else if(this.filterStatus()==='declined'){
+        this.guestIdList = [];
+        this.canSend = true;
+        this.canDelete = false;
+        this.guestIdList = this.filteredGuests
+                          .filter(g => g.status === 'declined')
+                          .map(g => g.id);
+        console.log('Tous les invités sélectionnés : ', this.guestIdList);
+      }
     } else {
       this.guestIdList = [];
     }

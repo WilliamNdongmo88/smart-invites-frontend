@@ -74,14 +74,14 @@
                     </div>
                 </div>
                 <button
-                    [disabled]="guestIdList.length === 0"
+                    [disabled]="guestIdList.length === 0 || canSend"
                     (click)="openDeleteModal(guestIdList, 'send')"
                     class="filter-btn send"
                     >
                     {{ loading ? '⏳ Envoie...' : 'Envoyer ' + guestIdList.length + ' invitation(s)' }}
                 </button>
                 <button
-                    [disabled]="guestIdList.length === 0"
+                    [disabled]="guestIdList.length === 0 || canDelete"
                     (click)="openDeleteModal(guestIdList, 'delete')"
                     class="filter-btn delete"
                     >

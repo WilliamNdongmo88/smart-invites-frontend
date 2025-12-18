@@ -76,22 +76,22 @@
                     </div> -->
                 </div>
 
-                <!-- Guests List -->
-                <div *ngIf="!(isMobile | async)" class="card mt-8">
+                <!-- Guests List *ngIf="!(isMobile | async)" -->
+                <div class="card mt-card">
                     <h2 class="clickable-title">
                         Invités ({{ filteredGuests.length }})
                     </h2>
 
-                    <!-- Search and Filter -->
-                    <div *ngIf="!(isMobile | async)" class="search-filter">
-                        <!-- <div class="search-box">
+                    <!-- Search and Filter *ngIf="!(isMobile | async)" -->
+                    <div class="search-filter">
+                        <div class="search-box">
                             <input
                             type="text"
                             placeholder="Rechercher par nom ou email..."
                             [(ngModel)]="searchTerm"
                             (ngModelChange)="filterGuests()"
                             />
-                        </div> -->
+                        </div>
 
                         <div class="filter-buttons">
                             <button
@@ -113,8 +113,8 @@
                         </div>
                     </div>
 
-                    <!-- Guests Table -->
-                    <div *ngIf="!(isMobile | async)" class="guests-table">
+                    <!-- Guests Table *ngIf="!(isMobile | async)" -->
+                    <div class="guests-table guests-grid">
                         <table>
                             <thead>
                                 <tr>
@@ -180,8 +180,42 @@
 
             <!-- Right column - Stats -->
             <div class="right-column">
-                <!-- Quick Stats -->
-                <div *ngIf="!(isMobile | async)" class="card">
+
+                <!-- Actions 👤-->
+                <div class="card mt-card">
+                    <h3>Actions rapides</h3>
+                    <div class="actions-list">
+                    <button class="btn btn-outline" style="width: 100%;" (click)="openAddGuestModal()">
+                        ➕ Ajouter un invité
+                    </button>
+                    <button class="btn btn-outline" style="width: 100%;" (click)="openImportModal()">
+                        📥 Importer une liste d'invité
+                    </button>
+                    <!-- <button class="btn btn-primary" style="width: 100%;" (click)="sendReminder()">
+                        ✉️ Envoyer rappel
+                    </button> -->
+                    </div>
+                </div>
+
+                <!-- Export Options -->
+                <!-- <div *ngIf="!(isMobile | async)" class="card mt-6">
+                    <h3>Exporter</h3>
+                    <p class="export-desc">Téléchargez vos données dans différents formats</p>
+                    <div class="export-buttons">
+                        <button class="btn btn-outline" style="width: 100%;" (click)="exportCSV()">
+                            📊 Exporter en CSV
+                        </button>
+                        <button class="btn btn-outline" style="width: 100%;" (click)="exportPDF()">
+                            📄 Exporter en PDF
+                        </button>
+                        <button class="btn btn-outline" style="width: 100%;" (click)="exportExcel()">
+                            📈 Exporter en Excel
+                        </button>
+                    </div>
+                </div> -->
+
+                <!-- Quick Stats *ngIf="!(isMobile | async)" -->
+                <div class="card mt-card">
                     <h3>Résumé</h3>
 
                     <div class="stats-list">
@@ -223,39 +257,6 @@
                     <div class="response-rate">
                     <p class="label">Taux de réponse</p>
                     <p class="value">{{ getResponseRate() }}%</p>
-                    </div>
-                </div>
-
-                <!-- Actions 👤-->
-                <div class="card mt-6">
-                    <h3>Actions rapides</h3>
-                    <div class="actions-list">
-                    <button class="btn btn-outline" style="width: 100%;" (click)="openAddGuestModal()">
-                        ➕ Ajouter un invité
-                    </button>
-                    <button class="btn btn-outline" style="width: 100%;" (click)="openImportModal()">
-                        📥 Importer une liste d'invité
-                    </button>
-                    <!-- <button class="btn btn-primary" style="width: 100%;" (click)="sendReminder()">
-                        ✉️ Envoyer rappel
-                    </button> -->
-                    </div>
-                </div>
-
-                <!-- Export Options -->
-                <div *ngIf="!(isMobile | async)" class="card mt-6">
-                    <h3>Exporter</h3>
-                    <p class="export-desc">Téléchargez vos données dans différents formats</p>
-                    <div class="export-buttons">
-                        <button class="btn btn-outline" style="width: 100%;" (click)="exportCSV()">
-                            📊 Exporter en CSV
-                        </button>
-                        <button class="btn btn-outline" style="width: 100%;" (click)="exportPDF()">
-                            📄 Exporter en PDF
-                        </button>
-                        <button class="btn btn-outline" style="width: 100%;" (click)="exportExcel()">
-                            📈 Exporter en Excel
-                        </button>
                     </div>
                 </div>
             </div>

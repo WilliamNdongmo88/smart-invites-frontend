@@ -57,6 +57,10 @@ $primary-gold: #d4af37;
       margin-top: -1rem;
     }
 
+    .right-column{
+      margin-top: -30px;
+    }
+
     .card {
       background-color: #FFFFFF;
       border: 1px solid #E0E0E0;
@@ -86,6 +90,9 @@ $primary-gold: #d4af37;
         color: #2d2c2c;
         //font-weight: bold;
       }
+    }
+    .mt-card{
+      margin-top: 30px;
     }
 
     .clickable-title {
@@ -601,5 +608,12 @@ $primary-gold: #d4af37;
 
       .mt-card{
         margin-top: 20px;
+      }
+
+      .guests-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
       }
     }

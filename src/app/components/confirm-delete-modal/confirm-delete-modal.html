@@ -12,7 +12,7 @@
     <div class="modal-footer">
       <button class="cancel-btn" [ngClass]="styleAction" (click)="onCancel()">Annuler</button>
       <button *ngIf="isDelete" class="delete-btn" (click)="onConfirm()">Supprimer</button>
-      <button *ngIf="isSender" class="sender-btn" (click)="onConfirm()">Envoyer</button>
+      <button *ngIf="isSender || isReSender" class="sender-btn" (click)="onConfirm()">Envoyer</button>
     </div>
   </div>
 </div>

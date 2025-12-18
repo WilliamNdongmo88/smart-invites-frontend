@@ -19,7 +19,7 @@
                 <button class="btn btn-outline" (click)="openImportModal()">
                 📥 Importer
                 </button>
-                <button class="btn btn-primary" (click)="sendReminder()">
+                <button class="btn btn-primary" (click)="openDeleteModal(guestIdList, 'resend')">
                     {{ loading ? '⏳ Renvoie...' : '✉️ Envoyer rappel' }}
                 </button>
             </div>
@@ -359,6 +359,7 @@
         [action]="modalAction"
         (confirmDelete)="confirmDelete()"
         (confirmSend)="sendInvitation()"
+        (confirmReSend)="sendReminder()"
         (cancel)="closeModal()">
     </app-confirm-delete-modal>
 </div>

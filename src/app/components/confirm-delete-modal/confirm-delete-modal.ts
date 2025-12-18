@@ -14,10 +14,12 @@ export class ConfirmDeleteModalComponent implements OnChanges {
   @Input() action: any;
 
   @Output() confirmSend = new EventEmitter<void>();
+  @Output() confirmReSend = new EventEmitter<void>();
   @Output() confirmDelete = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
   isSender: boolean = false;
+  isReSender: boolean = false;
   isDelete: boolean = false;
   styleAction: string = "";
 
@@ -29,8 +31,12 @@ export class ConfirmDeleteModalComponent implements OnChanges {
 
   private updateActionState(): void {
     this.isSender = this.action === 'send';
+    this.isReSender = this.action === 'resend';
     this.isDelete = this.action === 'delete' || this.action === 'one';
     if(this.isSender){
+      this.styleAction = 'send';
+    }
+    if(this.isReSender){
       this.styleAction = 'send';
     }
     if (this.isDelete) {
@@ -42,6 +48,8 @@ export class ConfirmDeleteModalComponent implements OnChanges {
   onConfirm() {
     if (this.isSender) {
       this.confirmSend.emit();
+    } else if (this.isReSender) {
+      this.confirmReSend.emit();
     } else if (this.isDelete) {
       this.confirmDelete.emit();
     }

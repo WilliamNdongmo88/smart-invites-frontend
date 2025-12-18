@@ -480,22 +480,35 @@ export class GuestListComponent implements OnInit{
 
   sendReminder() {
     // Récupérer uniquement les invités avec le statut "pending"
-    const pendingGuests = this.guests.filter(g => g.status === 'pending');
+    const pendingGuests = this.guests.filter(g => g.status === 'pending' && g.qrCodeUrl !== null);
     // Extraire uniquement leurs IDs
     const pendingGuestIds = pendingGuests.map(g => g.id);
-    alert(`✉️ Invitation renvoyée à ${this.getStatusCount('pending')}`);
+    console.log("pendingGuestIds :: ", pendingGuestIds);
+    if(pendingGuestIds.length===0){
+      this.closeModal();
+      this.triggerError();
+      this.errorMessage = "✉️ Veuillez d'abord envoyer une invitation aux invités donc le statut est en attente.";
+    }else{
+      // alert(`✉️ Invitation renvoyée à ${this.getStatusCount('pending')}`);
+      this.reSendInvitation(pendingGuestIds);
+    }
+  }
+  reSendInvitation(pendingGuestIds: number[]) {
     this.loading = true;
-    this.guestService.sendReminderMail(pendingGuestIds).subscribe(
-      (response) => {
-        this.loading = false;
-      },
-      (error) => {
-        this.loading = false;
-        console.error('❌ [sendReminderMail] Erreur :', error.message);
-        console.log("Message :: ", error.message);
-        this.errorMessage = error.message || 'Erreur de connexion';
-      }
-    );
+    if(this.modalAction=='resend'){
+      this.guestService.sendReminderMail(pendingGuestIds).subscribe(
+        (response) => {
+          this.loading = false;
+        },
+        (error) => {
+          this.loading = false;
+          console.error('❌ [sendReminderMail] Erreur :', error.message);
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
+    }
+    this.closeModal();
   }
 
   openImportModal() {
@@ -557,6 +570,10 @@ export class GuestListComponent implements OnInit{
     }
     if(modalAction=='send'){
       this.warningMessage = "Êtes-vous sûr de vouloir envoyer une invitation a tous ces invités ?";
+      this.showDeleteModal = true;
+    }
+    if(modalAction=='resend'){
+      this.warningMessage = "Êtes-vous sûr de vouloir renvoyer une invitation aux invités en attentes ?";
       this.showDeleteModal = true;
     }
   }

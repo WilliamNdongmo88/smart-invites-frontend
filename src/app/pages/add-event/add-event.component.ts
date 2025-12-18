@@ -116,7 +116,7 @@ export class AddEventComponent implements OnInit{
       eventNameConcerned1: this.eventData.eventNameConcerned1 || '',
       eventNameConcerned2: this.eventData.eventNameConcerned2 || '',
       footRestriction: this.eventData.allowDietaryRestrictions,
-      status: 'planned'
+      status: 'active'
     }
     datas.push(eventDatas);
     console.log('Event created:', datas);

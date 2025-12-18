@@ -105,7 +105,7 @@
                                 📊 Exporter en CSV
                             </button> -->
                             <button class=" filter-btn btn-outline" style="width: 100%;" (click)="exportPDF()">
-                                📄 Exporter en PDF
+                                {{ loading ? '⏳ Exportation...' : '📄 Exporter en PDF' }}
                             </button>
                             <!-- <button class="btn btn-outline" style="width: 100%;" (click)="exportExcel()">
                                 📈 Exporter en Excel

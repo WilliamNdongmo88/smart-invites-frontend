@@ -71,7 +71,8 @@ export class EventDetailComponent implements OnInit{
   isLoading: boolean = false;
   showErrorModal = false;
   showDeleteModal = false;
-  isScanning = true
+  isScanning = true;
+  loading: boolean = false;
   modalAction: string | undefined;
   warningMessage: string = "";
   rsvpStatus: string = "";
@@ -622,6 +623,7 @@ export class EventDetailComponent implements OnInit{
       filteredGuests: this.filteredGuests
     };
     console.log("data :: ", data);
+    this.loading = true;
     this.qrcodeService.downloadGuestsPdf(data).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
@@ -632,6 +634,7 @@ export class EventDetailComponent implements OnInit{
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
+        this.loading = false;
       },
       error: (err) => {
         console.error('Erreur téléchargement PDF', err);

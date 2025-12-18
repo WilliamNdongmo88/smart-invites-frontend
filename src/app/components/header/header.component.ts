@@ -109,6 +109,11 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/user-accueil']);
   }
 
+  goToProfile() {
+    this.router.navigate(['/profile']);
+    this.mobileMenuOpen.set(false);
+  }
+
   toggleMobileMenu(force?: boolean) {
     if (force === false) {
       this.mobileMenuOpen.set(false);

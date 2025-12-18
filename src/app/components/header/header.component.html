@@ -29,8 +29,8 @@
             </span>
           </div>
         </div>
-        <span class="welcome">Bienvenue, {{ currentUser?.name }} !</span>
-        <a *ngIf="isScanning" (click)="scanQrCode()" class="nav-link nav-link-cursor">Scanner</a>
+        <span class="welcome" (click)="goToProfile()">Bienvenue, {{ currentUser?.name }} !</span>
+        <a *ngIf="isScanning" (click)="scanQrCode()" class="nav-link nav-link-cursor nav-hover">Scanner</a>
         <button class="btns btns-primary" (click)="logout()">Déconnexion</button>
       </ng-template>
 
@@ -65,8 +65,8 @@
 
     <!-- Utilisateur connecté -->
     <ng-template #loggedInMobile>
-      <a *ngIf="isScanning" (click)="scanQrCode(); toggleMobileMenu(false)" class="mobile-nav-link">Scanner</a>
-      <p class="mobile-nav-link">Bienvenue, {{ currentUser?.name }}!</p>
+      <a *ngIf="isScanning" (click)="scanQrCode(); toggleMobileMenu(false)" class="mobile-nav-link nav-hover">Scanner</a>
+      <p class="mobile-nav-link welcome" (click)="goToProfile()">Bienvenue, {{ currentUser?.name }}!</p>
       <button class="btns btns-primary w-100" (click)="logout(); toggleMobileMenu(false)">Déconnexion</button>
     </ng-template>
 

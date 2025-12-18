@@ -18,6 +18,7 @@ import { FeaturesComponent } from './pages/features/features.component';
 import { PricingComponent } from './pages/pricing/pricing.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { EventReportComponent } from './pages/event-report/event-report.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 export const routes: Routes = [
   {
@@ -52,6 +53,11 @@ export const routes: Routes = [
   {
     path: 'events/:eventId',
     component: EventDetailComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent,
     canActivate: [AuthGuard]
   },
   {

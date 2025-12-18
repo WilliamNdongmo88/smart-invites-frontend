@@ -35,6 +35,15 @@
   margin-left: -30px;
 }
 
+.welcome {
+  background-color: #D4AF37;
+  padding: 8px;
+  font-size: 15px;
+  border-radius: 80%;
+  color: aliceblue;
+  cursor: pointer;
+}
+
 .nav {
   display: flex;
   align-items: center;
@@ -81,6 +90,13 @@
   
   &:hover {
     background-color: #F5F5F5;
+  }
+}
+
+.nav-hover {
+  &:hover {
+    background-color: #F5F5F5;
+    color: #D4AF37;
   }
 }
 
@@ -340,5 +356,10 @@
   .notification-icon {
     margin-left: 12rem;
     margin-top: 2px;
+  }
+
+  .welcome {
+    color: aliceblue;
+    cursor: pointer;
   }
 }

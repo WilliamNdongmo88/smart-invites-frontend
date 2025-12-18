@@ -187,6 +187,16 @@
     flex: 1;
 }
 
+.btn-text{
+    display: flex;
+    justify-content: end;
+}
+
+.btn-text-center{
+    display: flex;
+    justify-content: center;
+}
+
 .confirmation-card {
     background-color: #F5F5F5;
     border: 1px solid #E0E0E0;

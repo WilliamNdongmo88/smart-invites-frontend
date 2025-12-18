@@ -1,0 +1,404 @@
+<div class="profile-page">
+    <!-- Header -->
+    <div class="profile-header">
+    <div class="container">
+        <a routerLink="/dashboard" class="back-link">← Retour</a>
+        <h1>Mon Profil</h1>
+    </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="container py-12">
+    <div class="profile-wrapper">
+        <!-- Sidebar -->
+        <div class="profile-sidebar">
+        <div class="profile-card">
+            <div class="avatar-section">
+            <img src="img/avatar.webp" alt="Avatar" class="avatar" />
+            <button class="btn-change-avatar">📷 Changer</button>
+            </div>
+
+            <h2>{{ userProfile.firstName }} {{ userProfile.lastName }}</h2>
+            <p class="email">{{ userProfile.email }}</p>
+
+            <div class="profile-stats">
+            <div class="stat">
+                <span class="stat-value">12</span>
+                <span class="stat-label">Événements</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">45</span>
+                <span class="stat-label">Invitations</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">38</span>
+                <span class="stat-label">Confirmées</span>
+            </div>
+            </div>
+
+            <!-- <button class="btn btn-outline" style="width: 100%;">
+            🔗 Copier le lien de profil
+            </button> -->
+        </div>
+
+        <!-- Menu de navigation -->
+        <div class="profile-menu">
+            <button
+            *ngFor="let tab of tabs"
+            [class.active]="activeTab === tab.id"
+            (click)="activeTab = tab.id"
+            class="menu-item"
+            >
+            {{ tab.icon }} {{ tab.label }}
+            </button>
+        </div>
+        </div>
+
+        <!-- Main content area -->
+        <div class="profile-content">
+        <!-- Tab: Informations personnelles -->
+        <div *ngIf="activeTab === 'personal'" class="tab-content">
+            <div class="content-card">
+            <h2>Informations Personnelles</h2>
+
+            <div class="form-grid">
+
+                <div class="form-group full-width">
+                <label>Nom complet *</label>
+                <input type="text" [(ngModel)]="userProfile.fullName" class="form-input" />
+                </div>
+
+                <!-- <div class="form-group">
+                <label>Prénom *</label>
+                <input type="text" [(ngModel)]="userProfile.firstName" class="form-input" />
+                </div>
+
+                <div class="form-group">
+                <label>Nom *</label>
+                <input type="text" [(ngModel)]="userProfile.lastName" class="form-input" />
+                </div> -->
+
+                <div class="form-group">
+                <label>Email *</label>
+                <input type="email" [(ngModel)]="userProfile.email" class="form-input" />
+                </div>
+
+                <div class="form-group">
+                <label>Téléphone</label>
+                <input type="tel" [(ngModel)]="userProfile.phone" class="form-input" />
+                </div>
+
+                <!-- <div class="form-group">
+                <label>Date de naissance</label>
+                <input type="date" [(ngModel)]="userProfile.birthDate" class="form-input" />
+                </div>
+
+                <div class="form-group">
+                <label>Genre</label>
+                <select [(ngModel)]="userProfile.gender" class="form-select">
+                    <option value="">Non spécifié</option>
+                    <option value="male">Homme</option>
+                    <option value="female">Femme</option>
+                    <option value="other">Autre</option>
+                </select>
+                </div> -->
+
+                <div class="form-group full-width">
+                <label>Bio</label>
+                <textarea [(ngModel)]="userProfile.bio" class="form-textarea" placeholder="Parlez-nous de vous..."></textarea>
+                </div>
+
+                <!-- <div class="form-group">
+                <label>Localisation</label>
+                <input type="text" [(ngModel)]="userProfile.location" class="form-input" placeholder="Ville, Pays" />
+                </div>
+
+                <div class="form-group">
+                <label>Site web</label>
+                <input type="url" [(ngModel)]="userProfile.website" class="form-input" placeholder="https://..." />
+                </div>
+
+                <div class="form-group">
+                <label>Langue</label>
+                <select [(ngModel)]="userProfile.language" class="form-select">
+                    <option value="fr">Français</option>
+                    <option value="en">Anglais</option>
+                    <option value="es">Espagnol</option>
+                    <option value="de">Allemand</option>
+                </select>
+                </div>
+
+                <div class="form-group">
+                <label>Fuseau horaire</label>
+                <select [(ngModel)]="userProfile.timezone" class="form-select">
+                    <option value="Europe/Paris">Europe/Paris (GMT+1)</option>
+                    <option value="Europe/London">Europe/London (GMT+0)</option>
+                    <option value="America/New_York">America/New_York (GMT-5)</option>
+                    <option value="America/Los_Angeles">America/Los_Angeles (GMT-8)</option>
+                </select>
+                </div> -->
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary">💾 Enregistrer les modifications</button>
+                <button class="btn btn-outline">↺ Annuler</button>
+            </div>
+            </div>
+        </div>
+
+        <!-- Tab: Sécurité -->
+        <div *ngIf="activeTab === 'security'" class="tab-content">
+            <div class="content-card">
+            <h2>Sécurité et Mot de Passe</h2>
+
+            <div class="security-section">
+                <h3>Changer le mot de passe</h3>
+                <div class="form-group">
+                <label>Mot de passe actuel *</label>
+                <input type="password" class="form-input" />
+                </div>
+
+                <div class="form-group">
+                <label>Nouveau mot de passe *</label>
+                <input type="password" class="form-input" />
+                </div>
+
+                <div class="form-group">
+                <label>Confirmer le mot de passe *</label>
+                <input type="password" class="form-input" />
+                </div>
+
+                <button class="btn btn-primary btn-mt">🔒 Changer le mot de passe</button>
+            </div>
+
+            <!-- <div class="security-section">
+                <h3>Authentification à deux facteurs</h3>
+                <p>Renforcez la sécurité de votre compte avec l'authentification à deux facteurs.</p>
+                <button class="btn btn-outline">🔐 Activer l'authentification 2FA</button>
+            </div>
+
+            <div class="security-section">
+                <h3>Sessions actives</h3>
+                <div class="session-item">
+                <div class="session-info">
+                    <p class="session-device">💻 Chrome sur Windows</p>
+                    <p class="session-location">Paris, France</p>
+                    <p class="session-date">Connecté il y a 2 heures</p>
+                </div>
+                <button class="btn-small">Déconnecter</button>
+                </div>
+
+                <div class="session-item">
+                <div class="session-info">
+                    <p class="session-device">📱 Safari sur iPhone</p>
+                    <p class="session-location">Lyon, France</p>
+                    <p class="session-date">Connecté il y a 1 jour</p>
+                </div>
+                <button class="btn-small">Déconnecter</button>
+                </div>
+
+                <button class="btn btn-outline" style="width: 100%; margin-top: 1rem;">
+                🚪 Déconnecter de tous les appareils
+                </button>
+            </div> -->
+            </div>
+        </div>
+
+        <!-- Tab: Notifications -->
+        <div *ngIf="activeTab === 'notifications'" class="tab-content">
+            <div class="content-card">
+            <h2>Préférences de Notifications</h2>
+
+            <div class="notification-section">
+                <h3>Canaux de notification</h3>
+
+                <div class="notification-item">
+                <div class="notification-info">
+                    <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="notificationPrefs.emailNotifications" />
+                    <span>📧 Notifications par email</span>
+                    </label>
+                    <p class="description">Recevoir les notifications par email</p>
+                </div>
+                </div>
+
+                <!-- <div class="notification-item">
+                <div class="notification-info">
+                    <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="notificationPrefs.smsNotifications" />
+                    <span>📱 Notifications par SMS</span>
+                    </label>
+                    <p class="description">Recevoir les notifications par SMS</p>
+                </div>
+                </div> -->
+
+                <!-- <div class="notification-item">
+                <div class="notification-info">
+                    <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="notificationPrefs.pushNotifications" />
+                    <span>🔔 Notifications push</span>
+                    </label>
+                    <p class="description">Recevoir les notifications push sur votre navigateur</p>
+                </div>
+                </div> -->
+            </div>
+
+            <div class="notification-section">
+                <h3>Types de notifications</h3>
+
+                <div class="notification-item">
+                <div class="notification-info">
+                    <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="notificationPrefs.eventReminders" />
+                    <span>📅 Rappels d'événements</span>
+                    </label>
+                    <p class="description">Rappels 2 jours avant les événements prévus</p>
+                </div>
+                </div>
+
+                <div class="notification-item">
+                    <div class="notification-info">
+                        <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="notificationPrefs.weeklyDigest" />
+                        <span>📥 Récapitulatif de présence</span>
+                        </label>
+                        <p class="description">Recevoir la liste de tous les invités présents et absents à l'événement</p>
+                    </div>
+                </div>
+
+                <div class="notification-item">
+                    <div class="notification-info">
+                        <label class="checkbox-label">
+                        <input type="checkbox" [(ngModel)]="notificationPrefs.weeklyDigest" />
+                        <span>📋 Email de remerciement</span>
+                        </label>
+                        <p class="description">Envoyer automatiquement un email de remerciement à tous les invités présents à l'événement</p>
+                    </div>
+                </div>
+
+                <div class="notification-item">
+                <div class="notification-info">
+                    <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="notificationPrefs.marketingEmails" />
+                    <span>🎯 Emails marketing</span>
+                    </label>
+                    <p class="description">Recevoir les actualités et offres de Smart Invite</p>
+                </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary">💾 Enregistrer les préférences</button>
+            </div>
+        </div>
+
+        <!-- Tab: Confidentialité -->
+        <div *ngIf="activeTab === 'privacy'" class="tab-content">
+            <div class="content-card">
+            <h2>Confidentialité et Partage</h2>
+
+            <div class="privacy-section">
+                <h3>Visibilité du profil</h3>
+                <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" [(ngModel)]="privacySettings.profileVisibility" value="public" />
+                    <span>🌐 Public</span>
+                    <p class="description">Votre profil est visible par tous</p>
+                </label>
+                </div>
+
+                <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" [(ngModel)]="privacySettings.profileVisibility" value="friends" />
+                    <span>👥 Amis uniquement</span>
+                    <p class="description">Votre profil est visible par vos amis</p>
+                </label>
+                </div>
+
+                <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" [(ngModel)]="privacySettings.profileVisibility" value="private" />
+                    <span>🔒 Privé</span>
+                    <p class="description">Votre profil n'est visible que par vous</p>
+                </label>
+                </div>
+            </div>
+
+            <div class="privacy-section">
+                <h3>Informations visibles</h3>
+
+                <div class="privacy-item">
+                <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="privacySettings.showEmail" />
+                    <span>Afficher mon email</span>
+                </label>
+                </div>
+
+                <div class="privacy-item">
+                <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="privacySettings.showPhone" />
+                    <span>Afficher mon téléphone</span>
+                </label>
+                </div>
+            </div>
+
+            <div class="privacy-section">
+                <h3>Interactions</h3>
+
+                <div class="privacy-item">
+                <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="privacySettings.allowMessages" />
+                    <span>Permettre les messages privés</span>
+                </label>
+                </div>
+
+                <div class="privacy-item">
+                <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="privacySettings.allowEventInvites" />
+                    <span>Permettre les invitations d'événements</span>
+                </label>
+                </div>
+            </div>
+
+            <button class="btn btn-primary">💾 Enregistrer les paramètres</button>
+            </div>
+        </div>
+
+        <!-- Tab: Compte -->
+        <div *ngIf="activeTab === 'account'" class="tab-content">
+            <div class="content-card">
+            <h2>Paramètres du Compte</h2>
+
+            <div class="account-section">
+                <h3>Informations du compte</h3>
+                <div class="info-item">
+                <span class="label">ID utilisateur</span>
+                <span class="value">{{ userProfile.id }}</span>
+                </div>
+                <div class="info-item">
+                <span class="label">Email</span>
+                <span class="value">{{ userProfile.email }}</span>
+                </div>
+                <div class="info-item">
+                <span class="label">Compte créé</span>
+                <span class="value">{{ formatDate(userProfile.createdAt) }}</span>
+                </div>
+            </div>
+
+            <!-- <div class="account-section">
+                <h3>Télécharger vos données</h3>
+                <p>Téléchargez une copie de toutes vos données personnelles.</p>
+                <button class="btn btn-outline">📥 Télécharger mes données</button>
+            </div> -->
+
+            <div class="account-section danger">
+                <h3>Zone de danger</h3>
+                <p>Actions irréversibles sur votre compte.</p>
+
+                <button class="btn btn-outline danger">🗑️ Supprimer mon compte</button>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>

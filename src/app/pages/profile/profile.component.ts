@@ -42,6 +42,7 @@ export class ProfileComponent implements OnInit {
   errorMessage : string ='';
   loading = false;
   originalUserProfile!: UserProfile;
+  userId!: number;
 
   passwordData = {
     currentPassword: '',
@@ -93,6 +94,7 @@ export class ProfileComponent implements OnInit {
     this.authService.getMe().subscribe(
       (response) => {
         console.log("[getUserProfile] Response :: ", response);
+        this.userId = response.id;
         this.userProfile = {
           id: 'user_'+response.id,
           fullName: response.name,
@@ -161,23 +163,27 @@ export class ProfileComponent implements OnInit {
   changePassword(form: NgForm) {
     if (form.invalid) return;
 
-    if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-        this.errorMessage = 'Les mots de passe ne correspondent pas';
-        return;
-    }
+    // if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
+    //     this.errorMessage = 'Les mots de passe ne correspondent pas';
+    //     return;
+    // }
 
     this.loading = true;
-    this.errorMessage = '';
 
     console.log('Mot de passe à envoyer :', this.passwordData);
-
-    // Simulation API
-    setTimeout(() => {
+    this.authService.updatePassword(this.userId, this.passwordData).subscribe(
+      (response) => {
+        console.log("[saveProfile] Response :: ", response);
         this.loading = false;
-        alert('✅ Mot de passe modifié avec succès');
-
-        form.resetForm();
-    }, 1500);
+        this.errorMessage = '';
+      },
+      (error) => {
+        this.loading = false;
+        console.error('❌ Erreur de creation :', error.message.split(':')[4]);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';
+      }
+    );
   }
 
   formatDate(date: string): string {

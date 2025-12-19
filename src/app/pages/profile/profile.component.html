@@ -261,11 +261,6 @@
                     </small>
                 </div>
 
-                <!-- Erreur backend -->
-                <p class="error" *ngIf="errorMessage">
-                    {{ errorMessage }}
-                </p>
-
                 <!-- Bouton -->
                 <button
                     type="submit"
@@ -274,7 +269,11 @@
                 >
                     {{ loading ? '⏳ Modification...' : '🔒 Changer le mot de passe' }}
                 </button>
-                </form>
+                <!-- Erreur backend -->
+                <p class="error" *ngIf="errorMessage">
+                    {{ errorMessage }}
+                </p>
+            </form>
 
             <!-- <div class="security-section">
                 <h3>Authentification à deux facteurs</h3>
@@ -392,7 +391,9 @@
                 </div>
             </div>
 
-            <button class="btn btn-primary" (click)="saveProfile()">💾 Enregistrer les préférences</button>
+            <button class="btn btn-primary" (click)="saveProfile()">
+                {{ loading ? '⏳ Enregistrement...' : '💾 Enregistrer les préférences' }}
+            </button>
             </div>
         </div>
 

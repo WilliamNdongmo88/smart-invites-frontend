@@ -134,6 +134,12 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/reset-password`, data);
   }
 
+  updatePassword(userId: number, data: any): Observable<any> {
+    console.log('data :: ', data);
+    return this.http.post(`${this.apiUrl}/update-password/:${userId}`, data);
+  }
+
+
   logout(): any {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('currentUser');

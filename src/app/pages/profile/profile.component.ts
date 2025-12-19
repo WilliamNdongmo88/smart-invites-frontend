@@ -30,6 +30,12 @@ interface PrivacySettings {
   allowEventInvites: boolean;
 }
 
+interface PasswordData {
+  currentPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+}
+
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -39,12 +45,13 @@ interface PrivacySettings {
 })
 export class ProfileComponent implements OnInit {
   activeTab = 'personal';
-  errorMessage : string ='';
+  errorMessage: string | null = null;
+  successMessage: string | null = null;
   loading = false;
   originalUserProfile!: UserProfile;
   userId!: number;
 
-  passwordData = {
+  passwordData: PasswordData  = {
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
@@ -160,28 +167,56 @@ export class ProfileComponent implements OnInit {
     form.resetForm(this.userProfile);
   }
 
-  changePassword(form: NgForm) {
-    if (form.invalid) return;
+  changePassword(form: NgForm): void {
+    console.log('Changement de mot de passe initié');
 
-    // if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-    //     this.errorMessage = 'Les mots de passe ne correspondent pas';
-    //     return;
-    // }
+    this.errorMessage = '';
+
+    if (!this.passwordData.currentPassword ||
+        !this.passwordData.newPassword ||
+        !this.passwordData.confirmPassword) {
+        this.errorMessage = 'Tous les champs sont obligatoires.';
+        this.successMessage = '';
+        return;
+    }
+
+    if (this.passwordData.newPassword.length < 8) {
+        this.errorMessage = 'Le nouveau mot de passe doit contenir au moins 8 caractères.';
+        return;
+    }
+
+    if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
+        this.errorMessage = 'Les mots de passe ne correspondent pas.';
+        return;
+    }
 
     this.loading = true;
+    const data = {
+      currentPassword: this.passwordData.currentPassword,
+      newPassword: this.passwordData.newPassword,
+    };
+    console.log('Données envoyées:', data);
 
-    console.log('Mot de passe à envoyer :', this.passwordData);
-    this.authService.updatePassword(this.userId, this.passwordData).subscribe(
+    this.authService.updatePassword(this.userId, data).subscribe(
       (response) => {
         console.log("[saveProfile] Response :: ", response);
         this.loading = false;
+        this.successMessage = response.message || 'Mot de passe modifié avec succès.';
         this.errorMessage = '';
+        form.resetForm();
+
+        this.passwordData = {
+            currentPassword: '',
+            newPassword: '',
+            confirmPassword: '',
+        };
       },
       (error) => {
         this.loading = false;
-        console.error('❌ Erreur de creation :', error.message.split(':')[4]);
-        console.log("Message :: ", error.message);
-        this.errorMessage = error.message || 'Erreur de connexion';
+        this.successMessage = '';
+        console.error('❌ Erreur de creation :', error);
+        console.log("Message :: ", error.error.error);
+        this.errorMessage = error.error.error || 'Erreur de connexion';
       }
     );
   }

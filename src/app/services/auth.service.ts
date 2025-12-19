@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
+import { catchError, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../environment/environment';
 export interface User {
   id: number;
@@ -52,6 +52,9 @@ export class AuthService {
 
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+
+  private userCache$?: Observable<any>;
+  private refresh$ = new Subject<void>();
 
   constructor(private http: HttpClient) {
     if (this.isProd) {
@@ -215,6 +218,37 @@ export class AuthService {
       this.logout();
       return throwError(() => new Error('No refresh token available'));
     }
+  }
+
+  getMe(): Observable<any> {
+    return this.refresh$.pipe(
+      startWith(void 0),
+      switchMap(() => {
+        if (!this.userCache$) {
+          console.log('USER API CALL');
+          const headers = this.getAuthHeaders();
+
+          this.userCache$ = this.http
+            .get<any>(`${this.apiUrl}/me`, { headers })
+            .pipe(shareReplay(1));
+        }
+        console.log('CACHE USER CALL');
+        return this.userCache$;
+      })
+    );
+  }
+
+  updateProfile(userId: number, data: any): Observable<Event> {
+    const headers = this.getAuthHeaders();
+    return this.http
+    .put<Event>(`${this.apiUrl}/${userId}`, data, { headers })
+    .pipe(
+      tap(() => this.clearCache()),
+    );
+  }
+
+  clearCache() {
+    this.userCache$ = undefined;
   }
 
   /**

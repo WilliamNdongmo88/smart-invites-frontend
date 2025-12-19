@@ -392,6 +392,25 @@
     }
 }
 
+.error {
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: block;
+}
+
+.error-box {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.btn-mt {
+  margin-top: 1rem;
+}
+
 @media (max-width: 768px) {
     .profile-wrapper {
         grid-template-columns: 1fr;

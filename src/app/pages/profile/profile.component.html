@@ -18,10 +18,10 @@
             <button class="btn-change-avatar">📷 Changer</button>
             </div>
 
-            <h2>{{ userProfile.firstName }} {{ userProfile.lastName }}</h2>
+            <h2>{{ userProfile.fullName }}</h2>
             <p class="email">{{ userProfile.email }}</p>
 
-            <div class="profile-stats">
+            <!-- <div class="profile-stats">
             <div class="stat">
                 <span class="stat-value">12</span>
                 <span class="stat-label">Événements</span>
@@ -34,7 +34,7 @@
                 <span class="stat-value">38</span>
                 <span class="stat-label">Confirmées</span>
             </div>
-            </div>
+            </div> -->
 
             <!-- <button class="btn btn-outline" style="width: 100%;">
             🔗 Copier le lien de profil
@@ -59,90 +59,142 @@
         <!-- Tab: Informations personnelles -->
         <div *ngIf="activeTab === 'personal'" class="tab-content">
             <div class="content-card">
-            <h2>Informations Personnelles</h2>
+                <h2>Informations Personnelles</h2>
 
-            <div class="form-grid">
+                <form #profileForm="ngForm" (ngSubmit)="saveProfile()" novalidate>
+                    <div class="form-grid">
 
-                <div class="form-group full-width">
-                <label>Nom complet *</label>
-                <input type="text" [(ngModel)]="userProfile.fullName" class="form-input" />
-                </div>
+                        <!-- Nom complet -->
+                        <div class="form-group full-width">
+                        <label>Nom complet *</label>
+                        <input
+                            type="text"
+                            name="fullName"
+                            [(ngModel)]="userProfile.fullName"
+                            required
+                            minlength="3"
+                            class="form-input"
+                        />
+                        <small class="error"
+                            *ngIf="profileForm.submitted && profileForm.controls['fullName']?.invalid">
+                            Nom requis (min. 3 caractères)
+                        </small>
+                        </div>
 
-                <!-- <div class="form-group">
-                <label>Prénom *</label>
-                <input type="text" [(ngModel)]="userProfile.firstName" class="form-input" />
-                </div>
+                        <!-- <div class="form-group">
+                        <label>Prénom *</label>
+                        <input type="text" [(ngModel)]="userProfile.firstName" class="form-input" />
+                        </div>
 
-                <div class="form-group">
-                <label>Nom *</label>
-                <input type="text" [(ngModel)]="userProfile.lastName" class="form-input" />
-                </div> -->
+                        <div class="form-group">
+                        <label>Nom *</label>
+                        <input type="text" [(ngModel)]="userProfile.lastName" class="form-input" />
+                        </div> -->
 
-                <div class="form-group">
-                <label>Email *</label>
-                <input type="email" [(ngModel)]="userProfile.email" class="form-input" />
-                </div>
+                        <!-- Email -->
+                        <div class="form-group">
+                        <label>Email *</label>
+                        <input
+                            type="email"
+                            name="email"
+                            [(ngModel)]="userProfile.email"
+                            required
+                            email
+                            class="form-input"
+                        />
+                        <small class="error"
+                            *ngIf="profileForm.submitted && profileForm.controls['email']?.invalid">
+                            Email invalide
+                        </small>
+                        </div>
 
-                <div class="form-group">
-                <label>Téléphone</label>
-                <input type="tel" [(ngModel)]="userProfile.phone" class="form-input" />
-                </div>
+                        <!-- Téléphone -->
+                        <div class="form-group">
+                        <label>Téléphone</label>
+                        <input
+                            type="tel"
+                            name="phone"
+                            [(ngModel)]="userProfile.phone"
+                            pattern="^[0-9+ ]*$"
+                            class="form-input"
+                        />
+                        </div>
 
-                <!-- <div class="form-group">
-                <label>Date de naissance</label>
-                <input type="date" [(ngModel)]="userProfile.birthDate" class="form-input" />
-                </div>
+                        <!-- <div class="form-group">
+                        <label>Date de naissance</label>
+                        <input type="date" [(ngModel)]="userProfile.birthDate" class="form-input" />
+                        </div>
 
-                <div class="form-group">
-                <label>Genre</label>
-                <select [(ngModel)]="userProfile.gender" class="form-select">
-                    <option value="">Non spécifié</option>
-                    <option value="male">Homme</option>
-                    <option value="female">Femme</option>
-                    <option value="other">Autre</option>
-                </select>
-                </div> -->
+                        <div class="form-group">
+                        <label>Genre</label>
+                        <select [(ngModel)]="userProfile.gender" class="form-select">
+                            <option value="">Non spécifié</option>
+                            <option value="male">Homme</option>
+                            <option value="female">Femme</option>
+                            <option value="other">Autre</option>
+                        </select>
+                        </div> -->
 
-                <div class="form-group full-width">
-                <label>Bio</label>
-                <textarea [(ngModel)]="userProfile.bio" class="form-textarea" placeholder="Parlez-nous de vous..."></textarea>
-                </div>
+                        <!-- Bio -->
+                        <div class="form-group full-width">
+                        <label>Bio</label>
+                        <textarea
+                            name="bio"
+                            [(ngModel)]="userProfile.bio"
+                            rows="4"
+                            class="form-textarea"
+                            placeholder="Parlez-nous de vous...">
+                        </textarea>
+                        </div>
 
-                <!-- <div class="form-group">
-                <label>Localisation</label>
-                <input type="text" [(ngModel)]="userProfile.location" class="form-input" placeholder="Ville, Pays" />
-                </div>
+                        <!-- <div class="form-group">
+                        <label>Localisation</label>
+                        <input type="text" [(ngModel)]="userProfile.location" class="form-input" placeholder="Ville, Pays" />
+                        </div>
 
-                <div class="form-group">
-                <label>Site web</label>
-                <input type="url" [(ngModel)]="userProfile.website" class="form-input" placeholder="https://..." />
-                </div>
+                        <div class="form-group">
+                        <label>Site web</label>
+                        <input type="url" [(ngModel)]="userProfile.website" class="form-input" placeholder="https://..." />
+                        </div>
 
-                <div class="form-group">
-                <label>Langue</label>
-                <select [(ngModel)]="userProfile.language" class="form-select">
-                    <option value="fr">Français</option>
-                    <option value="en">Anglais</option>
-                    <option value="es">Espagnol</option>
-                    <option value="de">Allemand</option>
-                </select>
-                </div>
+                        <div class="form-group">
+                        <label>Langue</label>
+                        <select [(ngModel)]="userProfile.language" class="form-select">
+                            <option value="fr">Français</option>
+                            <option value="en">Anglais</option>
+                            <option value="es">Espagnol</option>
+                            <option value="de">Allemand</option>
+                        </select>
+                        </div>
 
-                <div class="form-group">
-                <label>Fuseau horaire</label>
-                <select [(ngModel)]="userProfile.timezone" class="form-select">
-                    <option value="Europe/Paris">Europe/Paris (GMT+1)</option>
-                    <option value="Europe/London">Europe/London (GMT+0)</option>
-                    <option value="America/New_York">America/New_York (GMT-5)</option>
-                    <option value="America/Los_Angeles">America/Los_Angeles (GMT-8)</option>
-                </select>
-                </div> -->
-            </div>
+                        <div class="form-group">
+                        <label>Fuseau horaire</label>
+                        <select [(ngModel)]="userProfile.timezone" class="form-select">
+                            <option value="Europe/Paris">Europe/Paris (GMT+1)</option>
+                            <option value="Europe/London">Europe/London (GMT+0)</option>
+                            <option value="America/New_York">America/New_York (GMT-5)</option>
+                            <option value="America/Los_Angeles">America/Los_Angeles (GMT-8)</option>
+                        </select>
+                        </div> -->
+                    </div>
 
-            <div class="form-actions">
-                <button class="btn btn-primary">💾 Enregistrer les modifications</button>
-                <button class="btn btn-outline">↺ Annuler</button>
-            </div>
+                    <!-- Actions -->
+                    <div class="form-actions">
+                        <button
+                        type="submit"
+                        class="btn btn-primary"
+                        [disabled]="profileForm.invalid || loading">
+                        {{ loading ? '⏳ Enregistrement...' : '💾 Enregistrer les modifications' }}
+                        </button>
+
+                        <button
+                        type="button"
+                        class="btn btn-outline"
+                        (click)="resetForm(profileForm)">
+                        ↺ Annuler
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -151,25 +203,78 @@
             <div class="content-card">
             <h2>Sécurité et Mot de Passe</h2>
 
-            <div class="security-section">
+            <form
+                #passwordForm="ngForm"
+                (ngSubmit)="changePassword(passwordForm)"
+                novalidate
+                class="security-section"
+                >
                 <h3>Changer le mot de passe</h3>
+
+                <!-- Mot de passe actuel -->
                 <div class="form-group">
-                <label>Mot de passe actuel *</label>
-                <input type="password" class="form-input" />
+                    <label>Mot de passe actuel *</label>
+                    <input
+                    type="password"
+                    name="currentPassword"
+                    [(ngModel)]="passwordData.currentPassword"
+                    required
+                    minlength="6"
+                    class="form-input"
+                    />
+                    <small class="error"
+                    *ngIf="passwordForm.submitted && passwordForm.controls['currentPassword']?.invalid">
+                    Mot de passe requis (min 6 caractères)
+                    </small>
                 </div>
 
+                <!-- Nouveau mot de passe -->
                 <div class="form-group">
-                <label>Nouveau mot de passe *</label>
-                <input type="password" class="form-input" />
+                    <label>Nouveau mot de passe *</label>
+                    <input
+                    type="password"
+                    name="newPassword"
+                    [(ngModel)]="passwordData.newPassword"
+                    required
+                    minlength="8"
+                    class="form-input"
+                    />
+                    <small class="error"
+                    *ngIf="passwordForm.submitted && passwordForm.controls['newPassword']?.invalid">
+                    Minimum 8 caractères
+                    </small>
                 </div>
 
+                <!-- Confirmation -->
                 <div class="form-group">
-                <label>Confirmer le mot de passe *</label>
-                <input type="password" class="form-input" />
+                    <label>Confirmer le mot de passe *</label>
+                    <input
+                    type="password"
+                    name="confirmPassword"
+                    [(ngModel)]="passwordData.confirmPassword"
+                    required
+                    class="form-input"
+                    />
+                    <small class="error"
+                    *ngIf="passwordForm.submitted && passwordData.newPassword !== passwordData.confirmPassword">
+                    Les mots de passe ne correspondent pas
+                    </small>
                 </div>
 
-                <button class="btn btn-primary btn-mt">🔒 Changer le mot de passe</button>
-            </div>
+                <!-- Erreur backend -->
+                <p class="error" *ngIf="errorMessage">
+                    {{ errorMessage }}
+                </p>
+
+                <!-- Bouton -->
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-mt"
+                    [disabled]="passwordForm.invalid || loading"
+                >
+                    {{ loading ? '⏳ Modification...' : '🔒 Changer le mot de passe' }}
+                </button>
+                </form>
 
             <!-- <div class="security-section">
                 <h3>Authentification à deux facteurs</h3>
@@ -259,7 +364,7 @@
                 <div class="notification-item">
                     <div class="notification-info">
                         <label class="checkbox-label">
-                        <input type="checkbox" [(ngModel)]="notificationPrefs.weeklyDigest" />
+                        <input type="checkbox" [(ngModel)]="notificationPrefs.attendanceNotifications" />
                         <span>📥 Récapitulatif de présence</span>
                         </label>
                         <p class="description">Recevoir la liste de tous les invités présents et absents à l'événement</p>
@@ -269,7 +374,7 @@
                 <div class="notification-item">
                     <div class="notification-info">
                         <label class="checkbox-label">
-                        <input type="checkbox" [(ngModel)]="notificationPrefs.weeklyDigest" />
+                        <input type="checkbox" [(ngModel)]="notificationPrefs.thankNotifications" />
                         <span>📋 Email de remerciement</span>
                         </label>
                         <p class="description">Envoyer automatiquement un email de remerciement à tous les invités présents à l'événement</p>
@@ -287,7 +392,7 @@
                 </div>
             </div>
 
-            <button class="btn btn-primary">💾 Enregistrer les préférences</button>
+            <button class="btn btn-primary" (click)="saveProfile()">💾 Enregistrer les préférences</button>
             </div>
         </div>
 

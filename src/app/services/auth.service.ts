@@ -136,7 +136,7 @@ export class AuthService {
 
   updatePassword(userId: number, data: any): Observable<any> {
     console.log('data :: ', data);
-    return this.http.post(`${this.apiUrl}/update-password/:${userId}`, data);
+    return this.http.post(`${this.apiUrl}/update-password/${userId}`, data);
   }
 
 

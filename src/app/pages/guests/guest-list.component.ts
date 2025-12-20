@@ -276,6 +276,10 @@ export class GuestListComponent implements OnInit{
             console.log('Guest non valide pour envoi : ', guest);
             this.canDelete = false;
             this.canSend = true;
+            break;
+          }else{
+            this.canSend = false;
+            this.canDelete = false;
           }
         }
         console.log('canSend : ', this.canSend, 'canDelete : ', this.canDelete);

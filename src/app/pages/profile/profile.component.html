@@ -416,7 +416,7 @@
         </div>
 
         <!-- Tab: Confidentialité -->
-        <div *ngIf="activeTab === 'privacy'" class="tab-content">
+        <!-- <div *ngIf="activeTab === 'privacy'" class="tab-content">
             <div class="content-card">
             <h2>Confidentialité et Partage</h2>
 
@@ -485,7 +485,7 @@
 
             <button class="btn btn-primary">💾 Enregistrer les paramètres</button>
             </div>
-        </div>
+        </div> -->
 
         <!-- Tab: Compte -->
         <div *ngIf="activeTab === 'account'" class="tab-content">
@@ -518,7 +518,9 @@
                 <h3>Zone de danger</h3>
                 <p>Actions irréversibles sur votre compte.</p>
 
-                <button class="btn btn-outline danger">🗑️ Supprimer mon compte</button>
+                <button class="btn btn-outline danger" (click)="openDeleteModal('delete')">
+                    {{ loading ? '⏳ Suppréssion...' : '🗑️ Supprimer mon compte' }}
+                </button>
             </div>
             </div>
         </div>
@@ -526,3 +528,11 @@
     </div>
     </div>
 </div>
+
+<app-confirm-delete-modal
+    [visible]="showDeleteModal"
+    [message] = warningMessage
+    [action]="modalAction"
+    (confirmDelete)="confirmDelete()"
+    (cancel)="closeModal()">
+</app-confirm-delete-modal>

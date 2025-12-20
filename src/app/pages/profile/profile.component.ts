@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 
 interface UserProfile {
   id: string;
@@ -39,7 +40,7 @@ interface PasswordData {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ConfirmDeleteModalComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
@@ -48,6 +49,9 @@ export class ProfileComponent implements OnInit {
   errorMessage: string | null = null;
   successMessage: string | null = null;
   loading = false;
+  showDeleteModal = false;
+  warningMessage: string = "";
+  modalAction: string | undefined;
   originalUserProfile!: UserProfile;
   userId!: number;
 
@@ -219,6 +223,46 @@ export class ProfileComponent implements OnInit {
         this.errorMessage = error.error.error || 'Erreur de connexion';
       }
     );
+  }
+
+  openDeleteModal(modalAction?: string) {
+    this.modalAction = modalAction;
+    if(modalAction=='delete'){
+      this.warningMessage = "Êtes-vous sûr de vouloir supprimer votre compte ?";
+      this.showDeleteModal = true;
+    }
+  }
+
+  deleteAccount(){
+    this.loading = true;
+    this.authService.deleteAccount(this.userId).subscribe(
+      (response) => {
+        console.log("[saveProfile] Response :: ", response);
+        this.loading = false;
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('currentUser');
+        this.authService.logout();
+        this.router.navigate(['/']);
+      },
+      (error) => {
+        this.loading = false;
+        this.successMessage = '';
+        console.error('❌ Erreur de creation :', error);
+        console.log("Message :: ", error.error.error);
+        this.errorMessage = error.error.error || 'Erreur de connexion';
+      }
+    );
+  }
+
+  confirmDelete() { 
+    if(this.modalAction=='delete'){
+      this.deleteAccount();
+    }
+    this.closeModal();
+  }
+
+  closeModal() {
+    this.showDeleteModal = false;
   }
 
   formatDate(date: string): string {

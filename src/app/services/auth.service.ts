@@ -139,6 +139,9 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/update-password/${userId}`, data);
   }
 
+  deleteAccount(userId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/delete-account/${userId}`);
+  }
 
   logout(): any {
     localStorage.removeItem('accessToken');

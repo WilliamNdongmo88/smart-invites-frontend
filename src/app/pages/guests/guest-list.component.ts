@@ -151,7 +151,7 @@ export class GuestListComponent implements OnInit{
   setFilterStatus(status: 'all' | 'confirmed' | 'pending' | 'declined' | 'present') {
     this.filterStatus.set(status);
     this.filterGuests();
-    this.toggleSelectAll({ target: { checked: true } });
+    this.toggleSelectAll({ target: { checked: false } });
   }
 
   goToGuestDetail(guestId: number){
@@ -247,6 +247,18 @@ export class GuestListComponent implements OnInit{
     }
 
     console.log('Guest sélectionné : ', this.guestIdList, 'checked:', checked);
+    for (const guest of this.guestIdList.map(id => this.guests.find(g => g.id === id))) {
+      console.log('Guest status : ', guest?.status);
+      if (guest?.status !== 'pending') {
+        console.log('Guest non valide pour envoi : ', guest);
+        this.canDelete = false;
+        this.canSend = true;
+        break;
+      }else{
+        this.canSend = false;
+        this.canDelete = false;
+      }
+    }
 
     // Mise à jour du "select all"
     this.isAllSelected = this.guestIdList.length === this.guests.length;
@@ -257,13 +269,15 @@ export class GuestListComponent implements OnInit{
     if (this.isAllSelected) {
       console.log('[toggleSelectAll] this.filteredGuests : ', this.filteredGuests);
       if(this.filterStatus()==='all'){
-        let valid = true;
         for (const guest of this.filteredGuests) {
+          console.log('Guest status : ', guest.status);
           if (guest.status !== 'pending') {
-            valid = false;
+            console.log('Guest non valide pour envoi : ', guest);
+            this.canDelete = false;
+            this.canSend = true;
           }
         }
-        this.canDelete = valid;
+        console.log('canSend : ', this.canSend, 'canDelete : ', this.canDelete);
         this.guestIdList = this.guests.map(guest => Number(guest.id));
         console.log('Tous les invités sélectionnés : ', this.guestIdList);
       }else if(this.filterStatus()==='confirmed'){

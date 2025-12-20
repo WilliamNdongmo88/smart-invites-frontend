@@ -51,15 +51,17 @@ export class LoginComponent {
         console.log("Message :: ", response.message)
         this.isLoading = false;
         this.router.navigate(['/dashboard']);
+        this.errorMessage = null;
       },
       (error) => {
         this.isLoading = false;
-        console.error('❌ Erreur de connexion :', error.message.split(':')[4]);
+        console.error('❌ Erreur de connexion :', error.message);
         console.log("Message :: ", error.message.split(':')[4])
         if (error.message.includes('429 Too Many Requests')) {
           this.errorMessage = 'Trop de tentatives de connexion. Réessayez plus tard.';
+        }else {
+          this.errorMessage = error.message || 'Erreur de connexion';
         }
-        // this.errorMessage = error.message || 'Erreur de connexion';
       }
     );
   }

@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ImportedGuest, ImportGuestService } from '../../services/import-guest.service';
 import { GuestService } from '../../services/guest.service';
 import { SpinnerComponent } from "../spinner/spinner";
 import { ErrorModalComponent } from "../error-modal/error-modal";
+import { I } from '@angular/cdk/keycodes';
 
 type ImportStep = 'upload' | 'preview' | 'success';
 
@@ -19,6 +20,7 @@ export class ImportGuestsModalComponent {
   @Output() guestsImported = new EventEmitter<ImportedGuest[]>();
   @Output() closed = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
+  @Input() eventId: number | undefined;
 
   currentStep = signal<ImportStep>('upload');
   selectedFile = signal<File | null>(null);
@@ -108,9 +110,9 @@ export class ImportGuestsModalComponent {
     const datas = [];
     for (const key in this.importedGuests) {
       const elt = this.importedGuests[key];
-      // console.log("elt :: ", elt.plusone);
+      console.log("eventId :: ", this.eventId);
       const data = {
-        eventId: Number(elt.eventid),
+        eventId: this.eventId,
         fullName: elt.nom,
         email: elt.email,
         phoneNumber: elt.phone,

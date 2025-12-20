@@ -111,7 +111,6 @@ export class ImportGuestService {
     });
     // console.log("### [headerMap]::", headerMap)
     // Map common header variations
-    const eventIdKeys = ['Id-Evenement', 'eventId', 'event_id', 'idEvent', 'id_event', 'id event'];
     const nameKeys = ['name', 'nom', 'prenom', 'first name', 'full name'];
     const emailKeys = ['email', 'e-mail', 'mail', 'email address'];
     const phoneKeys = ['phone', 'telephone', 'tel', 'mobile', 'téléphone'];
@@ -119,13 +118,6 @@ export class ImportGuestService {
     const plusOneKeys = ['plus one', 'plusone', '+1', 'guest', 'accompagnant'];
 
     // Find and assign values
-    for (const key of eventIdKeys) {
-      if (headerMap[key]) {
-        guest.eventId = Number(headerMap[key]);
-        break;
-      }
-    }
-
     for (const key of nameKeys) {
       if (headerMap[key]) {
         guest.nom = headerMap[key];
@@ -174,14 +166,6 @@ export class ImportGuestService {
     };
 
     // Try to find name
-    const eventIdKeys = ['Id-Evenement', 'eventId', 'event_id', 'idEvent', 'id_event', 'id event'];
-    for (const key of eventIdKeys) {
-      if (row[key]) {
-        guest.eventId = row[key];
-        break;
-      }
-    }
-
     const nameKeys = ['Name', 'Nom', 'Prénom', 'First Name', 'Full Name'];
     for (const key of nameKeys) {
       if (row[key]) {
@@ -254,12 +238,12 @@ export class ImportGuestService {
 
   generateCSVTemplate(): string {
     return `
-      eventId,nom,email,phone,rsvpStatus,plusone
-      1,Ndongmo Thierry,fotso-n@gmail.com,+237697432310,pending,1
-      1,Djoumessi Michka,djoumessi-m@gmail.com,+237670113245,pending,1
-      1,Kevin Ngassa,kevin.ngassa@gmail.com,+237675443902,pending,0
-      1,Samantha Fotso,samantha.fotso@gmail.com,+237691001234,pending,0
-      1,Brenda Noubissi,brenda.noubissi@gmail.com,+237670005678,pending,1
+      nom,email,phone,rsvpStatus,plusone
+      Ndongmo Thierry,fotso-n@gmail.com,+237697432310,pending,1
+      Djoumessi Michka,djoumessi-m@gmail.com,+237670113245,pending,1
+      Kevin Ngassa,kevin.ngassa@gmail.com,+237675443902,pending,0
+      Samantha Fotso,samantha.fotso@gmail.com,+237691001234,pending,0
+      Brenda Noubissi,brenda.noubissi@gmail.com,+237670005678,pending,1
     `;}
 
   downloadCSVTemplate() {

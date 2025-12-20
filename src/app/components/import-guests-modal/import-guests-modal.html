@@ -85,18 +85,16 @@
         <div class="preview-table">
             <table>
                 <thead>
-                <tr>
-                    <th>Id-Évènement</th>
-                    <th>Nom</th>
-                    <th>Email</th>
-                    <th>Téléphone</th>
-                    <th>Status-RSVP</th>
-                    <th>+1</th>
-                </tr>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Status-RSVP</th>
+                        <th>+1</th>
+                    </tr>
                 </thead>
                 <tbody>
                 <tr *ngFor="let guest of paginatedGuests()">
-                    <td>{{ guest.eventid }}</td>
                     <td>{{ guest.nom }}</td>
                     <td>{{ guest.email }}</td>
                     <td>{{ guest.phone || '-' }}</td>

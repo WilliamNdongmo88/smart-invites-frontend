@@ -348,6 +348,7 @@
     <!-- Import Guests Modal -->
     <app-import-guests-modal
         *ngIf="showImportModal()"
+        [eventId]="eventsId"
         (refresh)="getGuestsByEvent()"
         (closed)="closeImportModal()"
     ></app-import-guests-modal>

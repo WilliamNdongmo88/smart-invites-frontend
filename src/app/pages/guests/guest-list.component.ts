@@ -64,6 +64,7 @@ export class GuestListComponent implements OnInit{
   currentPage = 1;
   modalAction: string | undefined;
   warningMessage: string = "";
+  eventsId: number | undefined;
 
   filterStatus = signal<FilterStatus>('all');
   filters: { label: string; value: FilterStatus }[] = [
@@ -527,6 +528,7 @@ export class GuestListComponent implements OnInit{
 
   openImportModal() {
     this.showImportModal.set(true);
+    this.eventsId = this.eventId;
   }
 
   closeImportModal() {

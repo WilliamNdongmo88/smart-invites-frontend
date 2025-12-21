@@ -164,7 +164,7 @@ export class EventDetailComponent implements OnInit{
       // console.log("eventId :: ",this.eventId);
       this.eventService.getEventById(this.eventId).subscribe(
         (response) => {
-          // console.log("Response :: ", response.event[0]);
+          console.log("Response :: ", response[0]);
           const res = response[0];
           const time = res.event_date.split('T')[1].split(':')[0]+':'+res.event_date.split('T')[1].split(':')[1]
           this.event = {

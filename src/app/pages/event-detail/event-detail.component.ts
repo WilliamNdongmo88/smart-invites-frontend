@@ -166,7 +166,17 @@ export class EventDetailComponent implements OnInit{
         (response) => {
           console.log("[getOneEvent] Response :: ", response[0]);
           const res = response[0];
-          const time = res.event_date.split('T')[1].split(':')[0]+':'+res.event_date.split('T')[1].split(':')[1]
+          if (!res.event_date){
+            console.error('event_date manquant');
+            return;
+          }
+          const [datePart, timePart] = res.event_date.split('T');
+          if (!timePart){
+            console.error('timePart manquant');
+            return;
+          }
+          const time = timePart.slice(0, 5);
+          //const time = res.event_date.split('T')[1].split(':')[0]+':'+res.event_date.split('T')[1].split(':')[1]
           this.event = {
               id: res.event_id,
               title: res.title,
@@ -179,11 +189,8 @@ export class EventDetailComponent implements OnInit{
               pendingGuests: res.pending_count,
               declinedGuests: res.declined_count     
           };
-          // console.log("this.events :: ", this.event);
-          // this.loading = false;
         },
         (error) => {
-          // this.loading = false;
           console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';
         }
@@ -198,6 +205,10 @@ export class EventDetailComponent implements OnInit{
         (response) => {
           console.log("Response :: ", response.guests);
           response.guests.map(res => {
+            if (!res.response_date){
+              console.error('response_date manquant');
+              return;
+            }
             const uper = res.rsvp_status
             const data = {
                 id: String(res.guest_id),

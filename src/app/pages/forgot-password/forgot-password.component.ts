@@ -20,6 +20,7 @@ export class ForgotPasswordComponent {
   newPassword = '';
   confirmPassword = '';
   errorMessage = '';
+  loading = false;
   showPassword = signal(false);
   showConfirmPassword = signal(false);
   passwordStrength = signal<'weak' | 'medium' | 'strong'>('weak');
@@ -36,15 +37,18 @@ export class ForgotPasswordComponent {
 
       if (emailRegex.test(this.email)) {
         const data = {email: this.email}
+        this.loading = true;
         this.authService.sendResetEmail(data).subscribe({
           next: (response) => {
             console.log('Email envoyé avec succès', response);
             this.currentStep.set('verification');
             this.errorMessage = '';
+            this.loading = false;
           },
           error: (error) => {
             console.error('❌ Erreur lors de l’envoi de l’e-mail :', error);
             this.errorMessage = error.error.error;
+            this.loading = false;
           }
         });
       } else {
@@ -61,13 +65,16 @@ export class ForgotPasswordComponent {
         email: this.email,
         code: this.verificationCode
       }
+      this.loading = true;
       this.authService.checkCode(data).subscribe({
           next: (response) => {
             console.log('Code de vérification envoyé', response);
             this.currentStep.set('reset');
             this.errorMessage = '';
+            this.loading = false;
           },
           error: (error) => {
+            this.loading = false;
             console.error('❌ Erreur lors de la vérification du code :', error);
             this.errorMessage = 'Echec de la vérification. Réessayez plus tard.';
           }
@@ -85,13 +92,16 @@ export class ForgotPasswordComponent {
         newpassword: this.newPassword
       }
       console.log('data', data);
+      this.loading = true;
       this.authService.resetpassword(data).subscribe({
           next: (response) => {
             console.log('Mot de passe réinitialisé avec succès', response);
             this.currentStep.set('success');
             this.errorMessage = '';
+            this.loading = false;
           },
           error: (error) => {
+            this.loading = false;
             console.error('❌ Erreur lors de la réinitialisé du mot de passe :', error);
             this.errorMessage = error.error.error;
           }

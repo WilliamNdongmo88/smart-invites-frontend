@@ -111,7 +111,7 @@ export class ProfileComponent implements OnInit {
           fullName: response.name,
           email: response.email,
           phone: response.phone,
-          avatar: response.avatar,
+          avatar: response.avatar_url,
           bio: response.bio || 'Passionné par l\'organisation d\'événements',
           createdAt: response.created_at,
         };
@@ -225,6 +225,12 @@ export class ProfileComponent implements OnInit {
     );
   }
 
+  goToResetPage() {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('currentUser');
+    this.router.navigate(['/forgot-password']);
+  }
+
   openDeleteModal(modalAction?: string) {
     this.modalAction = modalAction;
     if(modalAction=='delete'){
@@ -240,9 +246,6 @@ export class ProfileComponent implements OnInit {
         console.log("[saveProfile] Response :: ", response);
         this.loading = false;
         localStorage.removeItem('accessToken');
-        localStorage.removeItem('currentUser');
-        this.authService.logout();
-        this.router.navigate(['/']);
       },
       (error) => {
         this.loading = false;

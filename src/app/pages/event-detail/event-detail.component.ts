@@ -172,12 +172,14 @@ export class EventDetailComponent implements OnInit{
           }
           const [datePart, timePart] = res.event_date.split('T');
           console.log('datePart:', datePart, 'timePart:', timePart);
+          const time = timePart.slice(0, 5);
+          console.log('time:', time);
           if (!timePart){
             console.error('timePart manquant');
             return;
           }
-          const time = timePart.slice(0, 5);
-          console.log('time:', time);
+          // const time = timePart.slice(0, 5);
+          // console.log('time:', time);
           //const time = res.event_date.split('T')[1].split(':')[0]+':'+res.event_date.split('T')[1].split(':')[1]
           this.event = {
               id: res.event_id,

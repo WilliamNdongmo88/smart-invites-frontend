@@ -159,45 +159,51 @@ export class EventDetailComponent implements OnInit{
     //this.getQrCodeImageUrl();
   }
 
-  getOneEvent(){
-    if (this.eventId) {
-      // console.log("eventId :: ",this.eventId);
-      this.eventService.getEventById(this.eventId).subscribe(
-        (response) => {
-          console.log("[getOneEvent] Response :: ", response[0]);
-          const res = response[0];
-          if (!res.event_date){
-            console.error('event_date manquant');
-            return;
-          }
-          const [datePart, timePart] = res.event_date.split('T');
-          console.log('datePart:', datePart, 'timePart:', timePart);
-          const time = datePart.split(' ')[1];
-          console.log('time:', time);
-          if (!time){
-            console.error('timePart manquant');
-            return;
-          }
-          this.event = {
-              id: res.event_id,
-              title: res.title,
-              date: res.event_date.split('T')[0],
-              time: time,
-              location: res.event_location,
-              description: res.description,
-              totalGuests: res.max_guests,
-              confirmedGuests: res.confirmed_count,
-              pendingGuests: res.pending_count,
-              declinedGuests: res.declined_count     
-          };
-        },
-        (error) => {
-          console.log("Message :: ", error.message);
-          this.errorMessage = error.message || 'Erreur de connexion';
+  getOneEvent() {
+    if (!this.eventId) return;
+
+    this.eventService.getEventById(this.eventId).subscribe(
+      (response) => {
+        const res = response[0];
+
+        if (!res?.event_date) {
+          console.error('event_date manquant');
+          return;
         }
-      );
-    }
-  };
+
+        const eventDate = new Date(res.event_date);
+
+        if (isNaN(eventDate.getTime())) {
+          console.error('Format de date invalide:', res.event_date);
+          return;
+        }
+
+        const date = eventDate.toISOString().split('T')[0];
+
+        const time = eventDate.toLocaleTimeString('fr-FR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+        this.event = {
+          id: res.event_id,
+          title: res.title,
+          date,
+          time,
+          location: res.event_location,
+          description: res.description,
+          totalGuests: res.max_guests,
+          confirmedGuests: res.confirmed_count,
+          pendingGuests: res.pending_count,
+          declinedGuests: res.declined_count,
+        };
+      },
+      (error) => {
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';
+      }
+    );
+  }
 
   getGuestsByEvent(){
     if (this.eventId) {

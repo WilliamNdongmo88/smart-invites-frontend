@@ -171,6 +171,7 @@ export class EventDetailComponent implements OnInit{
             return;
           }
           const [datePart, timePart] = res.event_date.split('T');
+          console.log('datePart:', datePart, 'timePart:', timePart);
           if (!timePart){
             console.error('timePart manquant');
             return;

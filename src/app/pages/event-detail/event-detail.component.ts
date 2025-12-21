@@ -184,7 +184,7 @@ export class EventDetailComponent implements OnInit{
         },
         (error) => {
           // this.loading = false;
-          console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
+          //console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
           console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';
         }

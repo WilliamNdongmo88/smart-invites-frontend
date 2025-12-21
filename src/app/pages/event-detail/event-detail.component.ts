@@ -178,7 +178,6 @@ export class EventDetailComponent implements OnInit{
             console.error('timePart manquant');
             return;
           }
-          //const time = res.event_date.split('T')[1].split(':')[0]+':'+res.event_date.split('T')[1].split(':')[1]
           this.event = {
               id: res.event_id,
               title: res.title,

@@ -184,7 +184,6 @@ export class EventDetailComponent implements OnInit{
         },
         (error) => {
           // this.loading = false;
-          //console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
           console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';
         }
@@ -222,7 +221,6 @@ export class EventDetailComponent implements OnInit{
         },
         (error) => {
           this.isLoading = false;
-          console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
           console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';
         }
@@ -499,7 +497,6 @@ export class EventDetailComponent implements OnInit{
       },
       (error) => {
         this.isLoading = false;
-        console.error('❌ Erreur :', error.message.split(':')[1]);
         if(error.message.includes("409 Conflict")){
           this.triggerError();
           this.errorMessage = "Vous essayez d'enregistrer un invités qui existe déjà";
@@ -530,7 +527,6 @@ export class EventDetailComponent implements OnInit{
         (error) => {
           this.isLoading = false;
           console.error('❌ Erreur :', error.message);
-          console.error('❌ Erreur :', error.message.split(':')[1]);
           if(error.message.includes("409 Conflict")){
             this.triggerError();
             this.errorMessage = "Erreur lors de la génération du lien";
@@ -550,7 +546,6 @@ export class EventDetailComponent implements OnInit{
         (error) => {
           this.isLoading = false;
           console.error('❌ Erreur :', error.message);
-          console.error('❌ Erreur :', error.message.split(':')[1]);
           if(error.message.includes("409 Conflict")){
             this.triggerError();
             this.errorMessage = "Erreur lors de la mise à jour du lien";

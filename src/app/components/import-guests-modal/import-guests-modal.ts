@@ -132,12 +132,17 @@ export class ImportGuestsModalComponent {
       },
       (error) => {
         this.isModalLoading = false;
-        console.error('❌ Erreur :', error.message.split(':')[1]);
+        console.error('❌ Erreur :', error.message);
+        console.error('❌ Erreur :', error.error);
         if(error.message.includes("409 Conflict")){
           this.triggerError();
           this.errorMessage = "Vous essayez d'enregistrer un ou plusieurs invités déjà présents ";
           console.log("Message :: ", this.errorMessage);
-        }  
+        }else if(error.message.includes("500 Internal Server Error")){
+          this.triggerError();
+          this.errorMessage = error.error.message || "Erreur serveur lors de l'importation des invités.";
+          console.log("Message :: ", this.errorMessage);
+        } 
       }
     );
   }

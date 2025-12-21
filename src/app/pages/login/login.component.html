@@ -99,9 +99,13 @@
           </div>
 
           <!-- Social login -->
-          <button class="social-btn google" (click)="loginWithGoogle()">
-            <span>🌐</span> Google
-          </button>
+          <!-- <button class="social-btn google" (click)="loginWithGoogle()">
+            <span>🌐</span> 
+            {{ isLoading ? '⏳ Connexion ...' :'Google' }}
+          </button> -->
+          <div class="social-login">
+            <div id="googleSignInDiv"></div>
+          </div>
 
           <!-- Sign up link -->
           <div class="signup-link">

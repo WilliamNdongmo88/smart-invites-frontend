@@ -432,6 +432,20 @@
   animation: fadeInError 0.2s ease-in-out;
 }
 
+// Reset password - style
+.password-reset {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.password-reset .pass-link {
+  color: #D4AF37;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 @keyframes fadeInError {
   from {
     opacity: 0;

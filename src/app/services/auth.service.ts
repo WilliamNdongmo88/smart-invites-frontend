@@ -260,6 +260,18 @@ export class AuthService {
     this.userCache$ = undefined;
   }
 
+  loginWithGoogle(tokenId: string) {
+    console.log('Google token received in AuthService:', tokenId);
+    return this.http.post<AuthResponse>(`${this.apiUrl}/google`, { tokenId }).pipe(
+      tap(response => {
+        // console.log('###[login] response :: ', response);
+        this.handleAuthResponse(response);
+        this.loadUserFromStorage();
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   /**
    * Centralized error handling
    */

@@ -14,7 +14,8 @@
         <div class="profile-sidebar">
         <div class="profile-card">
             <div class="avatar-section">
-            <img src="img/avatar.webp" alt="Avatar" class="avatar" />
+            <img *ngIf="userProfile.avatar == null" [src]="'img/avatar.webp'" alt="Avatar" class="avatar" />
+            <img *ngIf="userProfile.avatar != null" [src]="userProfile.avatar" alt="Avatar" class="avatar" />
             <button class="btn-change-avatar">📷 Changer</button>
             </div>
 
@@ -283,6 +284,10 @@
                 >
                     {{ loading ? '⏳ Modification...' : '🔒 Changer le mot de passe' }}
                 </button>
+                <div class="password-reset">
+                    <p>Mot de passe actuel oublié ?</p>
+                    <a (click)="goToResetPage()" class="pass-link">Reset mon mot de passe</a>
+                </div>
                 <!-- Success backend -->
                 <p class="success" *ngIf="successMessage">
                     {{ successMessage }}

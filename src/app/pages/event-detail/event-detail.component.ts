@@ -578,8 +578,12 @@ export class EventDetailComponent implements OnInit{
     this.eventService.getLink().subscribe(
       (response) => {
         console.log("[getLinks] Response :: ", response);
-        if(this.eventId != response[0].event_id) return;
+        const linksArray: any[] = [];
         for (const link of response) {
+          if(this.eventId == link.event_id) linksArray.push(link);
+        }
+        console.log("linksArray :: ", linksArray);
+        for (const link of linksArray) {
           const data = {
             id: link.id,
             label: `🔗 Partagé le lien ${link.type} (utilisé ${link.used_count}/${link.limit_count})`, 

@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
 import { catchError, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../environment/environment';
 import { NotificationService } from './notification.service';
+import { EventService } from './event.service';
 export interface User {
   id: number;
   email: string;
@@ -57,7 +58,11 @@ export class AuthService {
   private userCache$?: Observable<any>;
   private refresh$ = new Subject<void>();
 
-  constructor(private http: HttpClient, private notificationService: NotificationService) {
+  constructor(
+    private http: HttpClient, 
+    private notificationService: NotificationService,
+    private eventService: EventService
+  ) {
     if (this.isProd) {
       this.apiUrl = environment.apiUrlProd+'/auth';
     } else {
@@ -109,6 +114,21 @@ export class AuthService {
         this.handleAuthResponse(response);
         this.loadUserFromStorage();
         this.notificationService.clearNotificationsCache();
+        this.eventService.clearCache();
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  loginWithGoogle(tokenId: string) {
+    console.log('Google token received in AuthService:', tokenId);
+    return this.http.post<AuthResponse>(`${this.apiUrl}/google`, { tokenId }).pipe(
+      tap(response => {
+        // console.log('###[login] response :: ', response);
+        this.handleAuthResponse(response);
+        this.loadUserFromStorage();
+        this.notificationService.clearNotificationsCache();
+        this.eventService.clearCache();
       }),
       catchError(this.handleError)
     );
@@ -260,19 +280,6 @@ export class AuthService {
 
   clearCache() {
     this.userCache$ = undefined;
-  }
-
-  loginWithGoogle(tokenId: string) {
-    console.log('Google token received in AuthService:', tokenId);
-    return this.http.post<AuthResponse>(`${this.apiUrl}/google`, { tokenId }).pipe(
-      tap(response => {
-        // console.log('###[login] response :: ', response);
-        this.handleAuthResponse(response);
-        this.loadUserFromStorage();
-        this.notificationService.clearNotificationsCache();
-      }),
-      catchError(this.handleError)
-    );
   }
 
   /**

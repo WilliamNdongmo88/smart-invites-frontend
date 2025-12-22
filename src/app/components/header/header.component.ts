@@ -70,8 +70,8 @@ export class HeaderComponent implements OnInit {
       //console.log('Header rafraîchi - Connecté =', status);
     });
     this.authService.currentUser$.subscribe(user => {
-      console.log("---user :: ", user)
       this.currentUser = user;
+      console.log("---this.currentUser :: ", this.currentUser)
     });
     this.communicationService.message$.subscribe(msg => {
       console.log("msg :: ", localStorage.getItem('variable'));
@@ -89,18 +89,21 @@ export class HeaderComponent implements OnInit {
     this.loadNotifications();
   }
 
-  loadNotifications(){
-    const token = localStorage.getItem('accessToken');
-    if(!token) return;
+  loadNotifications() {
     this.notificationService.getNotifications().subscribe({
-      next: (response: any) => {
-        console.log('[loadNotifications] response :: ', response);
-        this.notifications = response.reverse();
+      next: (responses: any[]) => {
+        if (!this.currentUser) return;
+
+        this.notifications = responses
+          .filter(n => n.organizer_id === this.currentUser?.id)
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        console.log('[loadNotifications] notifications filtrées ::', this.notifications);
       },
       error: (err) => {
-        this.errorMessage = err.error.error || 'Erreur lors du chargement des notifications.';
-        console.error('[loadNotifications] Erreur :', err.error.error);
-        this.loadEventData();
+        this.errorMessage =
+          err?.error?.error || 'Erreur lors du chargement des notifications.';
+        console.error('[loadNotifications] Erreur :', err);
       }
     });
   }

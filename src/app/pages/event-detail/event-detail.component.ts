@@ -578,6 +578,7 @@ export class EventDetailComponent implements OnInit{
     this.eventService.getLink().subscribe(
       (response) => {
         console.log("[getLinks] Response :: ", response);
+        if(this.eventId != response[0].event_id) return;
         for (const link of response) {
           const data = {
             id: link.id,

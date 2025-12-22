@@ -240,14 +240,13 @@ export class InvitationComponent implements OnInit{
           console.log('response event :: ', response);
           const event = response[0];
           this.concernedEvent = response.event_name_concerned1 +' et '+ response.event_name_concerned2;
-          const res = event.event_date;
-          if (!res?.event_date) {
+          if (!event.event_date) {
             console.error('event_date manquant');
             return;
           }
-          const eventDate = new Date(res.event_date);
+          const eventDate = new Date(event.event_date);
           if (isNaN(eventDate.getTime())) {
-            console.error('Format de date invalide:', res.event_date);
+            console.error('Format de date invalide:', event.event_date);
             return;
           }
           const date = eventDate.toISOString().split('T')[0];

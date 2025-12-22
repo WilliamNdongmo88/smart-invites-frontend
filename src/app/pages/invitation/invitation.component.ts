@@ -192,8 +192,21 @@ export class InvitationComponent implements OnInit{
             this.response.set('declined');
             this.submitted.set(true);
           }else{
-            this.concernedEvent = response.eventTitle.split('de')[1];
-            const responseDate = response.eventDate;
+            this.concernedEvent = response.event_name_concerned1 +' et '+ response.event_name_concerned2;
+            if (!response?.eventDate) {
+              console.error('event_date manquant');
+              return;
+            }
+            const eventDate = new Date(response.eventDate);
+            if (isNaN(eventDate.getTime())) {
+              console.error('Format de date invalide:', response.eventDate);
+              return;
+            }
+            const date = eventDate.toISOString().split('T')[0];
+            const time = eventDate.toLocaleTimeString('fr-FR', {
+              hour: '2-digit',
+              minute: '2-digit',
+            });
             this.data = {
               guestId: response.guestId,
               guestName: response.guestName,
@@ -205,8 +218,8 @@ export class InvitationComponent implements OnInit{
               description: response.description,
               eventHasPlusOne: response.eventHasPlusOne,
               footRestriction: response.eventFootRestriction,
-              eventDate: response.eventDate.split('T')[0],
-              eventTime: responseDate.split('T')[1].split(':')[0]+':'+responseDate.split('T')[1].split(':')[1],
+              eventDate: date,
+              eventTime: time,
               eventLocation: response.eventLocation,
               emailOrganizer: response.emailOrganizer
             };
@@ -226,8 +239,23 @@ export class InvitationComponent implements OnInit{
         next: (response: any) => {
           console.log('response event :: ', response);
           const event = response[0];
-          this.concernedEvent = event.title.split('de')[1];
-          const responseDate = event.event_date;
+          this.concernedEvent = response.event_name_concerned1 +' et '+ response.event_name_concerned2;
+          const res = event.event_date;
+          if (!res?.event_date) {
+            console.error('event_date manquant');
+            return;
+          }
+          const eventDate = new Date(res.event_date);
+          if (isNaN(eventDate.getTime())) {
+            console.error('Format de date invalide:', res.event_date);
+            return;
+          }
+          const date = eventDate.toISOString().split('T')[0];
+          const time = eventDate.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          
           this.data = {
             guestId: 0,
             guestName: '',
@@ -239,8 +267,8 @@ export class InvitationComponent implements OnInit{
             description: event.description,
             eventHasPlusOne: event.has_plus_one,
             footRestriction: event.foot_restriction,
-            eventDate: event.event_date.split('T')[0],
-            eventTime: responseDate.split('T')[1].split(':')[0]+':'+responseDate.split('T')[1].split(':')[1],
+            eventDate: date,
+            eventTime: time,
             eventLocation: event.event_location,
             emailOrganizer: event.emailOrganizer
           };

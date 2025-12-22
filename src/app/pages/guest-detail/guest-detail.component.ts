@@ -267,10 +267,24 @@ export class GuestDetailComponent implements OnInit{
     this.guestService.updateRsvpStatusGuest(this.guestId, 'confirmed').subscribe(
       (response) => {
         console.log("response :: ", response);
-        const responseDate = response.updated_at;
+        if (!response?.updated_at) {
+          console.error('event_date manquant');
+          return;
+        }
+        const updatedAt = new Date(response.updated_at);
+        if (isNaN(updatedAt.getTime())) {
+          console.error('Format de date invalide:', response.updated_at);
+          return;
+        }
+        const date = updatedAt.toISOString().split('T')[0];
+        const time = updatedAt.toLocaleTimeString('fr-FR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+        
         this.guest.status = response.rsvp_status;
-        this.guest.responseDate = response.updated_at.split('T')[0];
-        this.guest.responseTime = responseDate.split('T')[1].split(':')[0]+':'+responseDate.split('T')[1].split(':')[1];
+        this.guest.responseDate = date;
+        this.guest.responseTime = time;
         this.loading = false;
       },
       (error) => {
@@ -286,10 +300,23 @@ export class GuestDetailComponent implements OnInit{
     this.guestService.updateRsvpStatusGuest(this.guestId, 'pending').subscribe(
       (response) => {
         console.log("response :: ", response);
-        const responseDate = response.updated_at;
+        if (!response?.updated_at) {
+          console.error('event_date manquant');
+          return;
+        }
+        const updatedAt = new Date(response.updated_at);
+        if (isNaN(updatedAt.getTime())) {
+          console.error('Format de date invalide:', response.updated_at);
+          return;
+        }
+        const date = updatedAt.toISOString().split('T')[0];
+        const time = updatedAt.toLocaleTimeString('fr-FR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
         this.guest.status = response.rsvp_status;
-        this.guest.responseDate = response.updated_at.split('T')[0];
-        this.guest.responseTime = responseDate.split('T')[1].split(':')[0]+':'+responseDate.split('T')[1].split(':')[1];
+        this.guest.responseDate = date;
+        this.guest.responseTime = time;
         this.loading = false;
       },
       (error) => {
@@ -305,10 +332,23 @@ export class GuestDetailComponent implements OnInit{
     this.guestService.updateRsvpStatusGuest(this.guestId, 'declined').subscribe(
       (response) => {
         console.log("response :: ", response);
-        const responseDate = response.updated_at;
+        if (!response?.updated_at) {
+          console.error('event_date manquant');
+          return;
+        }
+        const updatedAt = new Date(response.updated_at);
+        if (isNaN(updatedAt.getTime())) {
+          console.error('Format de date invalide:', response.updated_at);
+          return;
+        }
+        const date = updatedAt.toISOString().split('T')[0];
+        const time = updatedAt.toLocaleTimeString('fr-FR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
         this.guest.status = response.rsvp_status;
-        this.guest.responseDate = response.updated_at.split('T')[0];
-        this.guest.responseTime = responseDate.split('T')[1].split(':')[0]+':'+responseDate.split('T')[1].split(':')[1];
+        this.guest.responseDate = date;
+        this.guest.responseTime = time;
         this.loading = false;
       },
       (error) => {

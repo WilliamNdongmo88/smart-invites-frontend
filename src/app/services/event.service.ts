@@ -206,7 +206,7 @@ export class EventService {
 
   getLinkById(linkId: number): Observable<any> {
     return this.refresh$.pipe(
-      startWith(void 0), // première exécution
+      startWith(void 0),
       switchMap(() => {
         if (!this.linkCache$) {
           console.log('LINK API CALL');
@@ -231,6 +231,7 @@ export class EventService {
   }
 
   clearLinkCache() {
+    console.log('CLEAR LINK CACHE');
     this.linkCache$ = undefined;
   }
 }

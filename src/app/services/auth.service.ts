@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
 import { catchError, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../environment/environment';
+import { NotificationService } from './notification.service';
 export interface User {
   id: number;
   email: string;
@@ -56,7 +57,7 @@ export class AuthService {
   private userCache$?: Observable<any>;
   private refresh$ = new Subject<void>();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private notificationService: NotificationService) {
     if (this.isProd) {
       this.apiUrl = environment.apiUrlProd+'/auth';
     } else {
@@ -107,6 +108,7 @@ export class AuthService {
         // console.log('###[login] response :: ', response);
         this.handleAuthResponse(response);
         this.loadUserFromStorage();
+        this.notificationService.clearNotificationsCache();
       }),
       catchError(this.handleError)
     );
@@ -267,6 +269,7 @@ export class AuthService {
         // console.log('###[login] response :: ', response);
         this.handleAuthResponse(response);
         this.loadUserFromStorage();
+        this.notificationService.clearNotificationsCache();
       }),
       catchError(this.handleError)
     );

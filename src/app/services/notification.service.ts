@@ -151,6 +151,7 @@ export class NotificationService {
   }
 
   clearNotificationsCache() {
+    console.log('CLEAR NOTIFICATION CACHE');
     this.cache$ = undefined;
   }
 

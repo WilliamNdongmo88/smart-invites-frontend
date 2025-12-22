@@ -88,12 +88,31 @@ export class EditEventComponent implements OnInit {
     (response) => {
         console.log("#Response :: ", response[0]);
         const res = response[0];
-        const time = res.event_date.split('T')[1].split(':')[0]+':'+res.event_date.split('T')[1].split(':')[1]
+
+        if (!res?.event_date) {
+          console.error('event_date manquant');
+          return;
+        }
+
+        const eventDate = new Date(res.event_date);
+
+        if (isNaN(eventDate.getTime())) {
+          console.error('Format de date invalide:', res.event_date);
+          return;
+        }
+
+        const date = eventDate.toISOString().split('T')[0];
+
+        const time = eventDate.toLocaleTimeString('fr-FR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
         this.originalEventData = {
             id: Number(res.event_id).toString(),
             organizerId: res.organizer_id,
             title: res.title,
-            date: res.event_date.split('T')[0],
+            date: date,
             time: time,
             location: res.event_location,
             description: res.description,

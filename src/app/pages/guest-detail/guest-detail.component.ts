@@ -85,6 +85,26 @@ export class GuestDetailComponent implements OnInit{
       this.guestService.getGuestById(Number(this.guestId)).subscribe(
         (response) => {
           console.log("[getGuest]response :: ", response);
+          const res = response;
+
+          if (!res?.eventDate) {
+            console.error('event_date manquant');
+            return;
+          }
+
+          const eventDate = new Date(res.eventDate);
+
+          if (isNaN(eventDate.getTime())) {
+            console.error('Format de date invalide:', res.eventDate);
+            return;
+          }
+
+          const date = eventDate.toISOString().split('T')[0];
+
+          const time = eventDate.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
           this.eventId = response.eventId;
             this.guest = {
               id: response.guest_id,
@@ -97,8 +117,8 @@ export class GuestDetailComponent implements OnInit{
               plusOneName: response.plus_one_name,
               footRestriction: response.eventFootRestriction,
               plusOneDietaryRestrictions: response.plus_one_name_diet_restr,
-              responseDate: response.response_date.split('T')[0],
-              responseTime: response.response_date.split('T')[1].split(':')[0]+':'+response.response_date.split('T')[1].split(':')[1],
+              responseDate: date,
+              responseTime: time,
               qrCodeGenerated: response.qrCodeUrl ? true : false,
               qrCodeUrl: response.qrCodeUrl,
               notes: response.notes,

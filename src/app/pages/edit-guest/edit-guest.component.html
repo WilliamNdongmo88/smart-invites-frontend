@@ -75,6 +75,19 @@
                 />
               </div>
 
+              <div *ngIf="this.guestData.status == 'confirmed'" class="form-group">
+                <label for="table_number">Numero de table *</label>
+                <input
+                  type="text"
+                  id="table_number"
+                  name="table_number"
+                  [(ngModel)]="guestData.table_number"
+                  placeholder="Table 5"
+                  required
+                  class="form-input"
+                />
+              </div>
+
               <div class="form-group">
                 <label for="email">Adresse email *</label>
                 <input

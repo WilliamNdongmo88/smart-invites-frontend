@@ -6,10 +6,12 @@ import { GuestService } from '../../services/guest.service';
 import { SpinnerComponent } from "../../components/spinner/spinner";
 import { CommunicationService } from '../../services/share.service';
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
+import { from } from 'rxjs';
 
 interface Guest {
   id: number;
   name: string;
+  table_number: string;
   email: string;
   phone?: string;
   status: 'confirmed' | 'pending' | 'declined';
@@ -47,6 +49,7 @@ export class EditGuestComponent implements OnInit {
   originalGuestData: Guest = {
     id: 1,
     name: 'Jean Dupont',
+    table_number: 'Table 5',
     email: 'jean.dupont@email.com',
     phone: '+33 6 12 34 56 78',
     status: 'confirmed',
@@ -91,11 +94,12 @@ export class EditGuestComponent implements OnInit {
     this.isLoading = true;
     this.guestService.getGuestById(Number(this.guestId)).subscribe(
     (response) => {
-        console.log("###response :: ", response);
+        console.log("[loadGuest] response :: ", response);
         this.eventId = response.eventId;
         this.originalGuestData = {
             id: Number(response.guest_id),
             name: response.full_name,
+            table_number: response.table_number,
             email: response.email,
             phone: response.phone_number,
             status: response.rsvp_status as 'confirmed' | 'pending' | 'declined' || 'pending',
@@ -131,6 +135,7 @@ export class EditGuestComponent implements OnInit {
     const data = {
         eventId: this.eventId,
         fullName: this.guestData.name,
+        tableNumber: this.guestData.table_number,
         email: this.guestData.email,
         phoneNumber: this.guestData.phone,
         rsvpStatus: this.guestData.status,
@@ -138,7 +143,8 @@ export class EditGuestComponent implements OnInit {
         guesthasPlusOneAutoriseByAdmin: this.guestData.plusOne,
         plusOneName: this.guestData.plusOneInfo?.name,
         plusOneNameDietRestr: this.guestData.plusOneInfo?.dietaryRestrictions,
-        notes: this.guestData.notes
+        notes: this.guestData.notes,
+        fromEditePage: true
     }
     console.log('data :: ', data);
     this.isLoading = true;

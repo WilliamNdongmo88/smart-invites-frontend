@@ -15,9 +15,10 @@ export interface Guest {
   notes?: string;
 }
 export interface Guests{
-  guest_id: string,
+  guest_id: string;
   event_id: number;
-  full_name: string
+  full_name: string;
+  table_number: string;
   email: string
   phone_number: string
   rsvp_status: string

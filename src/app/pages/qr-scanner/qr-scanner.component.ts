@@ -13,6 +13,7 @@ interface ScanResult {
   guestId?: string;
   guestName?: string;
   eventName?: string;
+  tableNumber?: string;
   message: string;
 }
 
@@ -262,7 +263,9 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     console.log('data:: ', data);
     this.qrcodeService.addCheckIn(data).subscribe(
     (response) => {
-        //console.log("###response :: ", response);
+        console.log("[addCheckIn] response :: ", response);
+        const guest = response;
+        const event = response;
         this.successCount.update(count => count + 1);
 
         this.isValid = true;
@@ -272,8 +275,9 @@ export class QRScannerComponent implements OnInit, OnDestroy {
 
         this.scanResult.set({
             success: true,
-            guestName: this.data.hasPlusOne ? this.data.guestName+' et '+this.data.plusOneName : this.data.guestName,
-            eventName: this.data.eventTitle,
+            guestName: guest.has_plus_one ? guest.full_name+' et '+guest.plus_one_name : guest.plus_one_name,
+            eventName: event.title,
+            tableNumber: guest.table_number,
             message: 'Code QR validé avec succès !'
         });
       this.manageCheckInParameter();

@@ -101,9 +101,11 @@ export class HeaderComponent implements OnInit {
         console.log('[loadNotifications] notifications filtrées ::', this.notifications);
       },
       error: (err) => {
-        this.errorMessage =
-          err?.error?.error || 'Erreur lors du chargement des notifications.';
+        this.errorMessage = err?.error?.error || 'Erreur lors du chargement des notifications.';
         console.error('[loadNotifications] Erreur :', err);
+        if(err.status === 401 && this.errorMessage.includes(`Token invalide ou expiré`)){
+          this.loadAlertModal();
+        }
       }
     });
   }
@@ -254,7 +256,7 @@ endTouch(event: TouchEvent, notification: any) {
     this.showNotifications.set(false);
   }
 
-  loadEventData() {
+  loadAlertModal() {
     console.log("### Message :: ", this.errorMessage);
     // Notification si token expiré
     if (this.errorMessage.includes(`Token invalide ou expiré`)) {

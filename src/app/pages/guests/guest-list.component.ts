@@ -13,11 +13,13 @@ import { ImportedGuest } from '../../services/import-guest.service';
 import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 import { FooterDetailComponent } from "../../components/footer/footer.component";
+import { AlertConfig, ConditionalAlertComponent } from '../../components/conditional-alert/conditional-alert.component';
 
 interface Guest {
   id: number;
   name: string;
   email: string;
+  table_number: string;
   phone?: string;
   status: 'confirmed' | 'pending' | 'declined' | 'present';
   dietaryRestrictions?: string;
@@ -33,7 +35,7 @@ type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
   selector: 'app-guest-list',
   standalone: true,
   imports: [CommonModule, FormsModule, SpinnerComponent, AddGuestModalComponent,
-    ImportGuestsModalComponent, ErrorModalComponent, ConfirmDeleteModalComponent, FooterDetailComponent],
+    ImportGuestsModalComponent, ErrorModalComponent, ConfirmDeleteModalComponent, FooterDetailComponent, ConditionalAlertComponent],
   templateUrl: 'guest-list.component.html',
   styleUrl: 'guest-list.component.scss',
 })
@@ -75,6 +77,17 @@ export class GuestListComponent implements OnInit{
     // { label: 'Présent', value: 'present' },
   ];
 
+  alertConfig: AlertConfig = {
+    condition: false,
+    type: 'success',
+    title: '',
+    message: '',
+    icon: '',
+    dismissible: true,
+    autoClose: false,
+    duration: 5000,
+  };
+
   guests: Guest[] = [];
 
   constructor(
@@ -90,6 +103,7 @@ export class GuestListComponent implements OnInit{
     this.eventId = Number(result);
     console.log("this.eventId :: ", this.eventId);
     this.getGuestsByEvent();
+    this.loadGuestsData();
     this.communicationService.message$.subscribe(msg => {
       console.log("msg :: ", localStorage.getItem('variable'));
       if (msg) {
@@ -114,6 +128,7 @@ export class GuestListComponent implements OnInit{
                 eventId: res.event_id,
                 name: res.full_name,
                 email: res.email,
+                table_number: res.table_number,
                 phone: res.phone_number,  
                 status: uper.toLowerCase() as 'confirmed' | 'pending' | 'declined' | 'present',
                 dietaryRestrictions: res.dietary_restrictions,
@@ -147,6 +162,7 @@ export class GuestListComponent implements OnInit{
       const matchesStatus = this.filterStatus() === 'all' || guest.status === this.filterStatus();
       return matchesSearch && matchesStatus;
     });
+    console.log("filteredGuests :: ", this.filteredGuests);
   }
 
   setFilterStatus(status: 'all' | 'confirmed' | 'pending' | 'declined' | 'present') {
@@ -619,6 +635,25 @@ export class GuestListComponent implements OnInit{
   closeModal() {
     this.showDeleteModal = false;
     this.selectedGuestId = null;
+  }
+
+  loadGuestsData() {
+    console.log("Chargement des données des invités...");
+    for (const guest of this.guests) {
+      if (guest.status === 'confirmed') {
+        this.alertConfig = {
+          condition: true,
+          type: 'success',
+          title: 'Présence confirmée',
+          message: 'Vous pouvez déjà attribuer une table aux invités confirmés.',
+          icon: '✓',
+          dismissible: true,
+          autoClose: true,
+          duration: 5000,
+        };
+      };
+      break;
+    }
   }
 
   //Change le mode d'affichage (grille ou tableau)

@@ -3,6 +3,9 @@
     <!-- Indicateur de chargement -->
     <app-spinner [isLoading]="isLoading"></app-spinner>
 
+    <!-- Notification conditionnelle -->
+    <app-conditional-alert [config]="alertConfig"></app-conditional-alert>
+
     <!-- Header eventId, eventTitle-->
     <div class="guest-list-header">
         <div class="container">
@@ -111,10 +114,11 @@
                     <p class="guest-email">{{ guest.email }}</p>
 
                     <div class="guest-info">
-                    <div class="info-item" *ngIf="guest.phone">
-                        <span class="label">📱</span>
-                        <span class="value">{{ guest.phone }}</span>
+                    <div class="info-item" *ngIf="guest.table_number">
+                        <span class="label">🪑 Table: </span>
+                        <span class="value">{{ guest.table_number }}</span>
                     </div>
+                    
 
                     <div class="info-item" *ngIf="guest.dietaryRestrictions">
                         <span class="label">🍽️</span>

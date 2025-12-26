@@ -79,6 +79,17 @@ export class QrCodeService {
     return this.http.get<any>(`${this.apiUrl}/checkin-param/${eventId}`, { headers });
   }
 
+  getListScannedGuests(guestIds: number[]): Observable<any> {
+    console.log("GuestIds envoyés :", guestIds);
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/checkin/scanned-guest`, { guestIds }, { headers });
+  }
+
+  sendThankMessage(datas: any): Observable<any>{
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/checkin/thank-message`, { datas }, { headers });
+  }
+
   updateCheckInParam(data: any): Observable<any>{
     const headers = this.getAuthHeaders();
     return this.http.put<any>(`${this.apiUrl}/checkin-param`, data, { headers });

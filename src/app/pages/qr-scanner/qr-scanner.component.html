@@ -118,6 +118,136 @@
               </ol>
             </div>
 
+            <!-- Guests List *ngIf="!(isMobile | async)" -->
+            <div class="card mt-card">
+                <h2 class="clickable-title" (click)="toggle()">
+                  <span>Invités {{ isOpen ? '' : '(' + filteredGuests.length + ')' }}</span>
+
+                  <span class="toggle-icon">
+                    {{ isOpen ? '▾' : '▸' }}
+                  </span>
+                </h2>
+
+                <div *ngIf="!isOpen && filteredGuests.length > 0">
+                  <!-- Search and Filter *ngIf="!(isMobile | async)" -->
+                  <div class="search-filter">
+                      <div class="search-box">
+                          <input
+                          type="text"
+                          placeholder="Rechercher par nom ou email..."
+                          [(ngModel)]="searchTerm"
+                          (ngModelChange)="filterGuests()"
+                          />
+                      </div>
+
+                      <div class="filter-buttons">
+                          <button class=" filter-btn btn-outline" style="width: 100%;" (click)="exportPDF()">
+                              {{ loading ? '⏳ Téléchargement...' : '📄 Télécharger en PDF' }}
+                          </button>
+                          <button class="btn btn-outline text-center" style="width: 100%;" (click)="thankMessageForm()">
+                              💌 Envoyer message de remerciement
+                          </button>
+                      </div>
+                  </div>
+
+                  <!-- Guests Table *ngIf="!(isMobile | async)" -->
+                  <div class="guests-table guests-grid">
+                      <table>
+                          <thead>
+                              <tr>
+                                  <th>Nom</th>
+                                  <th>Nom +1</th>
+                                  <th>Restrictions</th>
+                                  <th>Restrictions +1</th>
+                                  <!-- <th>Actions</th> -->
+                                  <th>Statut</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr *ngFor="let guest of paginatedGuests()" [class]="'status-' + guest.status">
+                                  <td>{{ guest.name }}</td>
+                                  <td class="name">{{ guest.plusOne ? guest.plusOneName : '-' }}</td>
+                                  <td class="restrictions">{{ guest.dietaryRestrictions || '-' }}</td>
+                                  <td class="restrictions">{{ guest.plusOnedietaryRestrictions || '-' }}</td>
+                                  <td>
+                                      <span class="status-badge" [class]="'status-' + guest.status">
+                                          {{ getStatusIcon(guest.status) }} {{ getStatusLabel(guest.status) }}
+                                      </span>
+                                  </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                      <div *ngIf="filteredGuests.length === 0" class="no-guests">
+                          <p>Aucun invité trouvé</p>
+                      </div>
+                  </div>
+
+                  <!-- Pagination Controls -->
+                  <div *ngIf="!(isMobile | async)" class="pagination">
+                      <button 
+                          (click)="prevPage()" 
+                          [disabled]="currentPage === 1"
+                          class="page-btn">
+                          ◀
+                      </button>
+
+                      <button 
+                          *ngFor="let page of totalPagesArray()" 
+                          (click)="goToPage(page)"
+                          [class.active]="page === currentPage"
+                          class="page-btn">
+                          {{ page }}
+                      </button>
+
+                      <button 
+                          (click)="nextPage()" 
+                          [disabled]="currentPage === totalPages"
+                          class="page-btn">
+                          ▶
+                      </button>
+                  </div>
+                </div>
+                <div *ngIf="isMessage">
+                  <!-- Message de remerciement -->
+                  <label class="label-mt">
+                    💬 Saisir le message de remerciement
+                  </label>
+
+                  <textarea
+                    [(ngModel)]="thankMessage"
+                    (ngModelChange)="onMessageChange()"
+                    rows="4"
+                    maxlength="1000"
+                    placeholder="Merci d’avoir participé à notre événement..."
+                    class="thank-textarea"
+                  ></textarea>
+
+                  <!-- Compteur + erreur -->
+                  <div class="message-meta">
+                    <small>{{ thankMessage.length }}/1000 caractères</small>
+
+                    <small class="error" *ngIf="messageError">
+                      {{ messageError }}
+                    </small>
+                  </div>
+
+                  <!-- Bouton envoyer -->
+                  <button
+                    class="btn btn-primary"
+                    [disabled]="!canSendThankMessage"
+                    (click)="sendThankMessage()"
+                  >
+                    📨 Envoyer le message de remerciement
+                  </button>
+                </div>
+                <div *ngIf="noMessage">
+                  <span>📅 L’événement est dans le futur</span>
+                </div>
+                <div *ngIf="!isOpen && filteredGuests.length == 0">
+                    <span>Aucun invité pour le moment</span>
+                </div> 
+            </div>
+
             <div class="info-card">
               <h3>⚙️ Paramètres</h3>
               <div class="settings-group">
@@ -164,3 +294,4 @@
         </div>
       </div>
     </div>
+    <app-footer></app-footer>

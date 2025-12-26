@@ -614,10 +614,6 @@ export class EventDetailComponent implements OnInit{
     alert(`✏️ Édition de ${guest.name}...`);
   }
 
-  exportList() {
-    alert('📥 Export de la liste en cours...');
-  }
-
   shareLink() {
     alert('🔗 Lien partagé !');
   }

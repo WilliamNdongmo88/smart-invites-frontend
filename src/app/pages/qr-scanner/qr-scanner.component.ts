@@ -7,6 +7,10 @@ import { QrCodeService } from '../../services/qr-code.service';
 import { GuestService } from '../../services/guest.service';
 import { CommunicationService } from '../../services/share.service';
 import { EventService } from '../../services/event.service';
+import { map, Observable } from 'rxjs';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { FooterDetailComponent } from "../../components/footer/footer.component";
+import { NotificationService } from '../../services/notification.service';
 
 interface ScanResult {
   success: boolean;
@@ -17,10 +21,27 @@ interface ScanResult {
   message: string;
 }
 
+interface Guest {
+  id?: string;
+  eventId?: number
+  name: string;
+  email: string;
+  phone: string;
+  status: 'confirmed' | 'pending' | 'declined' | 'present';
+  dietaryRestrictions?: string;
+  plusOnedietaryRestrictions?: string;
+  plusOne?: boolean;
+  plusOneName?: string;
+  responseDate?: string;
+  eventDate: string
+}
+
+type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
+
 @Component({
   selector: 'app-qr-scanner',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FooterDetailComponent],
   templateUrl: 'qr-scanner.component.html',
   styleUrl: 'qr-scanner.component.scss'
 })
@@ -44,6 +65,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   guestId: number = 0;
   eventId: number = 0;
   isValid: boolean = false;
+  loading: boolean = false;
   private isScanning = false;
   datas: any[] = [];
   data = {
@@ -59,11 +81,36 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     role: ''
   };
 
+  event = {
+    eventTitle: '',
+    eventDate: '',
+    eventTime: '',
+    eventDateTime: '',
+    eventLocation: '',
+    guestRsvpStatus: ''
+  }
+
+  filterStatus = signal<FilterStatus>('present');
+  filteredGuests: Guest[] = [];
+  guests: Guest[] = [];
+  searchTerm = '';
+  itemsPerPage = 6;
+  currentPage = 1;
+  isMobile!: Observable<boolean>;
+  isOpen = true;
+  isMessage = false;
+  noMessage = false;
+  thankMessage = '';
+  messageError = '';
+  canSendThankMessage = false;
+
   constructor(
     private router: Router,
     private qrcodeService: QrCodeService,
     private guestService: GuestService,
     private eventService: EventService,
+    private notificationService: NotificationService,
+    private breakpointObserver: BreakpointObserver,
     private communicationService: CommunicationService
   ) {}
 
@@ -82,6 +129,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     });
     this.getEventAndInvitationRelated();
     this.getCheckInParam();
+    this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
   }
 
   ngOnDestroy() {
@@ -93,6 +141,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         (response) => {
             this.datas = response
             console.log("###this.datas :: ", this.datas);
+            this.getListScannedGuest();
         },
         (error) => {
             console.error('❌ [getEventAndInvitationRelated] Erreur :', error.message);
@@ -275,7 +324,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
 
         this.scanResult.set({
             success: true,
-            guestName: guest.has_plus_one ? guest.full_name+' et '+guest.plus_one_name : guest.plus_one_name,
+            guestName: guest.has_plus_one ? guest.guestName+' et '+guest.plus_one_name : guest.plus_one_name,
             eventName: event.title,
             tableNumber: guest.table_number,
             message: 'Code QR validé avec succès !'
@@ -294,6 +343,71 @@ export class QRScannerComponent implements OnInit, OnDestroy {
             message: error.error.error ? error.error.error : 'Code QR invalide ou non reconnu',
         });
     });
+  }
+
+  getListScannedGuest(){
+    const guestIds = this.datas.filter(g => g.guestId != null).map(g => g.guestId);
+    this.qrcodeService.getListScannedGuests(guestIds).subscribe(
+    (responses) => {
+      console.log("[getListScannedGuests] response :: ", responses);
+      const guests = [];
+      const res = responses[0];
+      if (!res?.event_date) {
+        console.error('event_date manquant');
+        return;
+      }
+
+      const eventDate = new Date(res.event_date);
+
+      if (isNaN(eventDate.getTime())) {
+        console.error('Format de date invalide:', res.event_date);
+        return;
+      }
+
+      const date = eventDate.toISOString().split('T')[0];
+
+      const time = eventDate.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+
+      this.event = {
+        eventTitle: responses[0].title,
+        eventDate: date,
+        eventTime: time,
+        eventDateTime: responses[0].event_date,
+        eventLocation: responses[0].event_location,
+        guestRsvpStatus: responses[0].rsvp_status
+      }
+      for (const res of responses) {
+        const guest = {
+          eventId: res.eventId,
+          name: res.guestName,
+          email: res.email,
+          phone: res.phone_number,
+          eventDate: res.event_date,
+          plusOne: res.has_plus_one,
+          plusOneName: res.plus_one_name,
+          dietaryRestrictions: res.dietary_restrictions || 'Aucune',
+          plusOnedietaryRestrictions: res.plus_one_name_diet_restr || 'Aucune',
+          status: res.rsvp_status,
+        }
+        guests.push(guest);
+      }
+      this.guests = guests;
+      // console.log("[getListScannedGuests] this.guests :: ", this.guests);
+      this.filterGuests();
+    },
+    (error) => {
+        console.error('❌ [getListScannedGuests] Erreur :', error.message);
+    });
+  }
+
+  toggle() {
+    this.isOpen = !this.isOpen;
+    this.isMessage = false;
+    this.noMessage = false;
+    // console.log('this.isOpen', this.isOpen)
   }
 
   manageCheckInParameter(){
@@ -416,6 +530,191 @@ export class QRScannerComponent implements OnInit, OnDestroy {
 
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + 0.2);
+  }
+
+  filterGuests() {
+    console.log("[filterGuests] this.guests :: ", this.guests);
+    this.filteredGuests = this.guests
+    .filter((guest) => {
+      const matchesSearch =
+        guest.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        guest.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        (guest.phone && guest.phone.includes(this.searchTerm));
+      const matchesStatus = this.filterStatus() === 'present' || guest.status === this.filterStatus();
+      return matchesSearch && matchesStatus;
+    });
+    console.log("filteredGuests :: ", this.filteredGuests);
+  }
+
+  exportPDF() {
+    console.log("[exportPDF] this.guests:: ", this.guests);
+    console.log("[exportPDF] this.filteredGuests:: ", this.filteredGuests);
+    const data = {
+      event: this.event,
+      filteredGuests: this.filteredGuests
+    };
+    console.log("data :: ", data);
+    this.loading = true;
+    this.qrcodeService.downloadGuestsPdf(data).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'invites-present.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Erreur téléchargement PDF', err);
+      }
+    });
+  }
+
+  thankMessageForm(){
+    console.log("Envoie du message en cours... ");
+    const eventDateObj = new Date(this.event.eventDate);
+    console.log('eventDateObj:', eventDateObj);
+    const now = new Date();
+
+    if (eventDateObj > now) {
+      console.log('📅 L’événement est dans le futur');
+      this.isOpen = true;
+      this.noMessage = true;
+      this.isMessage = false;
+    } else if (eventDateObj < now) {
+      console.log("Envoie du message en cours... ");
+      this.isOpen = true;
+      this.isMessage = true;
+    } else {
+      console.log('⚡ L’événement est maintenant');
+    }
+  }
+  onMessageChange() {
+    // Reset
+    this.messageError = '';
+    this.canSendThankMessage = false;
+
+    // Message obligatoire
+    if (!this.thankMessage || this.thankMessage.trim().length === 0) {
+      this.messageError = 'Le message est requis.';
+      return;
+    }
+
+    // Longueur minimale
+    if (this.thankMessage.trim().length < 5) {
+      this.messageError = 'Le message doit contenir au moins 5 caractères.';
+      return;
+    }
+
+    // Longueur max
+    if (this.thankMessage.length > 1000) {
+      this.messageError = 'Le message ne peut pas dépasser 300 caractères.';
+      return;
+    }
+
+    // OK
+    this.canSendThankMessage = true;
+  }
+
+  sendThankMessage() {
+    if (!this.canSendThankMessage) return;
+    const guests = [];
+    let eventId;
+    for (const g of this.guests) {
+      eventId = g.eventId;
+      const guest = {
+        full_name: g.name,
+        email: g.email
+      }
+      guests.push(guest);
+    }
+    const data = {
+      eventId : eventId,
+      guests: guests,
+      message: this.thankMessage
+    }
+    console.log('📨 data :', data);
+    this.qrcodeService.sendThankMessage(data).subscribe(
+    (response) => {
+      console.log("[sendThankMessage] response :: ", response);
+      this.thankMessage = '';
+      this.canSendThankMessage = false;
+      this.notificationService.clearNotificationsCache();
+      this.notificationService.getNotifications();
+    },
+    (error) => {
+        console.error('❌ [sendThankMessage] Erreur :', error.message);
+    });
+  }
+
+  formatDate(date: string): string {
+    return new Date(date).toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  }
+
+  // Logique pagination 
+  get totalPages() {
+    return Math.ceil(this.filteredGuests.length / this.itemsPerPage);
+  }
+
+  totalPagesArray() {
+    return Array(this.totalPages)
+      .fill(0)
+      .map((_, i) => i + 1);
+  }
+  paginatedGuests() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    //console.log("this.filteredGuests.slice :: ", this.filteredGuests.slice(startIndex, startIndex + this.itemsPerPage))
+    return this.filteredGuests.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  getStatusIcon(status: string): string {
+    switch (status) {
+      case 'confirmed':
+        return '✓';
+      case 'pending':
+        return '⏳';
+      case 'declined':
+        return '✕';
+      case 'present':
+        return '✓✓';
+      default:
+        return '';
+    }
+  }
+
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'confirmed':
+        return 'Confirmé';
+      case 'pending':
+        return 'En attente';
+      case 'declined':
+        return 'Refusé';
+      case 'present':
+        return 'Présent';
+      default:
+        return status;
+    }
+  }
+
+  goToPage(page: number) {
+    this.currentPage = page;
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) this.currentPage++;
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) this.currentPage--;
   }
 
   goToDashboard() {

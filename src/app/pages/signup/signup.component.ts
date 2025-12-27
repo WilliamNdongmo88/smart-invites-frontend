@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService, RegisterRequest } from '../../services/auth.service';
 
+declare const google: any;
 @Component({
   selector: 'app-signup',
   standalone: true,
@@ -27,9 +28,56 @@ export class SignupComponent {
 
   constructor(
     private router: Router, 
-    private authService: AuthService) {
+    private authService: AuthService,
+    private cd: ChangeDetectorRef
+  ) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+  ngOnInit(): void {
+    google.accounts.id.initialize({
+      client_id: '1054058117713-j8or7mvfn32k9r2rk5issg9137bm944a.apps.googleusercontent.com',
+      callback: (response: any) => this.handleCredentialResponse(response)
+    });
+
+    // Rendu du bouton
+    const googleDiv = document.getElementById('googleSignInDiv');
+
+    if (googleDiv) {
+      google.accounts.id.renderButton(googleDiv, {
+        theme: 'outline',
+        size: 'large',
+        text: 'signin_with',
+        shape: 'rectangular',
+        logo_alignment: 'center',
+        width: 400,
+        type: 'standard'
+      });
+    }
+  }
+
+  handleCredentialResponse(response: any) {
+    // this.loading = true;
+    this.cd.detectChanges(); //Force Angular à mettre à jour l’UI
+
+    const googleIdToken = response.credential;
+
+    this.authService.loginWithGoogle(googleIdToken).subscribe({
+      next: (result) => {
+        console.log('✅ Connexion Google réussie', result);
+        if (result) {
+          this.router.navigate(['/dashboard']);
+        }
+      },
+      error: (err) => {
+        console.error('Erreur d\'authentification Google :', err);
+      },
+      complete: () => {
+        // this.loading = false;
+        this.cd.detectChanges(); // MAJ l’UI quand c’est fini
+      }
+    });
+  }
 
   togglePasswordVisibility() {
     this.showPassword.update(value => !value);

@@ -48,7 +48,7 @@ export class LoginComponent implements  OnInit{
         text: 'signin_with',
         shape: 'rectangular',
         logo_alignment: 'center',
-        width: 400,
+        width: 360,
         type: 'standard'
       });
     }

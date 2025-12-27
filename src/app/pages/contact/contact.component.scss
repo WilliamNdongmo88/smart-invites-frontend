@@ -6,7 +6,7 @@
 .contact-header {
     background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(244, 228, 193, 0.1) 100%);
     border-bottom: 1px solid #E0E0E0;
-    padding: 4rem 0;
+    padding: 1rem 0;
     text-align: center;
 }
 
@@ -213,5 +213,19 @@
 
     .faq-grid {
     grid-template-columns: 1fr;
+    }
+
+    form {
+        padding: 0 5px 0 5px;
+    }
+
+    .contact-info-section {
+        padding: 0 4px 0 4px;
+    }
+
+    .faq-item {
+        background-color: #F5F5F5;
+        border-radius: 0.75rem;
+        margin: 0 3px 0 3px;
     }
 }

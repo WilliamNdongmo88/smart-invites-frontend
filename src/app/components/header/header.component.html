@@ -13,7 +13,8 @@
       <!-- Utilisateur NON connecté -->
       <ng-container *ngIf="!isAuthenticated; else loggedInDesktop">
         <a *ngIf="isMobile | async" (click)="scrollTo('accueil')" class="nav-link">Accueil</a>
-        <a (click)="scrollTo('features')" class="nav-link">Fonctionnalités</a>
+        <a (click)="navigateToHome()" class="nav-link">Fonctionnalités</a>
+        <a (click)="navigateToScanner()" class="nav-link nav-link-cursor nav-hover">Scanner</a>
         <!-- <a routerLink="/pricing" class="nav-link">Tarifs</a> -->
         <a routerLink="/contact" class="nav-link">À propos</a>
         <button class="btn btn-primary" (click)="navigateToLogin()">Connexion</button>
@@ -57,7 +58,8 @@
     <!-- Utilisateur NON connecté -->
     <ng-container *ngIf="!isAuthenticated; else loggedInMobile">
       <a (click)="scrollTo('accueil')" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Accueil</a>
-      <a (click)="scrollTo('features')" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Fonctionnalités</a>
+      <a (click)="navigateToHome()" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Fonctionnalités</a>
+      <a (click)="navigateToScanner()" class="nav-link nav-link-cursor nav-hover">Scanner</a>
       <!-- <a routerLink="/pricing" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Tarifs</a> -->
       <a routerLink="/contact" class="mobile-nav-link" (click)="toggleMobileMenu(false)">À propos</a>
       <button class="btn btn-primary w-100" (click)="navigateToLogin(); toggleMobileMenu(false)">Connexion</button>

@@ -52,7 +52,8 @@ export class HeaderComponent implements OnInit {
 
   notifications: Notification[] = [];
 
-  constructor(private router: Router, 
+  constructor(
+              private router: Router,
               private authService: AuthService,
               private breakpointObserver: BreakpointObserver,
               private notificationService: NotificationService,
@@ -146,6 +147,11 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  navigateToHome(){
+    this.router.navigate(['/']);
+    this.scrollTo('features');
+  }
+
   logout() {
     this.authService.logout();
     this.isAuthenticated = false;
@@ -154,6 +160,21 @@ export class HeaderComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.authSub.unsubscribe();
+  }
+
+  navigateToScanner() {
+    console.log('isAuthenticated:', this.isAuthenticated);
+
+    if (!this.isAuthenticated) {
+      this.router.navigate(
+        ['/login'],
+        { queryParams: { returnUrl: '/event-scan-list' } }
+      );
+      return;
+    }
+
+    // Si déjà connecté
+    this.router.navigate(['/scanner']);
   }
 
   scanQrCode(){

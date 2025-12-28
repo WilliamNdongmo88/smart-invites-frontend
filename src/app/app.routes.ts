@@ -19,6 +19,7 @@ import { PricingComponent } from './pages/pricing/pricing.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { EventReportComponent } from './pages/event-report/event-report.component';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { EventScanListComponent } from './pages/event-scan-list/event-scan-list';
 
 export const routes: Routes = [
   {
@@ -53,6 +54,11 @@ export const routes: Routes = [
   {
     path: 'events/:eventId',
     component: EventDetailComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'event-scan-list',
+    component: EventScanListComponent,
     canActivate: [AuthGuard]
   },
   {

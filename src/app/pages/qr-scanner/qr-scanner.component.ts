@@ -1,11 +1,10 @@
 import { Component, signal, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import jsQR from 'jsqr';
 import { QrCodeService } from '../../services/qr-code.service';
 import { GuestService } from '../../services/guest.service';
-import { CommunicationService } from '../../services/share.service';
 import { EventService } from '../../services/event.service';
 import { map, Observable } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -105,28 +104,21 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   canSendThankMessage = false;
 
   constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private qrcodeService: QrCodeService,
     private guestService: GuestService,
     private eventService: EventService,
     private notificationService: NotificationService,
-    private breakpointObserver: BreakpointObserver,
-    private communicationService: CommunicationService
+    private breakpointObserver: BreakpointObserver
   ) {}
 
   ngOnInit() {
     this.userConnected = JSON.parse(localStorage.getItem('currentUser') || '');
     console.log('this.userConnected', this.userConnected);
-    this.communicationService.message$.subscribe(msg => {
-        if(typeof msg === 'number'){
-            this.eventId = msg;
-            localStorage.setItem('scanner', String(this.eventId));
-            console.log("eventId 1 :::", this.eventId);
-        }else{
-            this.eventId = Number(localStorage.getItem('scanner'));
-            console.log("eventId 2 :::", this.eventId);
-        }
-    });
+    const result = this.route.snapshot.paramMap.get('eventId') || '';
+    this.eventId = Number(result);
+    console.log("eventId :::", this.eventId);
     this.getEventAndInvitationRelated();
     this.getCheckInParam();
     this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
@@ -324,7 +316,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
 
         this.scanResult.set({
             success: true,
-            guestName: guest.has_plus_one ? guest.guestName+' et '+guest.plus_one_name : guest.plus_one_name,
+            guestName: guest.has_plus_one ? guest.guestName+' et '+guest.plus_one_name : guest.guestName,
             eventName: event.title,
             tableNumber: guest.table_number,
             message: 'Code QR validé avec succès !'
@@ -369,6 +361,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
       const time = eventDate.toLocaleTimeString('fr-FR', {
         hour: '2-digit',
         minute: '2-digit',
+        timeZone: 'UTC'
       });
 
       this.event = {

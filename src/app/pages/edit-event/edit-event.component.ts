@@ -106,6 +106,7 @@ export class EditEventComponent implements OnInit {
         const time = eventDate.toLocaleTimeString('fr-FR', {
           hour: '2-digit',
           minute: '2-digit',
+          timeZone: 'UTC'
         });
 
         this.originalEventData = {

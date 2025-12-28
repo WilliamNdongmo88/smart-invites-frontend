@@ -104,6 +104,7 @@ export class GuestDetailComponent implements OnInit{
           const time = eventDate.toLocaleTimeString('fr-FR', {
             hour: '2-digit',
             minute: '2-digit',
+            timeZone: 'UTC'
           });
           this.eventId = response.eventId;
             this.guest = {
@@ -280,6 +281,7 @@ export class GuestDetailComponent implements OnInit{
         const time = updatedAt.toLocaleTimeString('fr-FR', {
           hour: '2-digit',
           minute: '2-digit',
+          timeZone: 'UTC'
         });
         
         this.guest.status = response.rsvp_status;
@@ -313,6 +315,7 @@ export class GuestDetailComponent implements OnInit{
         const time = updatedAt.toLocaleTimeString('fr-FR', {
           hour: '2-digit',
           minute: '2-digit',
+          timeZone: 'UTC'
         });
         this.guest.status = response.rsvp_status;
         this.guest.responseDate = date;
@@ -345,6 +348,7 @@ export class GuestDetailComponent implements OnInit{
         const time = updatedAt.toLocaleTimeString('fr-FR', {
           hour: '2-digit',
           minute: '2-digit',
+          timeZone: 'UTC'
         });
         this.guest.status = response.rsvp_status;
         this.guest.responseDate = date;

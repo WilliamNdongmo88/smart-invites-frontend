@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { RouterLink, Router } from '@angular/router';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 declare const google: any;
@@ -19,8 +19,10 @@ export class LoginComponent implements  OnInit{
   errorMessage: string | null = null;
   rememberMe = false;
   showPassword = signal(false);
+  returnUrl: string = '/dashboard';
 
   constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
     private cd: ChangeDetectorRef
@@ -33,6 +35,8 @@ export class LoginComponent implements  OnInit{
   }
 
   ngOnInit(): void {
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+
     google.accounts.id.initialize({
       client_id: '1054058117713-j8or7mvfn32k9r2rk5issg9137bm944a.apps.googleusercontent.com',
       callback: (response: any) => this.handleCredentialResponse(response)
@@ -64,7 +68,7 @@ export class LoginComponent implements  OnInit{
       next: (result) => {
         console.log('✅ Connexion Google réussie', result);
         if (result) {
-          this.router.navigate(['/dashboard']);
+          this.router.navigateByUrl(this.returnUrl);
         }
       },
       error: (err) => {
@@ -99,7 +103,7 @@ export class LoginComponent implements  OnInit{
       (response) => {
         console.log("Message :: ", response.message)
         this.isLoading = false;
-        this.router.navigate(['/dashboard']);
+        this.router.navigateByUrl(this.returnUrl);
         this.errorMessage = null;
       },
       (error) => {

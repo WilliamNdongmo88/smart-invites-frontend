@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../services/auth.service';
 import { map, Observable, Subscription } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -54,6 +54,7 @@ export class HeaderComponent implements OnInit {
   constructor(
               private elementRef: ElementRef,
               private router: Router,
+              private route: ActivatedRoute,
               private authService: AuthService,
               private breakpointObserver: BreakpointObserver,
               private notificationService: NotificationService,
@@ -190,9 +191,22 @@ export class HeaderComponent implements OnInit {
   }
 
   scanQrCode(){
-    this.send(this.eventId);
-    this.router.navigate(['events',this.eventId,'qr-scanner']);
-    this.mobileMenuOpen.set(false);
+    const currentUrl = this.router.url;
+    //console.log('Current path :', currentUrl);
+    const segments = currentUrl.split('/').filter(Boolean);
+
+    const basePath = `${segments[0]}/${segments[1]}`;
+    //console.log('Base path :', basePath);
+
+    if(currentUrl.includes('guests')){
+      this.send(this.eventId);
+      this.router.navigate([basePath,'qr-scanner']);
+      this.mobileMenuOpen.set(false);
+    }else{
+      this.send(this.eventId);
+      this.router.navigate(['events',this.eventId,'qr-scanner']);
+      this.mobileMenuOpen.set(false);
+    }
   }
 
   send(message: any) {

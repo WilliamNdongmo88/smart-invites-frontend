@@ -245,7 +245,11 @@ export class GuestListComponent implements OnInit{
   }
 
   editGuest(guest: Guest) {
+    this.send('personal');
     this.router.navigate(['/events', this.eventId, 'guests', guest.id, 'edit']);
+  }
+  send(message: any) {
+    this.communicationService.sendMessage(message);
   }
 
   // Start Logique checkbox du tableau

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../services/auth.service';
@@ -49,10 +49,10 @@ export class HeaderComponent implements OnInit {
   touchEndX = 0;
   swipeThreshold = 150; // pixels pour déclencher la suppression
   isSwiping = false;
-
   notifications: Notification[] = [];
 
   constructor(
+              private elementRef: ElementRef,
               private router: Router,
               private authService: AuthService,
               private breakpointObserver: BreakpointObserver,
@@ -126,6 +126,18 @@ export class HeaderComponent implements OnInit {
       return;
     }
     this.mobileMenuOpen.set(!this.mobileMenuOpen());
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    const clickedInside = this.elementRef.nativeElement.contains(event.target);
+
+    if (!clickedInside && this.mobileMenuOpen()) {
+      this.toggleMobileMenu(false);
+    }
+    if(!clickedInside && this.showNotifications()){
+      this.closeNotifications();
+    }
   }
 
   navigateToLogin() {

@@ -34,6 +34,7 @@ interface Guest {
 interface Event {
   id: number;
   title: string;
+  type: string;
   date: string;
   time: string;
   location: string;
@@ -116,6 +117,7 @@ export class EventDetailComponent implements OnInit{
   event: Event = {
     id: 0,
     title: '',
+    type: '',
     date: '',
     time: '',
     location: '',
@@ -190,6 +192,7 @@ export class EventDetailComponent implements OnInit{
         this.event = {
           id: res.event_id,
           title: res.title,
+          type: res.type,
           date,
           time,
           location: res.event_location,
@@ -410,10 +413,27 @@ export class EventDetailComponent implements OnInit{
   }
 
   shareEventLink(event: Event, link: any) {
+    console.log("this.event:: ", this.event);
     console.log("link:: ", link);
 
+    let text = '';
+    switch (this.event.type) {
+      case 'wedding':
+        text = "Vous êtes invité au"
+        break;
+      case 'engagement':
+        text = "Vous êtes invité aux"
+        break
+      case 'anniversary':
+        text = "Vous êtes invité à l'"
+        break
+      case 'birthday':
+        text = "Vous êtes invité à l'"
+        break
+    }
+
     const message =
-      `Vous êtes invité au : ${event.title}\n` +
+      `${text}: ${event.title}\n` +
       `📅 Date : ${this.formatDate(event.date)}\n` +
       `⏰ Heure : ${event.time}\n\n` +
       `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
@@ -673,7 +693,6 @@ export class EventDetailComponent implements OnInit{
   send(message: any) {
     console.log("message::", message)
     this.communicationService.sendMessage(message);
-    //this.message = ""; // reset
   }
 
   openAddGuestModal() {

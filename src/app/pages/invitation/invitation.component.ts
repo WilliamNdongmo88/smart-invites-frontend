@@ -124,6 +124,7 @@ export class InvitationComponent implements OnInit{
         dietaryRestrictions: this.dietaryRestrictions || null,
         hasPlusOne: this.plusOne,
         plusOneName: this.plusOne ? this.plusOneName : null,
+        plusOneNameDietRestr: this.plusOne ? this.plusOneNameDietRestr : null,
         token: this.token.split(':')[1]
       };
       console.log('Data envoyé au backend :', data);
@@ -206,6 +207,7 @@ export class InvitationComponent implements OnInit{
             const time = eventDate.toLocaleTimeString('fr-FR', {
               hour: '2-digit',
               minute: '2-digit',
+              timeZone: 'UTC'
             });
             this.data = {
               guestId: response.guestId,
@@ -253,6 +255,7 @@ export class InvitationComponent implements OnInit{
           const time = eventDate.toLocaleTimeString('fr-FR', {
             hour: '2-digit',
             minute: '2-digit',
+            timeZone: 'UTC'
           });
           
           this.data = {

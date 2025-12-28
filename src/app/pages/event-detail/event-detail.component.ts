@@ -164,6 +164,7 @@ export class EventDetailComponent implements OnInit{
 
     this.eventService.getEventById(this.eventId).subscribe(
       (response) => {
+        console.log("[getOneEvent] response: ", response);
         const res = response[0];
 
         if (!res?.event_date) {
@@ -183,6 +184,7 @@ export class EventDetailComponent implements OnInit{
         const time = eventDate.toLocaleTimeString('fr-FR', {
           hour: '2-digit',
           minute: '2-digit',
+          timeZone: 'UTC'
         });
 
         this.event = {
@@ -197,6 +199,7 @@ export class EventDetailComponent implements OnInit{
           pendingGuests: res.pending_count,
           declinedGuests: res.declined_count,
         };
+        console.log("[getOneEvent] Event: ", this.event);
       },
       (error) => {
         console.log("Message :: ", error.message);

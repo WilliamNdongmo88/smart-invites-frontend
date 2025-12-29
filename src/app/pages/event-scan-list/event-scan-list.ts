@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { MatIcon } from "@angular/material/icon";
 import { EventService } from '../../services/event.service';
 import { AuthService, User } from '../../services/auth.service';
 import { CommunicationService } from '../../services/share.service';
@@ -22,7 +21,7 @@ interface Event {
 @Component({
   selector: 'app-event-scan-list',
   standalone: true,
-  imports: [CommonModule, MatIcon],
+  imports: [CommonModule],
   templateUrl: './event-scan-list.html',
   styleUrls: ['./event-scan-list.scss']
 })

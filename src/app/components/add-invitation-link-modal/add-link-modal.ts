@@ -81,9 +81,25 @@ export class AddLinkModalComponent implements OnInit{
   }
   shareEventLink(event: any, link: any) {
     console.log("link:: ", link);
+    console.log("event:: ", event);
 
+    let text = '';
+    switch (this.event.type) {
+      case 'wedding':
+        text = "Vous êtes invité au "
+        break;
+      case 'engagement':
+        text = "Vous êtes invité aux "
+        break
+      case 'anniversary':
+        text = "Vous êtes invité à l'"
+        break
+      case 'birthday':
+        text = "Vous êtes invité à l'"
+        break
+    }
     const message =
-      `Vous êtes invité au : ${event.title}\n` +
+      `${text}${event.title}\n` +
       `📅 Date : ${this.formatDate(event.date)}\n` +
       `⏰ Heure : ${event.time}\n\n` +
       `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +

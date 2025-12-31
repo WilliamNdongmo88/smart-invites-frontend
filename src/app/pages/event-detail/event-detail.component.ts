@@ -502,6 +502,7 @@ export class EventDetailComponent implements OnInit{
       (response) => {
         console.log("[deleteEvent] response :: ", response);
         this.isLoading = false;
+        this.triggerBAction();
         this.router.navigate(['/dashboard']);
       },
       (error) => {
@@ -516,6 +517,11 @@ export class EventDetailComponent implements OnInit{
         }
       }
     );
+  }
+
+  triggerBAction() {
+    console.log("→ Je demande à DashboardCmp d’exécuter une action !");
+    this.communicationService.triggerSenderAction();
   }
 
   onGuestAdded(newGuest: any) {

@@ -135,7 +135,10 @@ export class EventService {
   createEvent(request: CreateEventRequest[]): Observable<any> {
     console.log('Creating event with data:', request);
     const headers = this.getAuthHeaders();
-    return this.http.post<any>(`${this.apiUrl}/event/create-event`, request, { headers });
+    return this.http.post<any>(`${this.apiUrl}/event/create-event`, request, { headers })
+    .pipe(
+      tap(() => this.clearCache())
+    );
   }
 
   updateEvent(eventId: number, request: Partial<CreateEventRequest>): Observable<Event> {

@@ -7,6 +7,7 @@ import { N } from '@angular/cdk/keycodes';
 import { SpinnerComponent } from "../../components/spinner/spinner";
 import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
+import { CommunicationService } from '../../services/share.service';
 
 interface Event {
   id: string;
@@ -72,6 +73,7 @@ export class EditEventComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private eventService: EventService,
+    private communicationService: CommunicationService,
     private router: Router) {}
 
   ngOnInit() {
@@ -212,6 +214,7 @@ export class EditEventComponent implements OnInit {
       (response) => {
         console.log("Response :: ", response);
         this.isLoading = false;
+        this.triggerBAction();
         this.router.navigate(['/dashboard']);
       },
       (error) => {
@@ -297,6 +300,7 @@ export class EditEventComponent implements OnInit {
         (response) => {
             console.log("[deleteEvent] response :: ", response);
             this.isLoading = false;
+            this.triggerBAction();
             this.router.navigate(['/dashboard']);
         },
         (error) => {
@@ -330,6 +334,11 @@ export class EditEventComponent implements OnInit {
 
   closeErrorModal() {
     this.showErrorModal = false;
+  }
+
+  triggerBAction() {
+    console.log("AddEventComponent → Je demande à DashboardCmp d’exécuter une action !");
+    this.communicationService.triggerSenderAction();
   }
 }
 

@@ -50,6 +50,10 @@ export class DashboardComponent {
     });
     this.triggerBAction();
     this.getAllEvent();
+    this.communicationService.triggerAction$.subscribe(() => {
+      console.log("AddEventCmp → Trigger reçu ! Exécution de la méthode getAllEvent()");
+      this.getAllEvent();
+    });
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
     console.log("this.isMobile::", this.isMobile)

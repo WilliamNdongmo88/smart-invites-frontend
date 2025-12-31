@@ -412,40 +412,40 @@ export class EventDetailComponent implements OnInit{
     });
   }
 
-  shareEventLink(event: Event, link: any) {
-    console.log("this.event:: ", this.event);
-    console.log("link:: ", link);
+  // shareEventLink(event: Event, link: any) {
+  //   console.log("this.event:: ", this.event);
+  //   console.log("link:: ", link);
 
-    let text = '';
-    switch (this.event.type) {
-      case 'wedding':
-        text = "Vous êtes invité au"
-        break;
-      case 'engagement':
-        text = "Vous êtes invité aux"
-        break
-      case 'anniversary':
-        text = "Vous êtes invité à l'"
-        break
-      case 'birthday':
-        text = "Vous êtes invité à l'"
-        break
-    }
+  //   let text = '';
+  //   switch (this.event.type) {
+  //     case 'wedding':
+  //       text = "Vous êtes invité au"
+  //       break;
+  //     case 'engagement':
+  //       text = "Vous êtes invité aux"
+  //       break
+  //     case 'anniversary':
+  //       text = "Vous êtes invité à l'"
+  //       break
+  //     case 'birthday':
+  //       text = "Vous êtes invité à l'"
+  //       break
+  //   }
 
-    const message =
-      `${text}: ${event.title}\n` +
-      `📅 Date : ${this.formatDate(event.date)}\n` +
-      `⏰ Heure : ${event.time}\n\n` +
-      `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
-      `${link.value}`;
+  //   const message =
+  //     `${text}: ${event.title}\n` +
+  //     `📅 Date : ${this.formatDate(event.date)}\n` +
+  //     `⏰ Heure : ${event.time}\n\n` +
+  //     `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
+  //     `${link.value}`;
 
-    if (navigator.share) {
-      navigator.share({
-        title: event.title,
-        text: message,
-      });
-    }
-  }
+  //   if (navigator.share) {
+  //     navigator.share({
+  //       title: event.title,
+  //       text: message,
+  //     });
+  //   }
+  // }
 // async shareEventLink(event: Event, link: any) {// Echec, partage sans texte
 //   const message =
 //     `Vous êtes invité au : ${event.title}\n` +

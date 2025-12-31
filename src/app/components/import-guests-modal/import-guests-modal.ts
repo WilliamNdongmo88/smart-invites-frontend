@@ -134,11 +134,11 @@ export class ImportGuestsModalComponent {
         this.isModalLoading = false;
         console.error('❌ Erreur :', error.message);
         console.error('❌ Erreur :', error.error);
-        if(error.message.includes("409 Conflict")){
+        if(error.status === 409){
           this.triggerError();
-          this.errorMessage = "Vous essayez d'enregistrer un ou plusieurs invités déjà présents ";
+          this.errorMessage = "Vous essayez d'enregistrer un ou plusieurs invités déjà présents.";
           console.log("Message :: ", this.errorMessage);
-        }else if(error.message.includes("500")){
+        }else if(error.status === 500){
           this.triggerError();
           this.errorMessage = error.error.message || "Erreur serveur lors de l'importation des invités.";
           console.log("Message :: ", this.errorMessage);

@@ -573,7 +573,7 @@ export class EventDetailComponent implements OnInit{
         (error) => {
           this.isLoading = false;
           console.error('❌ Erreur :', error.message);
-          if(error.message.includes("409 Conflict")){
+          if(error.status === 409){
             this.triggerError();
             this.errorMessage = "Erreur lors de la génération du lien";
             console.log("Message :: ", this.errorMessage);
@@ -592,7 +592,7 @@ export class EventDetailComponent implements OnInit{
         (error) => {
           this.isLoading = false;
           console.error('❌ Erreur :', error.message);
-          if(error.message.includes("409 Conflict")){
+          if(error.status === 409){
             this.triggerError();
             this.errorMessage = "Erreur lors de la mise à jour du lien";
             console.log("Message :: ", this.errorMessage);
@@ -624,7 +624,7 @@ export class EventDetailComponent implements OnInit{
       (error) => {
         this.isLoading = false;
         console.error('❌ Erreur :', error.message);
-        if(error.message.includes("409 Conflict")){
+        if(error.status === 409){
           this.triggerError();
           this.errorMessage = "Erreur lors de la génération du lien";
           console.log("Message :: ", this.errorMessage);

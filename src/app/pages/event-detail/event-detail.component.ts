@@ -538,11 +538,16 @@ export class EventDetailComponent implements OnInit{
       },
       (error) => {
         this.isLoading = false;
-        if(error.message.includes("409 Conflict")){
+
+        console.error('❌ Erreur HTTP :', error);
+
+        if (error.status === 409) {
           this.triggerError();
-          this.errorMessage = "Vous essayez d'enregistrer un invités qui existe déjà";
-          console.log("Message :: ", this.errorMessage);
-        }  
+          this.errorMessage = "Vous essayez d'enregistrer un invité qui existe déjà";
+          return;
+        }
+
+        this.errorMessage = "Une erreur est survenue, veuillez réessayer.";
       }
     );
   }

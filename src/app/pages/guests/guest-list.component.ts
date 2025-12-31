@@ -433,7 +433,7 @@ export class GuestListComponent implements OnInit{
       },
       (error) => {
         this.loading = false;
-        if(error.message.includes("409 Conflict")){
+        if(error.status === 409){
           this.closeModal();
           this.triggerError();
           this.errorMessage = "Ces invités ont déjà réçu une invitation !";
@@ -493,7 +493,7 @@ export class GuestListComponent implements OnInit{
 
         if (error.status === 409) {
           this.triggerError();
-          this.errorMessage = "Vous essayez d'enregistrer un invité qui existe déjà";
+          this.errorMessage = "Vous essayez d'enregistrer un invité qui existe déjà.";
           return;
         }
 

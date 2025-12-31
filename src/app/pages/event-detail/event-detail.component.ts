@@ -538,7 +538,7 @@ export class EventDetailComponent implements OnInit{
       },
       (error) => {
         this.isLoading = false;
-        if(error.message.includes("409 Conflict")){
+        if(error.message.includes("409 (Conflict)")){
           this.triggerError();
           this.errorMessage = "Vous essayez d'enregistrer un invités qui existe déjà";
           console.log("Message :: ", this.errorMessage);

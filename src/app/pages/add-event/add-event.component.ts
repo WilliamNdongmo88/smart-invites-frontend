@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../services/auth.service';
 import { CreateEventRequest, EventService } from '../../services/event.service';
 import { SpinnerComponent } from "../../components/spinner/spinner";
+import { CommunicationService } from '../../services/share.service';
 
 @Component({
   selector: 'app-add-event',
@@ -43,7 +44,8 @@ export class AddEventComponent implements OnInit{
   constructor(
     private router: Router, 
     private eventService: EventService,
-    private authService: AuthService
+    private authService: AuthService,
+    private communicationService: CommunicationService
   ) {}
 
   ngOnInit(): void {
@@ -125,6 +127,7 @@ export class AddEventComponent implements OnInit{
       (response) => {
         console.log("Response :: ", response)
         this.isLoading = false;
+        this.triggerBAction();
         this.router.navigate(['/dashboard']);
       },
       (error) => {
@@ -155,6 +158,11 @@ export class AddEventComponent implements OnInit{
       other: 'Autre',
     };
     return types[type] || 'Non spécifié';
+  }
+
+  triggerBAction() {
+    console.log("AddEventComponent → Je demande à DashboardCmp d’exécuter une action !");
+    this.communicationService.triggerSenderAction();
   }
 }
 

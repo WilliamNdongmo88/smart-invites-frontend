@@ -50,9 +50,12 @@ export class DashboardComponent {
     });
     this.triggerBAction();
     this.getAllEvent();
-    this.communicationService.triggerAction$.subscribe(() => {
-      console.log("AddEventCmp → Trigger reçu ! Exécution de la méthode getAllEvent()");
-      this.getAllEvent();
+    this.communicationService.triggerAction$.subscribe((action) => {
+      console.log('Action reçue:', action);
+
+      if (action === 'refresh') {
+        this.getAllEvent();
+      }
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
@@ -139,12 +142,11 @@ export class DashboardComponent {
   }
   send(message: any) {
     this.communicationService.sendMessage(message);
-    //this.message = ""; // reset
   }
 
   triggerBAction() {
     console.log("DashboardCmp → Je demande à HeaderCmp d’exécuter une action !");
-    this.communicationService.triggerSenderAction();
+    this.communicationService.triggerSenderAction('refresh');
   }
 }
 

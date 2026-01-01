@@ -520,8 +520,7 @@ export class EventDetailComponent implements OnInit{
   }
 
   triggerBAction() {
-    console.log("→ Je demande à DashboardCmp d’exécuter une action !");
-    this.communicationService.triggerSenderAction();
+    this.communicationService.triggerSenderAction('refresh');
   }
 
   onGuestAdded(newGuest: any) {

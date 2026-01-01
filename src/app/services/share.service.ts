@@ -13,11 +13,11 @@ export class CommunicationService {
   }
 
   // Pour déclencher une action chez le Sender
-  private triggerActionSource = new Subject<void>();
+  private triggerActionSource = new Subject<string>();
   triggerAction$ = this.triggerActionSource.asObservable();
 
   // Appelé par Receiver pour dire "Sender exécute ta méthode"
-  triggerSenderAction() {
-    this.triggerActionSource.next();
+  triggerSenderAction(action: string) {
+    this.triggerActionSource.next(action);
   }
 }

@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
+import { CommunicationService } from '../../services/share.service';
 
 interface UserProfile {
   id: string;
@@ -95,10 +96,15 @@ export class ProfileComponent implements OnInit {
     allowEventInvites: true,
   };
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router, 
+    private authService: AuthService,
+    private communicationService: CommunicationService
+  ) {}
 
   ngOnInit() {
     this.getUserProfile();
+    this.triggerBAction();
   }
 
   getUserProfile() {
@@ -274,5 +280,9 @@ export class ProfileComponent implements OnInit {
       month: 'long',
       day: 'numeric',
     });
+  }
+
+  triggerBAction() {
+    this.communicationService.triggerSenderAction('hide-scanner');
   }
 }

@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -83,12 +85,12 @@
 
     &:hover {
     background-color: #F5F5F5;
-    border-color: darken(#D4AF37, 10%);
+    border-color: color.adjust(#D4AF37, $lightness: -10%);
     }
 
     &.dragover {
     background-color: rgba(212, 175, 55, 0.1);
-    border-color: darken(#D4AF37, 10%);
+    border-color: color.adjust(#D4AF37, $lightness: -10%);
     }
 }
 

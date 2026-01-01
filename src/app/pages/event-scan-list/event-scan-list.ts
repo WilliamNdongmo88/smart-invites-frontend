@@ -22,7 +22,7 @@ interface Event {
 @Component({
   selector: 'app-event-scan-list',
   standalone: true,
-  imports: [CommonModule, MatIcon],
+  imports: [CommonModule],// MatIcon
   templateUrl: './event-scan-list.html',
   styleUrls: ['./event-scan-list.scss']
 })
@@ -125,7 +125,7 @@ export class EventScanListComponent {
 
   triggerBAction() {
     console.log("DashboardCmp → Je demande à HeaderCmp d’exécuter une action !");
-    this.communicationService.triggerSenderAction();
+    this.communicationService.triggerSenderAction('refresh');
   }
 }
 

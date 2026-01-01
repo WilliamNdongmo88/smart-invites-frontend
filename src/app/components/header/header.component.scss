@@ -325,7 +325,7 @@
     transition: color 0.2s ease;
 
     &:hover {
-    color: darken(#D4AF37, 10%);
+      color: color.adjust(#D4AF37, $lightness: -10%);
     }
   }
 }

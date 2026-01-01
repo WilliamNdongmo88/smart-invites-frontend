@@ -1,4 +1,6 @@
-    .add-event {
+@use "sass:color";
+
+.add-event {
       min-height: 100vh;
       background-color: #FFFFFF;
     }
@@ -18,7 +20,7 @@
       transition: color 0.3s ease;
 
       &:hover {
-        color: darken(#D4AF37, 10%);
+        color: color.adjust(#D4AF37, $lightness: -10%);
       }
     }
 

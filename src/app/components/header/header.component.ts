@@ -88,6 +88,17 @@ export class HeaderComponent implements OnInit {
       console.log("HeaderCmp → Trigger reçu ! Exécution de la méthode loadNotifications()");
       this.loadNotifications();
     });
+    this.communicationService.triggerAction$.subscribe((action) => {
+      console.log('Action reçue:', action);
+
+      if (action === 'refresh') {
+        this.loadNotifications();
+      }
+
+      if (action === 'hide-scanner') {
+        this.isScanning = false;
+      }
+    });
     this.loadNotifications();
   }
 

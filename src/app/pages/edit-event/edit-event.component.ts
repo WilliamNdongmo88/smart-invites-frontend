@@ -338,7 +338,7 @@ export class EditEventComponent implements OnInit {
 
   triggerBAction() {
     console.log("AddEventComponent → Je demande à DashboardCmp d’exécuter une action !");
-    this.communicationService.triggerSenderAction();
+    this.communicationService.triggerSenderAction('refresh');
   }
 }
 

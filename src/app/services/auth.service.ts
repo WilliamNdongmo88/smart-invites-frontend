@@ -282,6 +282,10 @@ export class AuthService {
     this.userCache$ = undefined;
   }
 
+  contactUs(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/contact-us`, data);
+  }
+
   /**
    * Centralized error handling
    */

@@ -102,6 +102,9 @@
         <div *ngIf="submitSuccess()" class="success-message">
             ✓ Merci ! Votre message a été envoyé avec succès. Nous vous répondrons dans les 24 heures.
         </div>
+        <div *ngIf="submitError()" class="error-message">
+            ❌ Désolé! Une erreur est survenue. Veuillez réessayer plutart.
+        </div>
         </div>
 
         <!-- Contact Info -->
@@ -201,10 +204,10 @@
             <p>Vous pouvez nous contacter par email ou via le formulaire ci-dessus avec les détails du bug.</p>
         </div>
 
-        <div class="faq-item">
+        <!-- <div class="faq-item">
             <h4>Proposez-vous des formations ?</h4>
             <p>Oui, nous proposons des formations gratuites pour les utilisateurs des plans Entreprise.</p>
-        </div>
+        </div> -->
         </div>
     </div>
     </div>

@@ -7,7 +7,7 @@
     <app-conditional-alert [config]="alertConfig"></app-conditional-alert>
 
     <!-- Header eventId, eventTitle-->
-    <div class="guest-list-header">
+    <div class="guest-list-header" [class]="guest_list_header_extended">
         <div class="container">
             <a (click)="navigateToEventPage()" class="back-link">← Retour a l'événement</a>
             <div class="header-content">

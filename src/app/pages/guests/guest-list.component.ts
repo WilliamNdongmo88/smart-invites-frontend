@@ -648,6 +648,7 @@ export class GuestListComponent implements OnInit{
   loadGuestsData() {
     console.log("Chargement des données des invités...");
     for (const guest of this.guests) {
+      console.log("guest.status: ", guest.status);
       if (guest.status === 'confirmed') {
         this.alertConfig = {
           condition: true,
@@ -657,7 +658,7 @@ export class GuestListComponent implements OnInit{
           // icon: '✓',
           dismissible: true,
           autoClose: true,
-          duration: 5000,
+          duration: 5000000,
         };
       };
       break;

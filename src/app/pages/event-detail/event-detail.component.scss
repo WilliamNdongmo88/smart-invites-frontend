@@ -232,12 +232,77 @@ $primary-gold: #d4af37;
       font-weight: 600;
     }
 
+
+    // .guests-table {
+    //   width: 100%;
+    //   max-width: 100%;
+    //   overflow-x: auto; // scroll horizontal si nécessaire
+    // }
+
+    // /* TABLE */
+    // .guests-table table {
+    //   width: 100%;
+    //   min-width: 900px; // évite l’écrasement excessif des colonnes
+    //   border-collapse: collapse;
+    // }
+
+    // /* HEADER */
+    // .guests-table thead {
+    //   background-color: #f5f5f5;
+    //   border-bottom: 2px solid #e0e0e0;
+    // }
+
+    // .guests-table th {
+    //   padding: 1rem;
+    //   text-align: left;
+    //   font-weight: 600;
+    //   font-size: 0.875rem;
+    //   color: #666666;
+    //   white-space: nowrap;
+    // }
+
+    // /* BODY */
+    // .guests-table td {
+    //   padding: 1rem;
+    //   border-bottom: 1px solid #e0e0e0;
+    //   font-size: 0.875rem;
+    //   word-break: break-word;
+    // }
+
+    // /* ROWS */
+    // .guests-table tbody tr {
+    //   transition: background-color 0.2s ease;
+    // }
+
+    // .guests-table tbody tr:hover {
+    //   background-color: #f9f9f9;
+    // }
+
+    // /* STATUS LEFT BORDER */
+    // .guests-table tbody tr.status-confirmed {
+    //   border-left: 4px solid #22c55e;
+    // }
+
+    // .guests-table tbody tr.status-pending {
+    //   border-left: 4px solid #eab308;
+    // }
+
+    // .guests-table tbody tr.status-declined {
+    //   border-left: 4px solid #ef4444;
+    // }
+
+    // .guests-table tbody tr.status-present {
+    //   border-left: 4px solid #219e4f;
+    // }
+    
     .guests-table {
+      width: 100%;
       overflow-x: auto;
     }
 
     table {
       width: 100%;
+      table-layout: fixed; 
       border-collapse: collapse;
 
       thead {
@@ -346,10 +411,15 @@ $primary-gold: #d4af37;
       }
     }
 
-    .no-guests {
-      text-align: center;
-      padding: 2rem;
+    .no-guests, .no-guestss {
+      //text-align: center;
+      margin-top: 3rem;
+      padding: 1rem;
       color: #666666;
+      margin-left: -6rem;
+    }
+    .no-guestss {
+      margin-left: -9rem;
     }
 
     .stats-list {
@@ -565,6 +635,7 @@ $primary-gold: #d4af37;
     }
 
     @media (max-width: 768px) {
+
       .details-grid {
         grid-template-columns: 1fr;
       }
@@ -575,11 +646,6 @@ $primary-gold: #d4af37;
 
       .filter-btn {
         width: 100%;
-      }
-
-      table {
-        //display: block;
-        overflow-x: auto;
       }
 
       .event-header {
@@ -610,8 +676,15 @@ $primary-gold: #d4af37;
         margin-top: 20px;
       }
 
+      .guests-table {
+        overflow-x: auto;
+      }
+
+      .guests-table table {
+        min-width: 755px;
+      }
       .guests-grid {
-        display: inline;
+        display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 1.5rem;
         margin-bottom: 2rem;

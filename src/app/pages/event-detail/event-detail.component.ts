@@ -373,7 +373,7 @@ export class EventDetailComponent implements OnInit{
   }
 
   getResponseRate(): number {
-    const responded = this.event.confirmedGuests + this.event.declinedGuests;
+    const responded = Number(this.event.confirmedGuests) + Number(this.event.declinedGuests);
     return Math.round((responded / this.event.totalGuests) * 100);
   }
 

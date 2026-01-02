@@ -67,6 +67,7 @@ export class GuestListComponent implements OnInit{
   modalAction: string | undefined;
   warningMessage: string = "";
   eventsId: number | undefined;
+  guest_list_header_extended: string = '';
 
   filterStatus = signal<FilterStatus>('all');
   filters: { label: string; value: FilterStatus }[] = [
@@ -108,8 +109,16 @@ export class GuestListComponent implements OnInit{
       console.log("msg :: ", localStorage.getItem('variable'));
       if (msg) {
         this.eventTitle = msg;
+        console.log("Size: ", this.eventTitle.length);
+        if(this.eventTitle.length > 29){
+          this.guest_list_header_extended = "guest-list-header-extended";
+        }
       }else{
         this.eventTitle = localStorage.getItem('variable') || "";
+        console.log("Size: ", this.eventTitle.length);
+        if(this.eventTitle.length > 29){
+          this.guest_list_header_extended = "guest-list-header-extended";
+        }
       }
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -657,7 +666,7 @@ export class GuestListComponent implements OnInit{
           // icon: '✓',
           dismissible: true,
           autoClose: true,
-          duration: 500000,
+          duration: 5000,
         };
       };
       break;

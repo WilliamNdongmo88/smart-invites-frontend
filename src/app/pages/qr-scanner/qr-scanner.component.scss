@@ -629,8 +629,11 @@ tr:hover {
         margin-bottom: 2rem;
     }
 
-    table {
-        display: block;
+    .guests-table {
         overflow-x: auto;
+    }
+
+    .guests-table table {
+        min-width: 755px;
     }
 }

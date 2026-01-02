@@ -658,7 +658,7 @@ export class GuestListComponent implements OnInit{
           // icon: '✓',
           dismissible: true,
           autoClose: true,
-          duration: 5000000,
+          duration: 5000,
         };
       };
       break;

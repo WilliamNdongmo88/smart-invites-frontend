@@ -24,16 +24,18 @@ export class ContactComponent {
   };
   telephone: string = '+237 655002318';
   addressMail: string = 'williamndongmo899@gmail.com';
+  loading: boolean = false;
 
   constructor(private authservice: AuthService){}
 
   onSubmit() {
     console.log('Form submitted:', this.formData);
+    this.loading = true;
     this.authservice.contactUs(this.formData).subscribe(
       (response) => {
         console.log("Response :: ", response);
         this.submitSuccess.set(true);
-
+        this.loading = false;
         // Reset form after 3 seconds
         setTimeout(() => {
           this.formData = {

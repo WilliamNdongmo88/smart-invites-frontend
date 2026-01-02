@@ -95,7 +95,8 @@
             </div>
 
             <button type="submit" class="btn btn-primary" style="width: 100%;" [disabled]="!contactForm.valid">
-            ✓ Envoyer le message
+            
+            {{ loading ? '⏳ Encoie en cours...' : '✓ Envoyer le message' }}
             </button>
         </form>
 

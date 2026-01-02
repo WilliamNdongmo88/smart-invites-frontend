@@ -654,10 +654,10 @@ export class GuestListComponent implements OnInit{
           type: 'success',
           title: 'Présence confirmée',
           message: 'Vous pouvez déjà attribuer une table aux invités confirmés.',
-          icon: '✓',
+          // icon: '✓',
           dismissible: true,
           autoClose: true,
-          duration: 5000,
+          duration: 500000,
         };
       };
       break;

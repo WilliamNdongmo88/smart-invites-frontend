@@ -237,7 +237,7 @@
                     [disabled]="!canSendThankMessage"
                     (click)="sendThankMessage()"
                   >
-                    📨 Envoyer le message de remerciement
+                  {{ loading ? '⏳ Envoie en cours...' : '📨 Envoyer le message de remerciement' }}
                   </button>
                 </div>
                 <div *ngIf="noMessage">

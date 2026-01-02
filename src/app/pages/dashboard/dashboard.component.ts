@@ -7,6 +7,7 @@ import { AuthService, User } from '../../services/auth.service';
 import { CommunicationService } from '../../services/share.service';
 import { map, Observable } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { FooterDetailComponent } from "../../components/footer/footer.component";
 
 interface Event {
   id: number;
@@ -22,7 +23,7 @@ interface Event {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MatIcon],
+  imports: [CommonModule, MatIcon, FooterDetailComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })

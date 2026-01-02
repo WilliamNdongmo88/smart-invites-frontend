@@ -411,10 +411,15 @@ $primary-gold: #d4af37;
       }
     }
 
-    .no-guests {
-      text-align: center;
-      padding: 2rem;
+    .no-guests, .no-guestss {
+      //text-align: center;
+      margin-top: 3rem;
+      padding: 1rem;
       color: #666666;
+      margin-left: -6rem;
+    }
+    .no-guestss {
+      margin-left: -9rem;
     }
 
     .stats-list {

@@ -98,12 +98,25 @@ export class AddLinkModalComponent implements OnInit{
         text = "Vous êtes invité à l'"
         break
     }
-    const message =
+    let message = '';
+    if(event.type == "wedding"){
+      message =
       `${text}${event.title}\n` +
       `📅 Date : ${this.formatDate(event.date)}\n` +
-      `⏰ Heure : ${event.time}\n\n` +
+      `⏰ Heure : ${event.time}\n` +
+      `📍 Lieu de la Cérémonie Civile : ${event.civilLocation}\n` +
+      `📍 Lieu du Banquet: ${event.location}\n\n` +
       `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
       `${link.value}`;
+    }else{
+      message =
+      `${text}${event.title}\n` +
+      `📅 Date : ${this.formatDate(event.date)}\n` +
+      `⏰ Heure : ${event.time}\n` +
+      `📍 Lieu : ${event.location}\n\n` +
+      `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
+      `${link.value}`;
+    }
 
     if (navigator.share) {
       navigator.share({

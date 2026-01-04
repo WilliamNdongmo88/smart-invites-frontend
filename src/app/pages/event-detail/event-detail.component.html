@@ -35,8 +35,13 @@
                         <p class="detail-value-date">{{ event.time }}</p>
                     </div>
 
+                    <div *ngIf="showWeddingCivilLocation" class="detail-item">
+                        <p class="detail-label">📍 Lieu de la Cérémonie Civile</p>
+                        <p class="detail-value-location">{{ event.civilLocation }}</p>
+                    </div>
                     <div class="detail-item">
-                        <p class="detail-label">📍 Lieu</p>
+                        <p *ngIf="!showWeddingCivilLocation" class="detail-label">📍 Lieu</p>
+                        <p *ngIf="showWeddingCivilLocation" class="detail-label">📍 Lieu du Banquet</p>
                         <p class="detail-value-location">{{ event.location }}</p>
                     </div>
                     </div>

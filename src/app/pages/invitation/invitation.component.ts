@@ -35,6 +35,7 @@ export class InvitationComponent implements OnInit{
   loading = false;
   isValidating = true;
   isFromGeneratedLink = false;
+  showWeddingCivilLocation = false;
   submitted = signal(false);
   concernedEvent: string = "";
   errorMessage: string | null = null;
@@ -53,6 +54,7 @@ export class InvitationComponent implements OnInit{
     footRestriction: false,
     eventDate: '',
     eventTime: '',
+    eventCivilLocation: '',
     eventLocation: '',
     emailOrganizer: ''
   };
@@ -222,6 +224,7 @@ export class InvitationComponent implements OnInit{
               footRestriction: response.eventFootRestriction,
               eventDate: date,
               eventTime: time,
+              eventCivilLocation: response.eventCivilLocation,
               eventLocation: response.eventLocation,
               emailOrganizer: response.emailOrganizer
             };
@@ -257,6 +260,12 @@ export class InvitationComponent implements OnInit{
             minute: '2-digit',
             timeZone: 'UTC'
           });
+
+          if(event.type=="wedding"){
+            this.showWeddingCivilLocation = true;
+          }else{
+            this.showWeddingCivilLocation = false;
+          }
           
           this.data = {
             guestId: 0,
@@ -271,6 +280,7 @@ export class InvitationComponent implements OnInit{
             footRestriction: event.foot_restriction,
             eventDate: date,
             eventTime: time,
+            eventCivilLocation: event.event_civil_location,
             eventLocation: event.event_location,
             emailOrganizer: event.emailOrganizer
           };

@@ -37,6 +37,7 @@ interface Event {
   type: string;
   date: string;
   time: string;
+  civilLocation: string;
   location: string;
   description: string;
   totalGuests: number;
@@ -73,6 +74,7 @@ export class EventDetailComponent implements OnInit{
   showErrorModal = false;
   showDeleteModal = false;
   isScanning = true;
+  showWeddingCivilLocation = false;
   loading: boolean = false;
   modalAction: string | undefined;
   warningMessage: string = "";
@@ -120,6 +122,7 @@ export class EventDetailComponent implements OnInit{
     type: '',
     date: '',
     time: '',
+    civilLocation: '',
     location: '',
     description: '',
     totalGuests: 0,
@@ -189,12 +192,19 @@ export class EventDetailComponent implements OnInit{
           timeZone: 'UTC'
         });
 
+        if(res.type=="wedding"){
+          this.showWeddingCivilLocation = true;
+        }else{
+          this.showWeddingCivilLocation = false;
+        }
+
         this.event = {
           id: res.event_id,
           title: res.title,
           type: res.type,
           date,
           time,
+          civilLocation: res.event_civil_location,
           location: res.event_location,
           description: res.description,
           totalGuests: res.max_guests,

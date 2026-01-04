@@ -57,6 +57,7 @@
                   id="eventType"
                   name="eventType"
                   [(ngModel)]="eventData.type"
+                  (change)="showSelection()"
                   class="form-input"
                 >
                   <option value="">Sélectionner un type</option>
@@ -92,8 +93,21 @@
                 />
               </div>
 
+              <div *ngIf="showWeddingCivilLocation" class="form-group">
+                <label for="eventCivilLocation">Lieu de célébration du mariage civil</label>
+                <input
+                  type="text"
+                  id="eventCivilLocation"
+                  name="eventCivilLocation"
+                  [(ngModel)]="eventData.civilLocation"
+                  placeholder="Ex: Hôtel de ville de Bafoussam"
+                  required
+                  class="form-input"
+                />
+              </div>
               <div class="form-group">
-                <label for="eventLocation">Lieu de l'événement</label>
+                <label *ngIf="showWeddingCivilLocation" for="eventLocation">Lieu du Banquet de Mariage</label>
+                <label *ngIf="!showWeddingCivilLocation" for="eventLocation">Lieu de l'événement</label>
                 <input
                   type="text"
                   id="eventLocation"

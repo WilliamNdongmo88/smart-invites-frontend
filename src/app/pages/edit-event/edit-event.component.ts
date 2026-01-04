@@ -15,6 +15,7 @@ interface Event {
   title: string;
   date: string;
   time: string;
+  civilLocation: string;
   location: string;
   description: string;
   totalGuests: number;
@@ -50,12 +51,14 @@ export class EditEventComponent implements OnInit {
   showAnniversaryNames = false;
   showBirthdayNames = false;
   showAnother = false;
+  showWeddingCivilLocation = false;
 
   originalEventData: Event = {
       id: '',
       title: '',
       date: '',
       time: '',
+      civilLocation: '',
       location: '',
       description: '',
       totalGuests: 0,
@@ -111,12 +114,19 @@ export class EditEventComponent implements OnInit {
           timeZone: 'UTC'
         });
 
+        if(res.type=='wedding'){
+          this.showWeddingCivilLocation = true;
+        }else{
+          this.showWeddingCivilLocation = false;
+        }
+
         this.originalEventData = {
             id: Number(res.event_id).toString(),
             organizerId: res.organizer_id,
             title: res.title,
             date: date,
             time: time,
+            civilLocation: res.event_civil_location,
             location: res.event_location,
             description: res.description,
             totalGuests: res.max_guests,
@@ -198,6 +208,7 @@ export class EditEventComponent implements OnInit {
         title: this.eventData.title,
         description: this.eventData.description,
         eventDate: this.eventData.date+' '+ this.eventData.time+':00',
+        eventCivilLocation: this.eventData.civilLocation,
         eventLocation: this.eventData.location,
         type: this.eventData.type,
         budget: this.eventData.budget,
@@ -234,6 +245,15 @@ export class EditEventComponent implements OnInit {
       month: 'long',
       day: 'numeric',
     });
+  }
+
+  showSelection() {
+    console.log('Type d’événement sélectionné :', this.eventData.type);
+    if(this.eventData.type == 'wedding'){
+      this.showWeddingCivilLocation = true;
+    }else{
+      this.showWeddingCivilLocation = false;
+    }
   }
 
   getEventTypeLabel(type: string): string {

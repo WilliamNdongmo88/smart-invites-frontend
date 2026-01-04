@@ -8,6 +8,7 @@ export interface Event {
   organizerId: number;
   title: string;
   description: string;
+  event_civil_location: string;
   event_date: string;
   event_location: string;
   max_guests: number;
@@ -31,6 +32,7 @@ export interface CreateEventRequest {
   title: string;
   description: string;
   eventDate: string;
+  eventCivilLocation: string;
   eventLocation: string;
   maxGuests: number;
   hasPlusOne?: boolean;

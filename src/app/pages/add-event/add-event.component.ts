@@ -23,11 +23,13 @@ export class AddEventComponent implements OnInit{
   showAnniversaryNames = false;
   showBirthdayNames = false;
   showAnother = false;
+  showWeddingCivilLocation = false;
 
   eventData = {
     title: '',
     date: '',
     time: '',
+    civilLocation: '',
     location: '',
     description: '',
     totalGuests: 0,
@@ -110,6 +112,7 @@ export class AddEventComponent implements OnInit{
       title: this.eventData.title,
       description: this.eventData.description,
       eventDate: this.eventData.date+' '+ this.eventData.time+':00',
+      eventCivilLocation: this.eventData.civilLocation,
       eventLocation: this.eventData.location,
       maxGuests: this.eventData.totalGuests,
       hasPlusOne: this.eventData.allowPlusOne,
@@ -147,6 +150,15 @@ export class AddEventComponent implements OnInit{
       month: 'long',
       day: 'numeric',
     });
+  }
+
+  showSelection() {
+    console.log('Type d’événement sélectionné :', this.eventData.type);
+    if(this.eventData.type == 'wedding'){
+      this.showWeddingCivilLocation = true;
+    }else{
+      this.showWeddingCivilLocation = false;
+    }
   }
 
   getEventTypeLabel(type: string): string {

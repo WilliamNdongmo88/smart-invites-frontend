@@ -206,7 +206,7 @@ export class EventDetailComponent implements OnInit{
           type: res.type,
           date,
           time,
-          banquetTime: res.banquet_time.split(':00')[0],
+          banquetTime: res.banquet_time?.split(':00')[0],
           civilLocation: res.event_civil_location,
           location: res.event_location,
           description: res.description,

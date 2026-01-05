@@ -56,6 +56,7 @@ export interface Event{
   footRestriction: boolean;
   eventDate: string;
   eventTime: string;
+  banquetTime: string;
   eventCivilLocation: string;
   eventLocation: string;
   emailOrganizer: string;

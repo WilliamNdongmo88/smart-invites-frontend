@@ -10,6 +10,7 @@ export interface Event {
   description: string;
   event_civil_location: string;
   event_date: string;
+  banquet_time: string;
   event_location: string;
   max_guests: number;
   type: string;
@@ -32,6 +33,7 @@ export interface CreateEventRequest {
   title: string;
   description: string;
   eventDate: string;
+  banquetTime: string;
   eventCivilLocation: string;
   eventLocation: string;
   maxGuests: number;

@@ -30,14 +30,15 @@
 
                     <div class="details-grid">
                     <div class="detail-item">
-                        <p class="detail-label">📅 Date et heure</p>
+                        <p class="detail-label">📅 Date</p>
                         <p class="detail-value-date">{{ formatDate(event.date) }}</p>
-                        <p class="detail-value-date">{{ event.time }}</p>
+                        <!-- <p class="detail-value-date">⏰ {{ event.time }}</p> -->
                     </div>
 
                     <div *ngIf="showWeddingCivilLocation" class="detail-item">
                         <p class="detail-label">📍 Lieu de la Cérémonie Civile</p>
                         <p class="detail-value-location">{{ event.civilLocation }}</p>
+                        <p class="detail-value-date">⏰ {{ event.time }}</p>
                     </div>
                     <div class="detail-item">
                         <p *ngIf="!showWeddingCivilLocation" class="detail-label">📍 Lieu</p>

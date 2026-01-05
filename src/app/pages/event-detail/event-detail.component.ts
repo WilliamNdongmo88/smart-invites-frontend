@@ -37,6 +37,7 @@ interface Event {
   type: string;
   date: string;
   time: string;
+  banquetTime: string;
   civilLocation: string;
   location: string;
   description: string;
@@ -122,6 +123,7 @@ export class EventDetailComponent implements OnInit{
     type: '',
     date: '',
     time: '',
+    banquetTime: '',
     civilLocation: '',
     location: '',
     description: '',
@@ -204,6 +206,7 @@ export class EventDetailComponent implements OnInit{
           type: res.type,
           date,
           time,
+          banquetTime: res.banquet_time.split(':00')[0],
           civilLocation: res.event_civil_location,
           location: res.event_location,
           description: res.description,

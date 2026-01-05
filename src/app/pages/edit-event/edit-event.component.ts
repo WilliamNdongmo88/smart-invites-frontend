@@ -15,6 +15,7 @@ interface Event {
   title: string;
   date: string;
   time: string;
+  banquetTime: string;
   civilLocation: string;
   location: string;
   description: string;
@@ -58,6 +59,7 @@ export class EditEventComponent implements OnInit {
       title: '',
       date: '',
       time: '',
+      banquetTime: '',
       civilLocation: '',
       location: '',
       description: '',
@@ -126,6 +128,7 @@ export class EditEventComponent implements OnInit {
             title: res.title,
             date: date,
             time: time,
+            banquetTime: res.banquet_time,
             civilLocation: res.event_civil_location,
             location: res.event_location,
             description: res.description,
@@ -208,6 +211,7 @@ export class EditEventComponent implements OnInit {
         title: this.eventData.title,
         description: this.eventData.description,
         eventDate: this.eventData.date+' '+ this.eventData.time+':00',
+        banquetTime: this.eventData.banquetTime,
         eventCivilLocation: this.eventData.civilLocation,
         eventLocation: this.eventData.location,
         type: this.eventData.type,

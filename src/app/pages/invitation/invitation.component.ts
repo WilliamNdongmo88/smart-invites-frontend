@@ -54,6 +54,7 @@ export class InvitationComponent implements OnInit{
     footRestriction: false,
     eventDate: '',
     eventTime: '',
+    banquetTime: '',
     eventCivilLocation: '',
     eventLocation: '',
     emailOrganizer: ''
@@ -211,6 +212,13 @@ export class InvitationComponent implements OnInit{
               minute: '2-digit',
               timeZone: 'UTC'
             });
+
+            if(response.type=="wedding"){
+              this.showWeddingCivilLocation = true;
+            }else{
+              this.showWeddingCivilLocation = false;
+            }
+
             this.data = {
               guestId: response.guestId,
               guestName: response.guestName,
@@ -224,6 +232,7 @@ export class InvitationComponent implements OnInit{
               footRestriction: response.eventFootRestriction,
               eventDate: date,
               eventTime: time,
+              banquetTime: response.banquetTime.split(':00')[0],
               eventCivilLocation: response.eventCivilLocation,
               eventLocation: response.eventLocation,
               emailOrganizer: response.emailOrganizer
@@ -280,6 +289,7 @@ export class InvitationComponent implements OnInit{
             footRestriction: event.foot_restriction,
             eventDate: date,
             eventTime: time,
+            banquetTime: event.banquet_time.split(':00')[0],
             eventCivilLocation: event.event_civil_location,
             eventLocation: event.event_location,
             emailOrganizer: event.emailOrganizer

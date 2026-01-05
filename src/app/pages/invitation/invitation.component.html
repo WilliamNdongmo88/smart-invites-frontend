@@ -39,9 +39,9 @@
                 <div class="detail-item">
                   <span class="detail-icon">📅</span>
                   <div>
-                    <p class="detail-label">Date et heure</p>
+                    <p class="detail-label">Date</p>
                     <p class="detail-value">{{ formatDate(data.eventDate) }}</p>
-                    <p class="detail-value">{{ data.eventTime }}</p>
+                    <!-- <p class="detail-value">{{ data.eventTime }}</p> -->
                   </div>
                 </div>
 
@@ -50,14 +50,16 @@
                   <div>
                     <p class="detail-label">Lieu de la Cérémonie Civile</p>
                     <p class="detail-value">{{ data.eventCivilLocation}}</p>
+                    <p class="detail-value">⏰ {{ data.eventTime }}</p>
                   </div>
                 </div>
                 <div class="detail-item">
                   <span class="detail-icon">📍</span>
                   <div>
-                    <p *ngIf="!showWeddingCivilLocation" class="detail-label">Lieu du Banquet</p>
+                    <p *ngIf="!showWeddingCivilLocation" class="detail-label">Lieu</p>
                     <p *ngIf="showWeddingCivilLocation" class="detail-label">Lieu du Banquet</p>
                     <p class="detail-value">{{ data.eventLocation}}</p>
+                    <p class="detail-value">⏰ {{ data.banquetTime }}</p>
                   </div>
                 </div>
               </div>

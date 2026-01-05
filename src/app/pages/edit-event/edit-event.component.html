@@ -100,6 +100,17 @@
                   class="form-input"
                 />
               </div>
+              <div *ngIf="showWeddingCivilLocation" class="form-group">
+                <label for="eventBanquetTime">Heure du Banquet</label>
+                <input
+                  type="time"
+                  id="eventBanquetTime"
+                  name="eventBanquetTime"
+                  [(ngModel)]="eventData.banquetTime"
+                  required
+                  class="form-input"
+                />
+              </div>
 
               <div class="form-group">
                 <label for="eventType">Type d'événement</label>

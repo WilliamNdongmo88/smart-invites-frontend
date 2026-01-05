@@ -260,7 +260,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     this.qrcodeService.viewPdfs(qrCode).subscribe(
     (response) => {
         console.log("###response :: ", response);
-        this.addCheckIn();
+        //this.addCheckIn();
     },
     (error) => {
         console.error('❌ [viewPdfs] Erreur :', error.message);

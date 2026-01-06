@@ -199,14 +199,16 @@ export class EventDetailComponent implements OnInit{
         }else{
           this.showWeddingCivilLocation = false;
         }
-
+        const banquetTime = res.banquet_time
+          ? res.banquet_time.split(':').slice(0, 2).join(':')
+          : '';
         this.event = {
           id: res.event_id,
           title: res.title,
           type: res.type,
           date,
           time,
-          banquetTime: res.banquet_time?.split(':00')[0],
+          banquetTime: banquetTime, //"21:00:00"
           civilLocation: res.event_civil_location,
           location: res.event_location,
           description: res.description,

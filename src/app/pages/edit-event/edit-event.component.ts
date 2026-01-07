@@ -16,6 +16,8 @@ interface Event {
   date: string;
   time: string;
   banquetTime: string;
+  religiousLocation: string,
+  religiousTime: string,
   civilLocation: string;
   location: string;
   description: string;
@@ -25,6 +27,7 @@ interface Event {
   eventNameConcerned1?: string;
   eventNameConcerned2?: string;
   allowDietaryRestrictions?: boolean;
+  showWeddingReligiousLocation?: boolean;
   allowPlusOne?: boolean;
   status: 'planned' | 'active' | 'completed' | 'canceled';
   createdAt?: string;
@@ -53,6 +56,7 @@ export class EditEventComponent implements OnInit {
   showBirthdayNames = false;
   showAnother = false;
   showWeddingCivilLocation = false;
+  showWeddingReligiousLocation = false;
 
   originalEventData: Event = {
       id: '',
@@ -60,6 +64,8 @@ export class EditEventComponent implements OnInit {
       date: '',
       time: '',
       banquetTime: '',
+      religiousLocation: '',
+      religiousTime: '',
       civilLocation: '',
       location: '',
       description: '',
@@ -69,6 +75,7 @@ export class EditEventComponent implements OnInit {
       eventNameConcerned1: '',
       eventNameConcerned2: '',
       allowDietaryRestrictions: true,
+      showWeddingReligiousLocation: false,
       allowPlusOne: true,
       status: 'planned'
   };
@@ -129,6 +136,8 @@ export class EditEventComponent implements OnInit {
             date: date,
             time: time,
             banquetTime: res.banquet_time,
+            religiousLocation: res.religious_location,
+            religiousTime: res.religious_time,
             civilLocation: res.event_civil_location,
             location: res.event_location,
             description: res.description,
@@ -136,6 +145,7 @@ export class EditEventComponent implements OnInit {
             budget: res.budget,
             type: res.type,
             allowDietaryRestrictions: res.foot_restriction,
+            showWeddingReligiousLocation: res.show_wedding_religious_location,
             eventNameConcerned1: res.event_name_concerned1,
             eventNameConcerned2: res.event_name_concerned2,
             allowPlusOne: res.has_plus_one,
@@ -212,6 +222,8 @@ export class EditEventComponent implements OnInit {
         description: this.eventData.description,
         eventDate: this.eventData.date+' '+ this.eventData.time+':00',
         banquetTime: this.eventData.banquetTime,
+        religiousLocation: this.eventData.religiousLocation,
+        religiousTime: this.eventData.religiousTime,
         eventCivilLocation: this.eventData.civilLocation,
         eventLocation: this.eventData.location,
         type: this.eventData.type,
@@ -221,6 +233,7 @@ export class EditEventComponent implements OnInit {
         maxGuests: this.eventData.totalGuests,
         hasPlusOne: this.eventData.allowPlusOne,
         footRestriction: this.eventData.allowDietaryRestrictions || false,
+        showWeddingReligiousLocation: this.eventData.showWeddingReligiousLocation,
         status: this.eventData.status,
     }
     console.log('Event updated:', eventDatas);

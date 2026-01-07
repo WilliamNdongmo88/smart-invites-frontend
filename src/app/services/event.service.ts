@@ -11,6 +11,8 @@ export interface Event {
   event_civil_location: string;
   event_date: string;
   banquet_time: string;
+  religious_location: string,
+  religious_time: string,
   event_location: string;
   max_guests: number;
   type: string;
@@ -19,8 +21,9 @@ export interface Event {
   event_name_concerned1?: string;
   event_name_concerned2?: string;
   organizer_id?: number
-  foot_restriction?: boolean
-  has_plus_one?: boolean
+  foot_restriction?: boolean;
+  show_wedding_religious_location: boolean;
+  has_plus_one?: boolean;
   confirmed_count: number;
   pending_count: number;
   declined_count: number;
@@ -34,11 +37,15 @@ export interface CreateEventRequest {
   description: string;
   eventDate: string;
   banquetTime: string;
+  religiousLocation: string,
+  religiousTime: string,
   eventCivilLocation: string;
   eventLocation: string;
   maxGuests: number;
   hasPlusOne?: boolean;
   footRestriction?: boolean;
+  allowDietaryRestrictions?: boolean;
+  showWeddingReligiousLocation?: boolean;
   status: string;
   budget?: number;
   type?: string;

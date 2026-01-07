@@ -24,6 +24,7 @@ export class AddEventComponent implements OnInit{
   showBirthdayNames = false;
   showAnother = false;
   showWeddingCivilLocation = false;
+  showWeddingReligiousLocation = false;
 
   eventData = {
     title: '',
@@ -32,6 +33,8 @@ export class AddEventComponent implements OnInit{
     banquetTime: '',
     civilLocation: '',
     location: '',
+    religiousLocation: '',
+    religiousTime: '',
     description: '',
     totalGuests: 0,
     budget: 0,
@@ -39,6 +42,7 @@ export class AddEventComponent implements OnInit{
     eventNameConcerned1: '',
     eventNameConcerned2: '',
     allowDietaryRestrictions: true,
+    showWeddingReligiousLocation: false,
     allowPlusOne: true,
   };
   organizerId: number | undefined;
@@ -114,6 +118,8 @@ export class AddEventComponent implements OnInit{
       description: this.eventData.description,
       eventDate: this.eventData.date+' '+ this.eventData.time+':00',
       banquetTime: this.eventData.banquetTime,
+      religiousLocation: this.eventData.religiousLocation,
+      religiousTime: this.eventData.religiousTime,
       eventCivilLocation: this.eventData.civilLocation,
       eventLocation: this.eventData.location,
       maxGuests: this.eventData.totalGuests,
@@ -123,6 +129,7 @@ export class AddEventComponent implements OnInit{
       eventNameConcerned1: this.eventData.eventNameConcerned1 || '',
       eventNameConcerned2: this.eventData.eventNameConcerned2 || '',
       footRestriction: this.eventData.allowDietaryRestrictions,
+      showWeddingReligiousLocation: this.eventData.showWeddingReligiousLocation,
       status: 'active'
     }
     datas.push(eventDatas);
@@ -142,6 +149,14 @@ export class AddEventComponent implements OnInit{
         this.errorMessage = error.message || 'Erreur de connexion';
       }
     );
+  }
+
+  toggleReligiousCeremony() {
+    this.eventData.showWeddingReligiousLocation = this.showWeddingReligiousLocation;
+    if (!this.showWeddingReligiousLocation) {
+      this.eventData.religiousLocation = '';
+      this.eventData.religiousTime = '';
+    }
   }
 
   formatDate(date: string): string {

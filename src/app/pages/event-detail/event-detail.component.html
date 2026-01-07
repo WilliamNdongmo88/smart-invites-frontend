@@ -26,42 +26,100 @@
             <div class="left-column">
                 <!-- Event Info Card -->
                 <div class="card">
-                    <h2>Détails de l'événement</h2>
-
-                    <div class="details-grid">
-                    <div class="detail-item">
-                        <p class="detail-label">📅 Date</p>
-                        <p class="detail-value-date">{{ formatDate(event.date) }}</p>
-                        <!-- <p class="detail-value-date">⏰ {{ event.time }}</p> -->
+                    <!-- Header Section -->
+                    <div class="header-section">
+                        <h1 class="title">Détails de l'événement</h1>
+                        <p class="subtitle">MARIAGE</p>
                     </div>
 
-                    <div *ngIf="showWeddingCivilLocation" class="detail-item">
-                        <p class="detail-label">📍 Lieu de la Cérémonie Civile</p>
-                        <p class="detail-value-location">{{ event.civilLocation }}</p>
-                        <p class="detail-value-date">⏰ {{ event.time }}</p>
-                    </div>
-                    <div class="detail-item">
-                        <p *ngIf="!showWeddingCivilLocation" class="detail-label">📍 Lieu</p>
-                        <p *ngIf="showWeddingCivilLocation" class="detail-label">📍 Lieu du Banquet</p>
-                        <p class="detail-value-location">{{ event.location }}</p>
-                        <p class="detail-value-location">⏰ {{ event.banquetTime }}</p>
-                    </div>
-                    </div>
+                    <div class="content-section">
+                        <!-- Date Section -->
+                        <div class="info-row">
+                        <div class="icon-container">
+                            <div class="icon-circle">
+                            <mat-icon style="color: #DAA520;">calendar_today</mat-icon>
+                            </div>
+                        </div>
+                        <div class="info-content">
+                            <p class="label">DATE</p>
+                            <p class="value-main">{{ formatDate(event.date) }}</p>
+                        </div>
+                        </div>
 
-                    <div class="detail-full">
-                    <p class="detail-label">Message d'invitation</p>
-                    <p class="detail-value">{{ event.description }}</p>
-                    </div>
+                        <div class="divider-gold-thin"></div>
 
-                    <div class="divider-gold"></div>
+                        <!-- Ceremonies Grid -->
+                        <div class="details-grid">
+                        <!-- Cérémonie Civile -->
+                        <div *ngIf="showWeddingCivilLocation" class="info-row">
+                            <div class="icon-container">
+                            <div class="icon-circle">
+                                <mat-icon style="color: #DAA520;">location_on</mat-icon>
+                            </div>
+                            </div>
+                            <div class="info-content">
+                            <p class="label">CÉRÉMONIE CIVILE</p>
+                            <p class="value-main">{{ event.civilLocation }}</p>
+                            <p class="value-sub">
+                                <span class="time-icon">🕒</span> {{ event.time }}
+                            </p>
+                            </div>
+                        </div>
 
-                    <div class="btn-both">
-                        <button class="btn btn-primary" style="width: 100%;" (click)="sendInvitations()">
-                            <p class="btn-text">Gérer vos invités</p>
-                        </button>
-                        <button class="btn btn-outline" style="width: 100%;" (click)="openAddLinkModal('create')">
-                            <p class="btn-text">Générer le lien d'invitation de l'événement</p>
-                        </button>
+                        <!-- Cérémonie Religieuse -->
+                        <div *ngIf="event.showWeddingReligiousLocation" class="info-row">
+                            <div class="icon-container">
+                            <div class="icon-circle">
+                                <mat-icon style="color: #DAA520;">church</mat-icon>
+                            </div>
+                            </div>
+                            <div class="info-content">
+                            <p class="label">CÉRÉMONIE RELIGIEUSE</p>
+                            <p class="value-main">{{ event.religiousLocation }}</p>
+                            <p class="value-sub">
+                                <span class="time-icon">🕒</span> {{ event.religiousTime }}
+                            </p>
+                            </div>
+                        </div>
+                        </div>
+
+                        <div class="divider-gold-thin"></div>
+
+                        <!-- Banquet Section -->
+                        <div class="info-row">
+                        <div class="icon-container">
+                            <div class="icon-circle">
+                            <mat-icon style="color: #DAA520;">location_on</mat-icon>
+                            </div>
+                        </div>
+                        <div class="info-content">
+                            <p class="label">
+                            {{ showWeddingCivilLocation ? 'LIEU DU BANQUET' : 'LIEU' }}
+                            </p>
+                            <p class="value-main">{{ event.location }}</p>
+                            <p class="value-sub">
+                            <span class="time-icon">🕒</span> {{ event.banquetTime }}
+                            </p>
+                        </div>
+                        </div>
+
+                        <!-- Message Section -->
+                        <div class="message-box">
+                        <p class="label">MESSAGE D'INVITATION</p>
+                        <p class="message-text">{{ event.description }}</p>
+                        </div>
+
+                        <div class="divider-gold-thin"></div>
+
+                        <!-- Actions Section -->
+                        <div class="btn-both">
+                            <button class="btn btn-primary" style="width: 100%;" (click)="sendInvitations()">
+                                Gérer vos invités
+                            </button>
+                            <button class="btn btn-outline" style="width: 100%;" (click)="openAddLinkModal('create')">
+                                Générer le lien d'invitation
+                            </button>
+                        </div>
                     </div>
                 </div>
 

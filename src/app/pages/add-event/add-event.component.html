@@ -105,6 +105,48 @@
                   class="form-input"
                 />
               </div>
+
+              <!-- Checkbox -->
+              <div *ngIf="showWeddingCivilLocation" class="form-group checkbox-group">
+                <label>
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="showWeddingReligiousLocation"
+                    name="hasReligiousCeremony"
+                    (change)="toggleReligiousCeremony()"
+                  />
+                  Cérémonie religieuse
+                </label>
+              </div>
+
+              <!-- Formulaire cérémonie religieuse -->
+              <div *ngIf="showWeddingReligiousLocation">
+                <div class="form-group">
+                  <label for="eventReligiousLocation">
+                    Lieu de la Cérémonie Religieuse
+                  </label>
+                  <input
+                    type="text"
+                    id="eventReligiousLocation"
+                    name="eventReligiousLocation"
+                    [(ngModel)]="eventData.religiousLocation"
+                    placeholder="Ex: Église Saint Pierre de Bafoussam"
+                    class="form-input"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="eventReligiousTime">Heure de la cérémonie</label>
+                  <input
+                    type="time"
+                    id="eventReligiousTime"
+                    name="eventReligiousTime"
+                    [(ngModel)]="eventData.religiousTime"
+                    class="form-input"
+                  />
+                </div>
+              </div>
+
               <div class="form-group">
                 <label *ngIf="showWeddingCivilLocation" for="eventLocation">Lieu du Banquet de Mariage</label>
                 <label *ngIf="!showWeddingCivilLocation" for="eventLocation">Lieu de l'événement</label>

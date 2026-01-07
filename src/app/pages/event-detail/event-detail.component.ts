@@ -18,6 +18,7 @@ import { QrCodeService } from '../../services/qr-code.service';
 import { AlertConfig, ConditionalAlertComponent } from "../../components/conditional-alert/conditional-alert.component";
 import { AddLinkModalComponent } from "../../components/add-invitation-link-modal/add-link-modal";
 import { environment } from '../../../environment/environment';
+import { MatIcon } from "@angular/material/icon";
 
 interface Guest {
   id: string;
@@ -39,6 +40,9 @@ interface Event {
   time: string;
   banquetTime: string;
   civilLocation: string;
+  showWeddingReligiousLocation: boolean;
+  religiousLocation: string;
+  religiousTime: string;
   location: string;
   description: string;
   totalGuests: number;
@@ -57,7 +61,7 @@ type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
     AddGuestModalComponent, ErrorModalComponent,
     ImportGuestsModalComponent, SpinnerComponent,
     ConfirmDeleteModalComponent, FooterDetailComponent,
-    ConditionalAlertComponent, AddLinkModalComponent],
+    ConditionalAlertComponent, AddLinkModalComponent, MatIcon],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.scss']
 })
@@ -126,6 +130,9 @@ export class EventDetailComponent implements OnInit{
     banquetTime: '',
     civilLocation: '',
     location: '',
+    showWeddingReligiousLocation: false,
+    religiousLocation: '',
+    religiousTime: '',
     description: '',
     totalGuests: 0,
     confirmedGuests: 0,
@@ -202,6 +209,10 @@ export class EventDetailComponent implements OnInit{
         const banquetTime = res.banquet_time
           ? res.banquet_time.split(':').slice(0, 2).join(':')
           : '';
+        const religiousTime = res.religious_time
+          ? res.religious_time.split(':').slice(0, 2).join(':')
+          : '';
+
         this.event = {
           id: res.event_id,
           title: res.title,
@@ -211,6 +222,9 @@ export class EventDetailComponent implements OnInit{
           banquetTime: banquetTime, //"21:00:00"
           civilLocation: res.event_civil_location,
           location: res.event_location,
+          showWeddingReligiousLocation: res.show_wedding_religious_location,
+          religiousLocation: res.religious_location,
+          religiousTime: religiousTime,
           description: res.description,
           totalGuests: res.max_guests,
           confirmedGuests: res.confirmed_count,

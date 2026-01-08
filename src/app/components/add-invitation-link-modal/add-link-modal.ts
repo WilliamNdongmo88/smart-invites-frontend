@@ -64,7 +64,7 @@ export class AddLinkModalComponent implements OnInit{
       (responses) => {
         console.log("[openEditLinkModal] Responses :: ", responses);
         for (const response of responses) {
-          const dateLimitLink = responses.date_limit_link
+          const dateLimitLink = response.date_limit_link
           ? this.event.banquetTime.split(':').slice(0, 2).join(':')
           : '';
           if(response.id==this.link.id){

@@ -591,7 +591,8 @@ export class EventDetailComponent implements OnInit{
     const data = {
       eventId: this.eventId,
       type: newLink.type,
-      usedLimitCount: newLink.used_limit_count
+      usedLimitCount: newLink.used_limit_count,
+      dateLimitLink: newLink.date_limit_link
     };
     console.log("data :: ", data);
     this.isLoading = true;

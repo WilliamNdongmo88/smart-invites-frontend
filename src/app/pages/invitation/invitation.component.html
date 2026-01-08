@@ -37,7 +37,7 @@
               <h3>Détails de l'événement</h3>
               <div class="details-grid">
                 <div class="detail-item">
-                  <span class="detail-icon">📅</span>
+                  <mat-icon style="color: #DAA520;">calendar_today</mat-icon>
                   <div>
                     <p class="detail-label">Date</p>
                     <p class="detail-value">{{ formatDate(data.eventDate) }}</p>
@@ -46,20 +46,20 @@
                 </div>
 
                 <div *ngIf="showWeddingCivilLocation" class="detail-item">
-                  <span class="detail-icon">📍</span>
-                  <div>
+                  <mat-icon style="color: #DAA520;">location_on</mat-icon>
+                  <div class="c-mt">
                     <p class="detail-label">Lieu de la Cérémonie Civile</p>
                     <p class="detail-value">{{ data.eventCivilLocation}}</p>
-                    <p class="detail-value">⏰ {{ data.eventTime }}</p>
+                    <span class="time-icon">🕒</span> {{ data.eventTime }}
                   </div>
                 </div>
                 <div class="detail-item">
-                  <span class="detail-icon">📍</span>
-                  <div>
+                  <mat-icon style="color: #DAA520;">location_on</mat-icon>
+                  <div class="c-mt">
                     <p *ngIf="!showWeddingCivilLocation" class="detail-label">Lieu</p>
                     <p *ngIf="showWeddingCivilLocation" class="detail-label">Lieu du Banquet</p>
                     <p class="detail-value">{{ data.eventLocation}}</p>
-                    <p class="detail-value">⏰ {{ data.banquetTime }}</p>
+                    <span class="time-icon">🕒</span> {{  data.banquetTime }}
                   </div>
                 </div>
               </div>

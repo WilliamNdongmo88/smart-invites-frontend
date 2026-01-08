@@ -7,6 +7,7 @@ interface NewLink {
   mode?: string;
   type: string;
   used_limit_count: number | null;
+  date_limit_link: string;
 }
 
 @Component({
@@ -27,6 +28,7 @@ export class AddLinkModalComponent implements OnInit{
   newLink: NewLink = {
     type: '',
     used_limit_count: null,
+    date_limit_link: '',
   };
 
   constructor(private eventService: EventService) {}
@@ -44,7 +46,8 @@ export class AddLinkModalComponent implements OnInit{
     this.linkAdded.emit({
       mode: this.mode,
       type: this.newLink.type,
-      used_limit_count: this.newLink.used_limit_count
+      used_limit_count: this.newLink.used_limit_count,
+      date_limit_link: this.newLink.date_limit_link,
     });
 
     // Reset du formulaire Angular si fourni
@@ -61,10 +64,14 @@ export class AddLinkModalComponent implements OnInit{
       (responses) => {
         console.log("[openEditLinkModal] Responses :: ", responses);
         for (const response of responses) {
+          const dateLimitLink = responses.date_limit_link
+          ? this.event.banquetTime.split(':').slice(0, 2).join(':')
+          : '';
           if(response.id==this.link.id){
             this.newLink = {
               type: response.type,
-              used_limit_count: response.limit_count
+              used_limit_count: response.limit_count,
+              date_limit_link: dateLimitLink
             };
           }
         }
@@ -142,7 +149,8 @@ export class AddLinkModalComponent implements OnInit{
   resetForm() {
     this.newLink = {
       type: '',
-      used_limit_count: null
+      used_limit_count: null,
+      date_limit_link: ''
     };
   }
 

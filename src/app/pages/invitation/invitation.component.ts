@@ -7,13 +7,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GuestService } from '../../services/guest.service';
 import { Event } from '../../services/guest.service';
 import { EventService } from '../../services/event.service';
+import { MatIcon } from "@angular/material/icon";
 
 type ResponseType = 'confirmed' | 'declined' | null;
 
 @Component({
   selector: 'app-invitation',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIcon],
   templateUrl: './invitation.component.html',
   styleUrls: ['./invitation.component.scss']
 })
@@ -99,7 +100,7 @@ export class InvitationComponent implements OnInit{
       plusOneName: this.plusOne ? this.plusOneName : null,
       plusOneNameDietRestr: this.plusOne ? this.plusOneNameDietRestr : null
     };
-    // console.log('Payload envoyé au backend :', payload);
+    console.log('Payload envoyé au backend :', payload);
     this.isValidating = true;
     this.loading = true;
     if(!this.isFromGeneratedLink){
@@ -142,6 +143,7 @@ export class InvitationComponent implements OnInit{
             this.loading = false;
             this.errorMessage = err.error.error || 'Erreur lors de la soumission de votre réponse.';
             console.error('[addGuest] Erreur :', err.error.error);
+            console.log('[addGuest] Err :', err);
           }
         });
       }else{

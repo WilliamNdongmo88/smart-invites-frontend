@@ -48,6 +48,17 @@
                 <small class="error" *ngIf="addLinkForm.submitted && !addLinkForm.controls['used_limit_count']?.valid">
                     Veuillez saisir une limite valide.
                 </small>
+                <div class="form-group">
+                    <label class="c-mt" for="date_limit_link">Date limite d'utilisation</label>
+                    <input
+                    type="date"
+                    id="date_limit_link"
+                    name="date_limit_link"
+                    [(ngModel)]="newLink.date_limit_link"
+                    required
+                    class="form-input"
+                    />
+              </div>
             </div>
 
             <!-- Form Actions -->

@@ -123,7 +123,7 @@
                 </div>
 
                 <!-- Liens d'invitation (click)="shareEventLink(event, link)"-->
-                <div class="card mt-card">
+                <div *ngIf="(isMobile | async)"  class="card mt-card">
                     <h3>Liens d'invitations</h3>
                     <p class="export-desc">Partagé le lien d'invitation a vos contact</p>
                     <button
@@ -133,11 +133,6 @@
                         >
                         {{ getFilterLabel(link.label) }}
                     </button>
-                    <!-- <div class="export-buttons">
-                        <button class="btn btn-outline" (click)="shareEvent(event)">
-                            🔗 Partager
-                        </button>
-                    </div> -->
                 </div>
 
                 <!-- Guests List *ngIf="!(isMobile | async)" -->
@@ -261,6 +256,17 @@
                     </div>
                 </div>
 
+                <div *ngIf="!(isMobile | async)"  class="card mt-card">
+                    <h3>Liens d'invitations</h3>
+                    <p class="export-desc">Partagé le lien d'invitation a vos contact</p>
+                    <button
+                        *ngFor="let link of links"
+                        class="btn link-btn btn-outline "
+                        (click)="openAddLinkModal('partage', event, link)"
+                        >
+                        {{ getFilterLabel(link.label) }}
+                    </button>
+                </div>
                 <!-- Export Options -->
                 <!-- <div *ngIf="!(isMobile | async)" class="card mt-6">
                     <h3>Exporter</h3>

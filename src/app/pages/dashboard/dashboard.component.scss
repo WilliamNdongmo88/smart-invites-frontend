@@ -93,7 +93,6 @@
     .event-meta {
       font-size: 0.875rem;
       color: #666666;
-      margin: 0.25rem 0;
     }
 
     .event-actions {
@@ -106,6 +105,14 @@
       grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
       gap: 1rem;
       margin-bottom: 1.5rem;
+    }
+
+    .detail-item {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .c-mb{
+      margin-bottom: 5px;
     }
 
     .stat-box {

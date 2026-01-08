@@ -48,9 +48,9 @@ export class EditGuestComponent implements OnInit {
 
   originalGuestData: Guest = {
     id: 1,
-    name: 'Jean Dupont',
+    name: 'Will',
     table_number: 'Table 5',
-    email: 'jean.dupont@email.com',
+    email: 'will@email.com',
     phone: '+33 6 12 34 56 78',
     status: 'confirmed',
     dietaryRestrictions: 'Végétarien',

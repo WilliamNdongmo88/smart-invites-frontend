@@ -49,9 +49,9 @@ export class GuestDetailComponent implements OnInit{
 
   guest: Guest = {
     id: 1,
-    name: 'Jean Dupont',
-    email: 'jean.dupont@email.com',
-    phone: '+33 6 12 34 56 78',
+    name: 'Will',
+    email: 'will@email.com',
+    phone: '+237 6 52 34 56 78',
     status: 'confirmed',
     dietaryRestrictions: 'Végétarien',
     plusOne: true,

@@ -29,8 +29,14 @@
           <div class="event-header" (click)="navigateToEventDetails(event.id)">
             <div>
               <h3>{{ event.title }}</h3>
-              <p class="event-meta">📅 {{ formatDate(event.date) }}</p>
-              <p class="event-meta">📍 {{ event.location }}</p>
+              <div class="detail-item c-mb">
+                <mat-icon style="color: #DAA520;">calendar_today</mat-icon> 
+                <p class="event-meta">{{ formatDate(event.date) }}</p>
+              </div>
+              <div class="detail-item">
+                <mat-icon style="color: #DAA520;">location_on</mat-icon>
+                <p class="event-meta">{{ event.location }}</p>
+              </div>
             </div>
             <div class="event-actions">
               <button class="btn btn-outline" (click)="navigateToInvitePage(event.id)">✉️ Inviter</button>

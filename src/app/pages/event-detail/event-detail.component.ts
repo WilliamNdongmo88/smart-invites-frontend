@@ -715,6 +715,7 @@ export class EventDetailComponent implements OnInit{
         this.loading = false;
       },
       error: (err) => {
+        this.loading = false;
         console.error('Erreur téléchargement PDF', err);
       }
     });

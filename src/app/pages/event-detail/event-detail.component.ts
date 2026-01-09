@@ -171,6 +171,7 @@ export class EventDetailComponent implements OnInit{
     //console.log("this.isMobile::", this.isMobile)
     this.getLinks();
     //this.getQrCodeImageUrl();
+    this.setFilterStatus('confirmed');
   }
 
   getOneEvent() {

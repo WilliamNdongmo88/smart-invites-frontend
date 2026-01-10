@@ -533,7 +533,7 @@ export class EventDetailComponent implements OnInit{
         console.log("[deleteEvent] response :: ", response);
         this.isLoading = false;
         this.triggerBAction();
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/evenements']);
       },
       (error) => {
         this.isLoading = false;

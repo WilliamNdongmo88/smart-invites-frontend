@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
 
   navigateToLogin() {
     if (this.isAuthenticated) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/evenements']);
       return;
     }
     this.router.navigate(['/login']);

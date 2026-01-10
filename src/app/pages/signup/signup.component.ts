@@ -66,7 +66,7 @@ export class SignupComponent {
       next: (result) => {
         console.log('✅ Connexion Google réussie', result);
         if (result) {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/evenements']);
         }
       },
       error: (err) => {

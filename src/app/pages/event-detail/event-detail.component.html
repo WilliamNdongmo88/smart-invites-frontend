@@ -210,8 +210,8 @@
                         </div>
                     </div>
 
-                    <!-- Pagination Controls -->
-                    <div *ngIf="!(isMobile | async)" class="pagination">
+                    <!-- Pagination Controls *ngIf="!(isMobile | async)" -->
+                    <div class="pagination">
                         <button 
                             (click)="prevPage()" 
                             [disabled]="currentPage === 1"

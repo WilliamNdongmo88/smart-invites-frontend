@@ -193,7 +193,7 @@ export class GuestDetailComponent implements OnInit{
   }
 
   editGuest() {
-    this.send('plusone');
+    this.send('personal');
     this.router.navigate(['/events', this.eventId, 'guests', this.guestId, 'edit']);
   }
   send(message: any) {

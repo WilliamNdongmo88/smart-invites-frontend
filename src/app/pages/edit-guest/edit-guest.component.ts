@@ -41,6 +41,7 @@ export class EditGuestComponent implements OnInit {
   isLoading: boolean = false;
   errorMessage: string = '';
   eventId: number = 0;
+  eventTile: string = '';
   modalAction: string | undefined;
   warningMessage: string = "";
   showDeleteModal = false;
@@ -96,6 +97,7 @@ export class EditGuestComponent implements OnInit {
     (response) => {
         console.log("[loadGuest] response :: ", response);
         this.eventId = response.eventId;
+        this.eventTile = response.eventTitle;
         this.originalGuestData = {
             id: Number(response.guest_id),
             name: response.full_name,
@@ -250,7 +252,11 @@ export class EditGuestComponent implements OnInit {
   }
 
   gobackToGuestList() {
+    this.send(this.eventTile);
     this.router.navigate(['/events', this.eventId, 'guests']);
+  }
+  send(message: any) {
+    this.communicationService.sendMessage(message);
   }
 
   gobackToGuestDetail() {

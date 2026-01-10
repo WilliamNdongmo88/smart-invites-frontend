@@ -19,7 +19,7 @@ export class LoginComponent implements  OnInit{
   errorMessage: string | null = null;
   rememberMe = false;
   showPassword = signal(false);
-  returnUrl: string = '/dashboard';
+  returnUrl: string = '/evenements';
 
   constructor(
     private route: ActivatedRoute,

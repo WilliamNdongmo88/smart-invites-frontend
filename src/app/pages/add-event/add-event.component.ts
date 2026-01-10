@@ -140,7 +140,7 @@ export class AddEventComponent implements OnInit{
         console.log("Response :: ", response)
         this.isLoading = false;
         this.triggerBAction();
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/evenements']);//dashboard
       },
       (error) => {
         this.isLoading = false;

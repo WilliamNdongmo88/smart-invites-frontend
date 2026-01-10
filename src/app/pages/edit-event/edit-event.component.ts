@@ -243,7 +243,7 @@ export class EditEventComponent implements OnInit {
         console.log("Response :: ", response);
         this.isLoading = false;
         this.triggerBAction();
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/evenements']);// dashboard
       },
       (error) => {
         this.isLoading = false;
@@ -338,7 +338,7 @@ export class EditEventComponent implements OnInit {
             console.log("[deleteEvent] response :: ", response);
             this.isLoading = false;
             this.triggerBAction();
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(['/evenements']);
         },
         (error) => {
             this.isLoading = false;

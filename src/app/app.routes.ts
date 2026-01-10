@@ -39,7 +39,7 @@ export const routes: Routes = [
     component: ForgotPasswordComponent,
   },
   {
-    path: 'dashboard',
+    path: 'evenements',
     component: DashboardComponent,
     canActivate: [AuthGuard]
   },

@@ -630,6 +630,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
       message: this.thankMessage
     }
     console.log('📨 data :', data);
+    this.loading = true;
     this.qrcodeService.sendThankMessage(data).subscribe(
     (response) => {
       console.log("[sendThankMessage] response :: ", response);
@@ -637,9 +638,11 @@ export class QRScannerComponent implements OnInit, OnDestroy {
       this.canSendThankMessage = false;
       this.notificationService.clearNotificationsCache();
       this.notificationService.getNotifications();
+      this.loading = false;
     },
     (error) => {
-        console.error('❌ [sendThankMessage] Erreur :', error.message);
+      this.loading = false;
+      console.error('❌ [sendThankMessage] Erreur :', error.message);
     });
   }
 

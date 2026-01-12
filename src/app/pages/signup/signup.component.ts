@@ -4,6 +4,8 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService, RegisterRequest } from '../../services/auth.service';
 
+type ActivatedAccoutStep = 'verification' | 'success';
+
 declare const google: any;
 @Component({
   selector: 'app-signup',
@@ -13,11 +15,17 @@ declare const google: any;
   styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent {
+  currentStep = signal<ActivatedAccoutStep>('verification');
+  verificationCode = '';
+  newPassword = '';
   name = '';
   email = '';
+  email_confirmed = '';
   password = '';
   confirmPassword = '';
+  loading = false;
   acceptTerms = false;
+  isActiveAccount = false;
   subscribeNewsletter = false;
   showPassword = signal(false);
   showConfirmPassword = signal(false);
@@ -169,19 +177,51 @@ export class SignupComponent {
       email: this.email,
       password: this.password
     };
-
+    this.loading = true;
     this.authService.register(request).subscribe({
       next: (response) => {
         console.log('✅ Inscription réussie', response);
-        this.successMessage = 'Compte créé avec succès ! Vous pouvez vous connecter.';
+        this.email_confirmed = this.email;
+        this.isActiveAccount = true;
+        // this.successMessage = 'Compte créé avec succès ! Vous pouvez vous connecter.';
         this.errorMessage = null;
         form.resetForm();
+        this.loading = false;
       },
       error: (err) => {
+        this.loading = false;
         console.error('❌ Erreur d’inscription :', err.message);
         this.errorMessage = err.message || 'Une erreur est survenue lors de l’inscription.';
       }
     });
+  }
+
+  submitVerificationCode() {
+    if (this.verificationCode && this.verificationCode.length === 6) {
+      const data = {
+        email: this.email_confirmed,
+        code: this.verificationCode,
+        isActive: true
+      }
+      console.log('C data: ', data);
+      this.loading = true;
+      this.authService.checkCode(data).subscribe({
+          next: (response) => {
+            console.log('Code de vérification envoyé', response);
+            this.currentStep.set('success');
+            this.errorMessage = '';
+            this.loading = false;
+          },
+          error: (error) => {
+            this.loading = false;
+            console.error('❌ Erreur lors de la vérification du code :', error);
+            this.errorMessage = 'Echec de la vérification. Réessayez plus tard.';
+          }
+        });
+    }else{
+      console.error('❌ Code invalide ou incorrect');
+      this.errorMessage = 'Code invalide ou incorrect';
+    }
   }
 
   signupWithGoogle() {
@@ -190,5 +230,13 @@ export class SignupComponent {
 
   signupWithFacebook() {
     alert('📘 Inscription avec Facebook...');
+  }
+
+  resendCode() {
+    alert('✉️ Code de vérification renvoyé !');
+  }
+
+  redirectToLogin() {
+    this.router.navigate(['/login']);
   }
 }

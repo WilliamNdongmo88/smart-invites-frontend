@@ -20,160 +20,227 @@
             <p>Créez votre compte Smart Invite</p>
           </div>
 
-          <!-- Form -->
-          <form (ngSubmit)="onSubmit(signupForm)" #signupForm="ngForm">
-            <!-- Full Name -->
-            <div class="form-group">
-              <label for="name">Nom complet</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                [(ngModel)]="name"
-                placeholder="William Ndongmo"
-                required
-                class="form-input"
-              />
-            </div>
-
-            <!-- Email -->
-            <div class="form-group">
-              <label for="email">Adresse email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                [(ngModel)]="email"
-                placeholder="votre@email.com"
-                required
-                class="form-input"
-              />
-              <p class="form-hint">Nous ne partagerons jamais votre email</p>
-            </div>
-
-            <!-- Password -->
-            <div class="form-group">
-              <label for="password">Mot de passe</label>
-              <div class="password-input">
+          <div *ngIf="!isActiveAccount">
+            <!-- Form -->
+            <form (ngSubmit)="onSubmit(signupForm)" #signupForm="ngForm">
+              <!-- Full Name -->
+              <div class="form-group">
+                <label for="name">Nom complet</label>
                 <input
-                  [type]="showPassword() ? 'text' : 'password'"
-                  id="password"
-                  name="password"
-                  [(ngModel)]="password"
-                  placeholder="••••••••"
+                  type="text"
+                  id="name"
+                  name="name"
+                  [(ngModel)]="name"
+                  placeholder="William Ndongmo"
                   required
                   class="form-input"
-                  (change)="checkPasswordStrength()"
                 />
-                <button
-                  type="button"
-                  class="toggle-password"
-                  (click)="togglePasswordVisibility()"
-                >
-                  {{ showPassword() ? '👁️' : '👁️‍🗨️' }}
-                </button>
               </div>
-              <div class="password-strength" *ngIf="password">
-                <div class="strength-bar">
-                  <div
-                    class="strength-fill"
-                    [class]="'strength-' + passwordStrength()"
-                    [style.width.%]="getPasswordStrengthPercentage()"
-                  ></div>
+
+              <!-- Email -->
+              <div class="form-group">
+                <label for="email">Adresse email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  [(ngModel)]="email"
+                  placeholder="votre@email.com"
+                  required
+                  class="form-input"
+                />
+                <p class="form-hint">Nous ne partagerons jamais votre email</p>
+              </div>
+
+              <!-- Password -->
+              <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <div class="password-input">
+                  <input
+                    [type]="showPassword() ? 'text' : 'password'"
+                    id="password"
+                    name="password"
+                    [(ngModel)]="password"
+                    placeholder="••••••••"
+                    required
+                    class="form-input"
+                    (change)="checkPasswordStrength()"
+                  />
+                  <button
+                    type="button"
+                    class="toggle-password"
+                    (click)="togglePasswordVisibility()"
+                  >
+                    {{ showPassword() ? '👁️' : '👁️‍🗨️' }}
+                  </button>
                 </div>
-                <p class="strength-text" [class]="'strength-' + passwordStrength()">
-                  {{ getPasswordStrengthLabel() }}
+                <div class="password-strength" *ngIf="password">
+                  <div class="strength-bar">
+                    <div
+                      class="strength-fill"
+                      [class]="'strength-' + passwordStrength()"
+                      [style.width.%]="getPasswordStrengthPercentage()"
+                    ></div>
+                  </div>
+                  <p class="strength-text" [class]="'strength-' + passwordStrength()">
+                    {{ getPasswordStrengthLabel() }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Confirm Password -->
+              <div class="form-group">
+                <label for="confirmPassword">Confirmer le mot de passe</label>
+                <div class="password-input">
+                  <input
+                    [type]="showConfirmPassword() ? 'text' : 'password'"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    [(ngModel)]="confirmPassword"
+                    placeholder="••••••••"
+                    required
+                    class="form-input"
+                  />
+                  <button
+                    type="button"
+                    class="toggle-password"
+                    (click)="toggleConfirmPasswordVisibility()"
+                  >
+                    {{ showConfirmPassword() ? '👁️' : '👁️‍🗨️' }}
+                  </button>
+                </div>
+                <p class="form-hint" *ngIf="password && confirmPassword && password !== confirmPassword" style="color: #EF4444;">
+                  ✕ Les mots de passe ne correspondent pas
+                </p>
+                <p class="form-hint" *ngIf="password && confirmPassword && password === confirmPassword" style="color: #22C55E;">
+                  ✓ Les mots de passe correspondent
                 </p>
               </div>
-            </div>
 
-            <!-- Confirm Password -->
-            <div class="form-group">
-              <label for="confirmPassword">Confirmer le mot de passe</label>
-              <div class="password-input">
-                <input
-                  [type]="showConfirmPassword() ? 'text' : 'password'"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  [(ngModel)]="confirmPassword"
-                  placeholder="••••••••"
-                  required
-                  class="form-input"
-                />
-                <button
-                  type="button"
-                  class="toggle-password"
-                  (click)="toggleConfirmPasswordVisibility()"
-                >
-                  {{ showConfirmPassword() ? '👁️' : '👁️‍🗨️' }}
-                </button>
+              <!-- Terms checkbox -->
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms" required />
+                  <span>J'accepte les <a href="#" class="link-inline">conditions d'utilisation</a> et la <a href="#" class="link-inline">politique de confidentialité</a></span>
+                </label>
               </div>
-              <p class="form-hint" *ngIf="password && confirmPassword && password !== confirmPassword" style="color: #EF4444;">
-                ✕ Les mots de passe ne correspondent pas
-              </p>
-              <p class="form-hint" *ngIf="password && confirmPassword && password === confirmPassword" style="color: #22C55E;">
-                ✓ Les mots de passe correspondent
-              </p>
-            </div>
 
-            <!-- Terms checkbox -->
-            <div class="form-group">
-              <label class="checkbox-label">
-                <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms" required />
-                <span>J'accepte les <a href="#" class="link-inline">conditions d'utilisation</a> et la <a href="#" class="link-inline">politique de confidentialité</a></span>
-              </label>
-            </div>
+              <!-- Newsletter checkbox -->
+              <!-- <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" [(ngModel)]="subscribeNewsletter" name="subscribeNewsletter" />
+                  <span>Je souhaite recevoir des conseils et des mises à jour</span>
+                </label>
+              </div> -->
 
-            <!-- Newsletter checkbox -->
-            <!-- <div class="form-group">
-              <label class="checkbox-label">
-                <input type="checkbox" [(ngModel)]="subscribeNewsletter" name="subscribeNewsletter" />
-                <span>Je souhaite recevoir des conseils et des mises à jour</span>
-              </label>
+              <!-- Submit button -->
+              <button
+                type="submit"
+                class="btn btn-primary submit-btn"
+                [disabled]="!signupForm.valid || password !== confirmPassword"
+              >
+                {{ loading ? '⏳ Création en cours...' : 'Créer mon compte' }}
+              </button>
+              <!-- Message d'erreur -->
+              <div *ngIf="errorMessage" class="alert alert-error">
+                {{ errorMessage }}
+              </div>
+
+              <!-- Message de succès -->
+              <div *ngIf="successMessage" class="alert alert-success">
+                {{ successMessage }}
+              </div>
+            </form>
+
+            <!-- Divider -->
+            <!-- <div class="divider">
+              <span>ou</span>
             </div> -->
 
-            <!-- Submit button -->
-            <button
-              type="submit"
-              class="btn btn-primary submit-btn"
-              [disabled]="!signupForm.valid || password !== confirmPassword"
-            >
-              Créer mon compte
-            </button>
-            <!-- Message d'erreur -->
-            <div *ngIf="errorMessage" class="alert alert-error">
-              {{ errorMessage }}
+            <!-- Social signup -->
+            <!-- <button class="social-btn google" (click)="signupWithGoogle()">
+              <span>🌐</span> Google
+            </button> -->
+            <!-- <div class="social-login">
+              <div id="googleSignInDiv"></div>
+            </div> -->
+
+            <!-- Login link -->
+            <div class="login-link">
+              <p>Vous avez déjà un compte ?</p>
+              <a routerLink="/login" class="link-primary">Se connecter</a>
             </div>
 
-            <!-- Message de succès -->
-            <div *ngIf="successMessage" class="alert alert-success">
-              {{ successMessage }}
+            <!-- Security notice -->
+            <div class="security-notice">
+              <p>🔒 Vos données sont sécurisées et chiffrées</p>
             </div>
-          </form>
-
-          <!-- Divider -->
-          <!-- <div class="divider">
-            <span>ou</span>
-          </div> -->
-
-          <!-- Social signup -->
-          <!-- <button class="social-btn google" (click)="signupWithGoogle()">
-            <span>🌐</span> Google
-          </button> -->
-          <!-- <div class="social-login">
-            <div id="googleSignInDiv"></div>
-          </div> -->
-
-          <!-- Login link -->
-          <div class="login-link">
-            <p>Vous avez déjà un compte ?</p>
-            <a routerLink="/login" class="link-primary">Se connecter</a>
           </div>
+          <div *ngIf="isActiveAccount">
+            <!-- Right side - Form -->
+            <div class="forgot-password-form-container">
+              <div class="forgot-password-form">
+                <!-- Step 2: Verification Code -->
+                <div *ngIf="currentStep() === 'verification'" class="step-content">
+                  <div class="step-info">
+                    <p class="step-description">
+                      Un code de vérification a été envoyé à <strong>{{ email_confirmed }}</strong>
+                    </p>
+                  </div>
 
-          <!-- Security notice -->
-          <div class="security-notice">
-            <p>🔒 Vos données sont sécurisées et chiffrées</p>
+                  <form (ngSubmit)="submitVerificationCode()" #verificationForm="ngForm">
+                    <div class="form-group">
+                      <label for="verificationCode">Code de vérification</label>
+                      <input
+                        type="text"
+                        id="verificationCode"
+                        name="verificationCode"
+                        [(ngModel)]="verificationCode"
+                        placeholder="000000"
+                        maxlength="6"
+                        required
+                        class="form-input code-input"
+                      />
+                      <p *ngIf="!errorMessage" class="form-hint">Entrez le code à 6 chiffres reçu par email</p>
+                    </div>
+                    <!-- Message d'erreur -->
+                    <div *ngIf="errorMessage" class="alert alert-error">
+                      {{ errorMessage }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary submit-btn" [disabled]="!verificationForm.valid">
+                      {{ loading ? '⏳ Vérification en cours...' : 'Vérifier le code' }}
+                    </button>
+
+                    <div class="resend-code">
+                      <p class="resend-text">Vous n'avez pas reçu le code ?</p>
+                      <button type="button" class="link-resend" (click)="resendCode()">
+                        Renvoyer le code
+                      </button>
+                    </div>
+
+                    <div class="back-to-login">
+                      <a routerLink="/login" class="link-back">← Retour à la connexion</a>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Step 4: Success -->
+                <div *ngIf="currentStep() === 'success'" class="step-content success-content">
+                  <div class="success-icon">✓</div>
+                  <h2>Compte activé !</h2>
+                  <p class="success-message">
+                    Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.
+                  </p>
+
+                  <button class="btn btn-primary submit-btn" (click)="redirectToLogin()">
+                    Aller à la connexion
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
+          
         </div>
       </div>
     </div>

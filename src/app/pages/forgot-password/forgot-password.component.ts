@@ -63,7 +63,8 @@ export class ForgotPasswordComponent {
     if (this.verificationCode && this.verificationCode.length === 6) {
       const data = {
         email: this.email,
-        code: this.verificationCode
+        code: this.verificationCode,
+        isActive: false
       }
       this.loading = true;
       this.authService.checkCode(data).subscribe({

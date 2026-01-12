@@ -107,16 +107,20 @@ export class AuthService {
   }
 
   login(request: LoginRequest): Observable<AuthResponse> {
-    // console.log('### request :: ', request);
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
       tap(response => {
-        // console.log('###[login] response :: ', response);
+        console.log('###[login] response :: ', response);
         this.handleAuthResponse(response);
         this.loadUserFromStorage();
         this.notificationService.clearNotificationsCache();
         this.eventService.clearCache();
       }),
-      catchError(this.handleError)
+      catchError(error => {
+        // ✅ Extraire le message d'erreur du backend
+        const errorMessage = error.error?.error || error.error?.message || error.message || 'Une erreur est survenue';
+        console.error('Login error:', errorMessage);
+        return throwError(() => new Error(errorMessage));
+      })
     );
   }
 

@@ -20,6 +20,7 @@ import { ContactComponent } from './pages/contact/contact.component';
 import { EventReportComponent } from './pages/event-report/event-report.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { EventScanListComponent } from './pages/event-scan-list/event-scan-list';
+import { InvitationEditorComponent } from './pages/invitation-editor/invitation-editor.component';
 
 export const routes: Routes = [
   {
@@ -70,6 +71,11 @@ export const routes: Routes = [
     path: 'invitations/:token',
     component: InvitationComponent,
     // canActivate: [AuthGuard]
+  },
+  {
+  path: 'invitation-editor',
+    component: InvitationEditorComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'events/:eventId/guests',

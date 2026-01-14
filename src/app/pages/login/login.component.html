@@ -110,7 +110,11 @@
           <!-- Sign up link -->
           <div class="signup-link">
             <p>Vous n'avez pas de compte ?</p>
-            <a routerLink="/signup" class="link-primary">Créer un compte</a>
+            <a *ngIf="!isActiveAccount" routerLink="/signup" class="link-primary">Créer un compte</a>
+            <a *ngIf="isActiveAccount" (click)="activeAccount()" class="link-primary curso"
+            >
+              Activer votre compte
+          </a>
           </div>
 
           <!-- Terms -->

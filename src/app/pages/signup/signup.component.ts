@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService, RegisterRequest } from '../../services/auth.service';
+import { CommunicationService } from '../../services/share.service';
 
-type ActivatedAccoutStep = 'verification' | 'success';
+type ActivatedAccoutStep = 'email' | 'verification' | 'success';
 
 declare const google: any;
 @Component({
@@ -25,6 +26,7 @@ export class SignupComponent {
   confirmPassword = '';
   loading = false;
   acceptTerms = false;
+  showActiveAccount = false;
   isActiveAccount = false;
   subscribeNewsletter = false;
   showPassword = signal(false);
@@ -37,7 +39,8 @@ export class SignupComponent {
   constructor(
     private router: Router, 
     private authService: AuthService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private communicationService: CommunicationService
   ) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -61,7 +64,14 @@ export class SignupComponent {
         width: 400,
         type: 'standard'
       });
-    }
+    };
+
+    this.communicationService.message$.subscribe(msg => {
+      console.log("isActive :: ", msg);
+      this.currentStep.set('email');
+      this.showActiveAccount = msg;
+      this.isActiveAccount = msg;
+    });
   }
 
   handleCredentialResponse(response: any) {
@@ -181,8 +191,10 @@ export class SignupComponent {
     this.authService.register(request).subscribe({
       next: (response) => {
         console.log('✅ Inscription réussie', response);
+        console.log('✅ this.email', this.email);
+        this.currentStep.set('verification');
         this.email_confirmed = this.email;
-        this.isActiveAccount = true;
+        this.showActiveAccount = true;
         // this.successMessage = 'Compte créé avec succès ! Vous pouvez vous connecter.';
         this.errorMessage = null;
         form.resetForm();
@@ -196,10 +208,41 @@ export class SignupComponent {
     });
   }
 
+  submitEmail() {
+    if (this.email && this.email.trim() !== '') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (emailRegex.test(this.email)) {
+        const data = {
+          email: this.email,
+          isActive: true
+        }
+        this.loading = true;
+        this.authService.sendResetEmail(data).subscribe({
+          next: (response) => {
+            console.log('Email envoyé avec succès', response);
+            this.currentStep.set('verification');
+            this.errorMessage = '';
+            this.loading = false;
+          },
+          error: (error) => {
+            console.error('❌ Erreur lors de l’envoi de l’e-mail :', error);
+            this.errorMessage = error.error.error;
+            this.loading = false;
+          }
+        });
+      } else {
+        this.errorMessage = 'Adresse e-mail invalide.';
+      }
+    } else {
+      this.errorMessage = 'Veuillez entrer une adresse e-mail.';
+    }
+  }
+
   submitVerificationCode() {
     if (this.verificationCode && this.verificationCode.length === 6) {
       const data = {
-        email: this.email_confirmed,
+        email: this.isActiveAccount ? this.email : this.email_confirmed,
         code: this.verificationCode,
         isActive: true
       }
@@ -233,7 +276,8 @@ export class SignupComponent {
   }
 
   resendCode() {
-    alert('✉️ Code de vérification renvoyé !');
+    this.submitEmail();
+    console.log('✉️ Code de vérification renvoyé !');
   }
 
   redirectToLogin() {

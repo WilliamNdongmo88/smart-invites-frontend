@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { CommunicationService } from '../../services/share.service';
 
 declare const google: any;
 @Component({
@@ -16,6 +17,7 @@ export class LoginComponent implements  OnInit{
   email = '';
   password = '';
   isLoading = false;
+  isActiveAccount = false;
   errorMessage: string | null = null;
   rememberMe = false;
   showPassword = signal(false);
@@ -25,7 +27,8 @@ export class LoginComponent implements  OnInit{
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private communicationService: CommunicationService
   ) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -112,11 +115,19 @@ export class LoginComponent implements  OnInit{
         console.log("Message :: ", error.message.split(':')[4])
         if (error.message.includes('429 Too Many Requests')) {
           this.errorMessage = 'Trop de tentatives de connexion. Réessayez plus tard.';
+        }else if (error.message.includes('Veuillez activer votre compte!')){
+          this.isActiveAccount = true;
+          this.errorMessage = error.message || 'Erreur de connexion';
         }else {
           this.errorMessage = error.message || 'Erreur de connexion';
         }
       }
     );
+  }
+
+  activeAccount(){
+    this.router.navigate(['/signup']);
+    this.communicationService.sendMessage(true);
   }
 
   // loginWithGoogle() {

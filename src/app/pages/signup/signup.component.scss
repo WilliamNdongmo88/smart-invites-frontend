@@ -67,7 +67,7 @@
 
     .form-header {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
     }
 
     .logo {
@@ -347,6 +347,7 @@
       text-decoration: none;
       font-weight: 600;
       transition: color 0.3s ease;
+      cursor: pointer;
 
       &:hover {
         color: color.adjust(#D4AF37, $lightness: -10%);

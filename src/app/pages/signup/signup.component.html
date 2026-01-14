@@ -20,7 +20,7 @@
             <p>Créez votre compte Smart Invite</p>
           </div>
 
-          <div *ngIf="!isActiveAccount">
+          <div *ngIf="!showActiveAccount">
             <!-- Form -->
             <form (ngSubmit)="onSubmit(signupForm)" #signupForm="ngForm">
               <!-- Full Name -->
@@ -176,15 +176,46 @@
               <p>🔒 Vos données sont sécurisées et chiffrées</p>
             </div>
           </div>
-          <div *ngIf="isActiveAccount">
+          <div *ngIf="showActiveAccount">
             <!-- Right side - Form -->
             <div class="forgot-password-form-container">
               <div class="forgot-password-form">
+                <!-- Step 1: Email -->
+                <div *ngIf="currentStep() === 'email' && isActiveAccount" class="step-content">
+                  <form (ngSubmit)="submitEmail()" #emailForm="ngForm">
+                    <div class="form-group">
+                      <label for="email">Adresse email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        [(ngModel)]="email"
+                        placeholder="votre@email.com"
+                        required
+                        class="form-input"
+                      />
+                      <p *ngIf="!errorMessage" class="form-hint">Entrez l'adresse email associée à votre compte</p>
+                    </div>
+                    <!-- Message d'erreur -->
+                    <div *ngIf="errorMessage" class="alert alert-error">
+                      {{ errorMessage }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary submit-btn" [disabled]="!emailForm.valid">
+                      {{ loading ? '⏳ Envoi en cours...' : 'Envoyer le lien de réinitialisation' }}
+                    </button>
+
+                    <div class="back-to-login">
+                      <a routerLink="/login" class="link-back">← Retour à la connexion</a>
+                    </div>
+                  </form>
+                </div>
+
                 <!-- Step 2: Verification Code -->
                 <div *ngIf="currentStep() === 'verification'" class="step-content">
                   <div class="step-info">
                     <p class="step-description">
-                      Un code de vérification a été envoyé à <strong>{{ email_confirmed }}</strong>
+                      Un code de vérification a été envoyé à <strong>{{ isActiveAccount ? email : email_confirmed }}</strong>
                     </p>
                   </div>
 

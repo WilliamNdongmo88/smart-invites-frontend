@@ -36,7 +36,10 @@ export class ForgotPasswordComponent {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       if (emailRegex.test(this.email)) {
-        const data = {email: this.email}
+        const data = {
+          email: this.email,
+          isActive: false
+        }
         this.loading = true;
         this.authService.sendResetEmail(data).subscribe({
           next: (response) => {

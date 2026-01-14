@@ -74,23 +74,42 @@ export class AuthService {
 
   private loadUserFromStorage(): void {
     const token = this.getToken();
-    const user = localStorage.getItem('currentUser');
-    // console.log('[loadUserFromStorage] token : ', token);
-    if (token && user) {
-      this.decodeToken(token); 
-      this.currentUserSubject.next(JSON.parse(user));
+    const userStr = localStorage.getItem('currentUser');
+
+    if (!token || !userStr || userStr === 'undefined') {
+      return;
+    }
+
+    try {
+      const user = JSON.parse(userStr);
+      this.decodeToken(token);
+      this.currentUserSubject.next(user);
+    } catch (e) {
+      console.error('[loadUserFromStorage] JSON invalide', e);
+      localStorage.removeItem('currentUser');
     }
   }
-  private decodeToken(token: string): CustomJwtPayload {
+
+  private decodeToken(token: string): CustomJwtPayload | null {
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const base64Url = token.split('.')[1];
+      if (!base64Url) return null;
+
+      const base64 = base64Url
+        .replace(/-/g, '+')
+        .replace(/_/g, '/')
+        .padEnd(base64Url.length + (4 - base64Url.length % 4) % 4, '=');
+
+      const payload = JSON.parse(atob(base64));
+
       this.user = payload;
-      console.log('[decodeToken] this.user', this.user)
+      console.log('[decodeToken] this.user', this.user);
+
       return payload;
     } catch (e) {
       console.error('Erreur décodage token', e);
       this.user = null;
-      return null as any;
+      return null;
     }
   }
 

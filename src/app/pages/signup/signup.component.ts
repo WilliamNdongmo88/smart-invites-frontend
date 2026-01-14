@@ -72,6 +72,7 @@ export class SignupComponent {
       this.showActiveAccount = msg;
       this.isActiveAccount = msg;
     });
+    console.log('storage: ', localStorage.getItem('refreshToken'));
   }
 
   handleCredentialResponse(response: any) {
@@ -199,11 +200,13 @@ export class SignupComponent {
         this.errorMessage = null;
         form.resetForm();
         this.loading = false;
+        localStorage.clear();
       },
       error: (err) => {
         this.loading = false;
         console.error('❌ Erreur d’inscription :', err.message);
         this.errorMessage = err.message || 'Une erreur est survenue lors de l’inscription.';
+        localStorage.clear();
       }
     });
   }

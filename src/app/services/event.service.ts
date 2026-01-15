@@ -62,6 +62,7 @@ export class EventService {
 
   private cache = new Map<number, Observable<{ events: Event[] }>>();
   private cachedEvent = new Map<number, Observable<Event[]>>();
+  private cachedEventInvtNote = new Map<number, Observable<any>>();
 
   private linksSubject = new BehaviorSubject<any | null>(null);
   links$ = this.linksSubject.asObservable();
@@ -127,6 +128,24 @@ export class EventService {
     return request$;
   }
 
+  getEventInvitNote(eventId: number): Observable<any> {
+    if (this.cachedEventInvtNote.has(eventId)) {
+      console.log('CACHE HIT for eventId:', eventId);
+      return this.cachedEventInvtNote.get(eventId)!;
+    }
+
+    console.log('API CALL for eventId:', eventId);
+
+    const request$ = this.http
+      .get<Event[]>(`${this.apiUrl}/event/event-inv-note/${eventId}`)
+      .pipe(
+        shareReplay(1)
+      );
+
+    this.cachedEventInvtNote.set(eventId, request$);
+    return request$;
+  }
+
   // Vider le cache pour un event
   clearCache(eventId?: number) {
     if (eventId) {
@@ -143,7 +162,7 @@ export class EventService {
     return this.http.get<Event[]>(`${this.apiUrl}/event/${eventId}/invitation`, {headers});
   }
 
-  createEvent(request: CreateEventRequest[]): Observable<any> {
+  createEvent(request: any): Observable<any> {
     console.log('Creating event with data:', request);
     const headers = this.getAuthHeaders();
     return this.http.post<any>(`${this.apiUrl}/event/create-event`, request, { headers })
@@ -152,7 +171,7 @@ export class EventService {
     );
   }
 
-  updateEvent(eventId: number, request: Partial<CreateEventRequest>): Observable<Event> {
+  updateEvent(eventId: number, request: Partial<any>): Observable<Event> {
     const headers = this.getAuthHeaders();
     return this.http
     .put<Event>(`${this.apiUrl}/event/${eventId}`, request, { headers })

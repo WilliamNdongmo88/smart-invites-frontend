@@ -9,6 +9,29 @@ import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 import { CommunicationService } from '../../services/share.service';
 
+interface InvitationData {
+  // Contenu personnalisé
+  title: string;
+  mainMessage: string;
+  eventTheme: string;
+  priorityColors: string;
+  qrInstructions: string;
+  dressCodeMessage: string;
+  thanksMessage1: string;
+  sousMainMessage: string;
+  closingMessage: string;
+
+  // Couleurs et design
+  titleColor: string;
+  topBandColor: string;
+  bottomBandColor: string;
+  textColor: string;
+
+  // Logo et images
+  logoUrl?: string;
+  heartIconUrl?: string;
+}
+
 interface Event {
   id: string;
   organizerId?: number;
@@ -79,8 +102,25 @@ export class EditEventComponent implements OnInit {
       allowPlusOne: true,
       status: 'planned'
   };
-
   eventData: Event = { ...this.originalEventData };
+
+  invitationData: InvitationData = {
+    title: "L'ETTRE D'INVITATION",
+    mainMessage: "C'est avec un immense bonheur que nous vous invitons à célébrer notre union. Votre présence à nos côtés rendra cette journée inoubliable.",
+    eventTheme: 'CHIC ET GLAMOUR',
+    priorityColors: 'Bleu, Blanc, Rouge, Noir',
+    qrInstructions: 'Prière de vous présenter uniquement avec votre code QR pour faciliter votre accueil.',
+    dressCodeMessage: 'Merci de respecter les couleurs vestimentaires choisies.',
+    thanksMessage1: 'Merci pour votre compréhension.',
+    sousMainMessage: "Mini réception à la sortie de la mairie directement après la célébration de l'union par Mr le Maire.",
+    closingMessage: 'Votre présence illuminera ce jour si spécial pour nous.',
+    titleColor: '#b58b63',
+    topBandColor: '#0055A4',
+    bottomBandColor: '#EF4135',
+    textColor: '#444444',
+    logoUrl: 'img/logo.png',
+    heartIconUrl: 'img/heart.png'
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -94,6 +134,7 @@ export class EditEventComponent implements OnInit {
       console.log('Édition de l\'événement avec ID :', this.eventId);
       // Charger l'événement depuis le backend
       this.loadEvent();
+      this.loadEventInvitationNote()
     });
   }
 
@@ -135,9 +176,9 @@ export class EditEventComponent implements OnInit {
             title: res.title,
             date: date,
             time: time,
-            banquetTime: res.banquet_time,
+            banquetTime: res.banquet_time.split(":00")[0],
             religiousLocation: res.religious_location,
-            religiousTime: res.religious_time,
+            religiousTime: res.religious_time.split(":00")[0],
             civilLocation: res.event_civil_location,
             location: res.event_location,
             description: res.description,
@@ -158,17 +199,49 @@ export class EditEventComponent implements OnInit {
     },
     (error) => {
         // this.loading = false;
-        console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
+        console.error('❌ Erreur de recupération :', error);
         console.log("Message :: ", error.message);
         this.errorMessage = error.message || 'Erreur de connexion';
     }
     );
-    
+  }
+
+  loadEventInvitationNote() {
+    this.eventService.getEventInvitNote(this.eventId).subscribe(
+    (response) => {
+        console.log("#Response :: ", response);
+        this.invitationData = {
+          title: response.title,
+          mainMessage: response.main_message,
+          sousMainMessage:response.sous_main_message,
+          eventTheme: response.event_theme,
+          priorityColors: response.priority_colors,
+          qrInstructions: response.qr_instructions,
+          dressCodeMessage: response.dress_code_message,
+          thanksMessage1: response.thanks_message1,
+          closingMessage: response.closing_message,
+          titleColor: response.title_color,
+          topBandColor: response.top_band_color,
+          bottomBandColor: response.bottom_band_color,
+          textColor: response.text_color,
+          logoUrl: response.logo_url,
+          heartIconUrl: response.heart_icon_url,
+        };
+        console.log("#this.invitationData :: ", this.invitationData);
+    },
+    (error) => {
+        // this.loading = false;
+        console.error('❌ Erreur de recupération :', error);
+        console.log("Message :: ", error.message);
+        this.errorMessage = error.message || 'Erreur de connexion';
+    }
+    );
   }
 
   nextStep() {
-    if (this.currentStep() < 3) {
+    if (this.currentStep() < 5) {
       console.log('this.eventData:', this.eventData);
+      console.log("this.invitationData: ", this.invitationData)
       if (this.eventData.type=='wedding') {
         this.showWeddingNames = true;
         this.showEngagementNames = false;
@@ -236,9 +309,33 @@ export class EditEventComponent implements OnInit {
         showWeddingReligiousLocation: this.eventData.showWeddingReligiousLocation,
         status: this.eventData.status,
     }
-    console.log('Event updated:', eventDatas);
+
+    const eventInvitationNote = {
+      eventId: this.eventData.id,
+      invTitle: this.invitationData.title,
+      mainMessage: this.invitationData.mainMessage,
+      eventTheme: this.invitationData.eventTheme,
+      priorityColors: this.invitationData.priorityColors,
+      qrInstructions: this.invitationData.qrInstructions,
+      dressCodeMessage: this.invitationData.dressCodeMessage,
+      thanksMessage1: this.invitationData.thanksMessage1,
+      sousMainMessage: this.invitationData.sousMainMessage,
+      closingMessage: this.invitationData.closingMessage,
+      titleColor: this.invitationData.titleColor,
+      topBandColor: this.invitationData.topBandColor,
+      bottomBandColor: this.invitationData.bottomBandColor,
+      textColor: this.invitationData.textColor,
+      logoUrl: this.invitationData.logoUrl,
+      heartIconUrl: this.invitationData.heartIconUrl,
+    }
+    
+    const data = {
+      eventDatas: eventDatas,
+      eventInvitationNote: eventInvitationNote
+    }
+    console.log('Event updated:', data);
     this.isLoading = true;
-    this.eventService.updateEvent(Number(this.eventData.id), eventDatas).subscribe(
+    this.eventService.updateEvent(Number(this.eventData.id), data).subscribe(
       (response) => {
         console.log("Response :: ", response);
         this.isLoading = false;
@@ -252,6 +349,14 @@ export class EditEventComponent implements OnInit {
         this.errorMessage = error.message || 'Erreur de connexion';
       }
     );
+  }
+
+  toggleReligiousCeremony() {
+    this.eventData.showWeddingReligiousLocation = this.showWeddingReligiousLocation;
+    if (!this.showWeddingReligiousLocation) {
+      this.eventData.religiousLocation = '';
+      this.eventData.religiousTime = '';
+    }
   }
 
   formatDate(date: string): string {

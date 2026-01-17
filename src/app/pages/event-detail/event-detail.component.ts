@@ -30,6 +30,7 @@ interface Guest {
   plusOne?: boolean;
   plusOneName?: string;
   responseDate?: string;
+  tableNumber?: string;
 }
 
 interface Event {
@@ -257,7 +258,8 @@ export class EventDetailComponent implements OnInit{
                 id: String(res.guest_id),
                 name: res.full_name,
                 email: res.email,
-                phoneNumber: res.phone_number,  
+                phoneNumber: res.phone_number,
+                tableNumber: res.table_number,
                 status: uper.toLowerCase() as 'confirmed' | 'pending' | 'declined',
                 dietaryRestrictions: res.dietary_restrictions,
                 plusOnedietaryRestrictions: res.plus_one_name_diet_restr,

@@ -4,18 +4,20 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommunicationService } from '../../services/share.service';
+import { SpinnerComponent } from "../../components/spinner/spinner";
 
 declare const google: any;
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, SpinnerComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements  OnInit{
   email = '';
   password = '';
+  loading = false;
   isLoading = false;
   isActiveAccount = false;
   errorMessage: string | null = null;
@@ -62,7 +64,7 @@ export class LoginComponent implements  OnInit{
   }
 
   handleCredentialResponse(response: any) {
-    // this.loading = true;
+    this.isLoading = true;
     this.cd.detectChanges(); //Force Angular à mettre à jour l’UI
 
     const googleIdToken = response.credential;
@@ -75,11 +77,12 @@ export class LoginComponent implements  OnInit{
         }
       },
       error: (err) => {
+        this.isLoading = false;
         console.error('Erreur d\'authentification Google :', err);
       },
       complete: () => {
-        // this.loading = false;
         this.cd.detectChanges(); // MAJ l’UI quand c’est fini
+        this.isLoading = false;
       }
     });
   }
@@ -96,7 +99,7 @@ export class LoginComponent implements  OnInit{
 
     // Si valide, exécute ta logique d’authentification
     console.log('Formulaire valide :', form.value);
-    this.isLoading = true;
+    this.loading = true;
     const loginRequest = {
       email: form.value.email,
       password: form.value.password,
@@ -105,12 +108,12 @@ export class LoginComponent implements  OnInit{
     this.authService.login(loginRequest).subscribe(
       (response) => {
         console.log("Message :: ", response.message)
-        this.isLoading = false;
+        this.loading = false;
         this.router.navigateByUrl(this.returnUrl);
         this.errorMessage = null;
       },
       (error) => {
-        this.isLoading = false;
+        this.loading = false;
         console.error('❌ Erreur de connexion :', error.message);
         console.log("Message :: ", error.message.split(':')[4])
         if (error.message.includes('429 Too Many Requests')) {

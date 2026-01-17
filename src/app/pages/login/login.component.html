@@ -10,6 +10,9 @@
         </div>
       </div>
 
+      <!-- Indicateur de chargement -->
+      <app-spinner [isLoading]="isLoading"></app-spinner>
+      
       <!-- Right side - Form -->
       <div class="login-form-container">
         <div class="login-form">
@@ -89,7 +92,7 @@
 
             <!-- Submit button -->
             <button type="submit" class="btn btn-primary submit-btn" [disabled]="!loginForm.valid">
-              {{ isLoading ? '⏳ Connexion ...' :'Se connecter' }}
+              {{ loading ? '⏳ Connexion ...' :'Se connecter' }}
             </button>
           </form>
 
@@ -101,7 +104,7 @@
           <!-- Social login -->
           <!-- <button class="social-btn google" (click)="loginWithGoogle()">
             <span>🌐</span> 
-            {{ isLoading ? '⏳ Connexion ...' :'Google' }}
+            {{ loading ? '⏳ Connexion ...' :'Google' }}
           </button> -->
           <div class="social-login">
             <div id="googleSignInDiv"></div>

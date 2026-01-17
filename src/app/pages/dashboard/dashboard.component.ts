@@ -8,6 +8,7 @@ import { CommunicationService } from '../../services/share.service';
 import { map, Observable } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { FooterDetailComponent } from "../../components/footer/footer.component";
+import { SpinnerComponent } from "../../components/spinner/spinner";
 
 interface Event {
   id: number;
@@ -23,7 +24,7 @@ interface Event {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MatIcon, FooterDetailComponent],
+  imports: [CommonModule, MatIcon, FooterDetailComponent, SpinnerComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -34,6 +35,7 @@ export class DashboardComponent {
   isMobile!: Observable<boolean>;
 
   events: Event[] = [];
+  isLoading = false;
 
   constructor(
     private router: Router, 
@@ -65,6 +67,7 @@ export class DashboardComponent {
 
   getAllEvent(){
     if (this.organizerId) {
+      this.isLoading = true;
       this.eventService.getEvents(this.organizerId).subscribe(
         (response) => {
           // console.log("Response :: ", response.events);
@@ -83,10 +86,10 @@ export class DashboardComponent {
             return data;
           });
           // console.log("this.events :: ", this.events);
-          // this.loading = false;
+          this.isLoading = false;
         },
         (error) => {
-          // this.loading = false;
+          this.isLoading = false;
           console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
           console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';

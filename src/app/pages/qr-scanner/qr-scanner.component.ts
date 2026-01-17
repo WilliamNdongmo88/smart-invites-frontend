@@ -103,6 +103,12 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   messageError = '';
   canSendThankMessage = false;
 
+  // NOUVELLES PROPRIÉTÉS POUR L'OPTIMISATION
+  private dataMap = new Map<number, any>();
+  private lastScanTime = 0;
+  private readonly SCAN_INTERVAL = 200; // Scanner toutes les 200ms au lieu de chaque frame (~16ms)
+  private readonly SCAN_SCALE = 0.7;    // Réduire la taille de l'image de 30% pour jsQR
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -128,7 +134,25 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     this.stopCamera();
   }
 
+  // OPTIMISATION : Pré-indexer les données pour une recherche instantanée (O(1))
   getEventAndInvitationRelated(){
+    this.eventService.getEventAndInvitationRelated(this.eventId).subscribe(
+        (response) => {
+            this.datas = response;
+            // Création d'une Map pour éviter la boucle 'for' dans addCheckIn
+            this.dataMap.clear();
+            this.datas.forEach(elt => {
+                if (elt.guestId) this.dataMap.set(Number(elt.guestId), elt);
+            });
+            this.getListScannedGuest();
+        },
+        (error) => {
+            console.error('❌ [getEventAndInvitationRelated] Erreur :', error.message);
+            console.log("Message :: ", error.message);
+        }
+    );
+  }
+  getEventAndInvitationRelateds(){
     this.eventService.getEventAndInvitationRelated(this.eventId).subscribe(
         (response) => {
             this.datas = response
@@ -180,7 +204,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     this.cameraActive.set(false);
   }
 
-  scanQRCode() {
+  scanQRCodes() {
     if (!this.cameraActive() || !this.isScanning) return;
 
     const video = this.videoElement.nativeElement;
@@ -208,6 +232,55 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         cancelAnimationFrame(this.animationFrameId!);
 
         this.processQRCode(qrCode.data);      // Un seul appel
+        return;                               
+    }
+
+    this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
+  }
+    // OPTIMISATION : Gestion du cycle de scan plus efficace
+  scanQRCode() {
+    if (!this.cameraActive() || !this.isScanning) return;
+
+    const now = Date.now();
+    if (now - this.lastScanTime < this.SCAN_INTERVAL) {
+        this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
+        return;
+    }
+    this.lastScanTime = now;
+
+    const video = this.videoElement.nativeElement;
+    const canvas = this.canvasElement.nativeElement;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+
+    if (!context || video.videoWidth === 0) {
+        this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
+        return;
+    }
+
+    // OPTIMISATION : Réduction de la résolution pour jsQR
+    // Un QR code n'a pas besoin de 1080p pour être lu. 
+    // Réduire la taille divise drastiquement le nombre de pixels à analyser.
+    const scanWidth = video.videoWidth * this.SCAN_SCALE;
+    const scanHeight = video.videoHeight * this.SCAN_SCALE;
+    
+    if (canvas.width !== scanWidth) {
+        canvas.width = scanWidth;
+        canvas.height = scanHeight;
+    }
+
+    context.drawImage(video, 0, 0, scanWidth, scanHeight);
+    const imageData = context.getImageData(0, 0, scanWidth, scanHeight);
+    
+    // jsQR est synchrone et gourmand en CPU. 
+    // En réduisant imageData, on accélère cette ligne :
+    const qrCode = jsQR(imageData.data, scanWidth, scanHeight, {
+        inversionAttempts: "dontInvert", // Gain de performance si les QR ne sont pas inversés
+    });
+
+    if (qrCode?.data) {
+        this.isScanning = false;
+        cancelAnimationFrame(this.animationFrameId!);
+        this.processQRCode(qrCode.data);
         return;                               
     }
 
@@ -276,7 +349,73 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     );
   }
 
+    // OPTIMISATION : Recherche instantanée
   addCheckIn(){
+    const now = new Date().toISOString();
+    const checkinTime = now.split('.')[0].replace('T', ' ');
+    
+    // Utilisation de la Map au lieu de la boucle 'for...of' sur this.datas
+    const elt = this.dataMap.get(this.guestId);
+    
+    if (elt) {
+        const data = {
+            eventId: elt.eventId,
+            guestId: elt.guestId,
+            invitationId: elt.invitationId,
+            token: this.token,
+            scannedBy: this.userConnected.name,
+            scanStatus: 'VALID',
+            checkinTime: checkinTime
+        };
+        
+        // Mise à jour des données locales pour l'affichage
+        this.data.eventTitle = elt.title;
+        this.data.guestName = elt.guestName;
+        this.data.hasPlusOne = elt.hasPlusOne;
+        this.data.plusOneName = elt.plusOneName;
+
+        this.qrcodeService.addCheckIn(data).subscribe(
+        (response) => {
+            console.log("[addCheckIn] response :: ", response);
+            const guest = response;
+            const event = response;
+            this.successCount.update(count => count + 1);
+
+            this.isValid = true;
+
+            // 🎉 Son + message + stop caméra (comme avant)
+            if (this.soundEnabled()) this.playSuccessSound();
+
+            this.scanResult.set({
+                success: true,
+                guestName: guest.has_plus_one ? guest.guestName+' et '+guest.plus_one_name : guest.guestName,
+                eventName: event.title,
+                tableNumber: guest.table_number,
+                message: 'Code QR validé avec succès !'
+            });
+          this.manageCheckInParameter();
+        },
+        (error) => {
+            console.error('❌ [getGuestById] Erreur :', error.message);
+            this.isValid = false;
+            if (this.soundEnabled()) this.playErrorSound();
+            this.errorCount.update(count => count + 1);
+            this.manageCheckInParameter();
+            if(error.message.includes('409 Conflict'))console.warn(error.error.error);
+            this.scanResult.set({
+                success: false,
+                message: error.error.error ? error.error.error : 'Code QR invalide ou non reconnu',
+            });
+        });
+    } else {
+        console.error("Invité non trouvé dans la liste locale");
+        this.scanResult.set({
+            success: false,
+            message: 'Invité non trouvé dans la liste locale',
+        });
+    }
+  }
+  addCheckIns(){
     const now = new Date().toISOString();
     const checkinTime = now.split('.')[0].replace('T', ' ');
     const data = {

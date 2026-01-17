@@ -292,7 +292,7 @@ export class EditEventComponent implements OnInit {
     const eventDatas : CreateEventRequest = {
         organizerId: this.eventData.organizerId,
         title: this.eventData.title,
-        description: this.eventData.description,
+        description: this.invitationData.mainMessage,
         eventDate: this.eventData.date+' '+ this.eventData.time+':00',
         banquetTime: this.eventData.banquetTime,
         religiousLocation: this.eventData.religiousLocation,

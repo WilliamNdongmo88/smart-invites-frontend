@@ -512,10 +512,14 @@ export class GuestListComponent implements OnInit{
   }
 
   downloadQRCode(guest: any) {
-    console.log("Guest : ", guest);
+    console.log("[downloadQRCode] Guest : ", guest);
     if (!guest.qrCodeUrl) {
       this.triggerError();
       this.errorMessage = "Le QR code n'est pas disponible pour cet invité.";
+      return;
+    }else if(guest.status == 'pending'){
+      this.triggerError();
+      this.errorMessage = "L'invité doit d'abord confirmer sa présence.";
       return;
     }
 

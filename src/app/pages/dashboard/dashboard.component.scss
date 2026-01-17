@@ -215,15 +215,15 @@
 }
 
 /* 📌 Smartphones moyens (360px – 369px) */
-@media (min-width: 360px) and (max-width: 369px) {
+@media (min-width: 360px) and (max-width: 480px) {
   .c-mtop {
-    margin-top: 2rem;   /* plus compact */
+    margin-top: 30px;   /* plus compact */
   }
 }
 
 /* 📌 Petits smartphones (≤ 360px) */
 @media (max-width: 360px) {
   .c-mtop {
-    margin-top: 0.5rem;  /* très compact */
+    margin-top: 1px;  /* très compact */
   }
 }

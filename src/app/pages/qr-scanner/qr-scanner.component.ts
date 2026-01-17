@@ -152,19 +152,19 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         }
     );
   }
-  getEventAndInvitationRelateds(){
-    this.eventService.getEventAndInvitationRelated(this.eventId).subscribe(
-        (response) => {
-            this.datas = response
-            console.log("###this.datas :: ", this.datas);
-            this.getListScannedGuest();
-        },
-        (error) => {
-            console.error('❌ [getEventAndInvitationRelated] Erreur :', error.message);
-            console.log("Message :: ", error.message);
-        }
-    );
-  }
+  // getEventAndInvitationRelateds(){
+  //   this.eventService.getEventAndInvitationRelated(this.eventId).subscribe(
+  //       (response) => {
+  //           this.datas = response
+  //           console.log("###this.datas :: ", this.datas);
+  //           this.getListScannedGuest();
+  //       },
+  //       (error) => {
+  //           console.error('❌ [getEventAndInvitationRelated] Erreur :', error.message);
+  //           console.log("Message :: ", error.message);
+  //       }
+  //   );
+  // }
 
   startCamera() {
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
@@ -204,40 +204,40 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     this.cameraActive.set(false);
   }
 
-  scanQRCodes() {
-    if (!this.cameraActive() || !this.isScanning) return;
+  // scanQRCodes() {
+  //   if (!this.cameraActive() || !this.isScanning) return;
 
-    const video = this.videoElement.nativeElement;
-    const canvas = this.canvasElement.nativeElement;
-    const context = canvas.getContext("2d", { willReadFrequently: true });
+  //   const video = this.videoElement.nativeElement;
+  //   const canvas = this.canvasElement.nativeElement;
+  //   const context = canvas.getContext("2d", { willReadFrequently: true });
 
-    if (!context) return;
+  //   if (!context) return;
 
-    if (video.videoWidth === 0 || video.videoHeight === 0) {
-        this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
-        return;
-    }
+  //   if (video.videoWidth === 0 || video.videoHeight === 0) {
+  //       this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
+  //       return;
+  //   }
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  //   canvas.width = video.videoWidth;
+  //   canvas.height = video.videoHeight;
+  //   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-    const qrCode = jsQR(imageData.data, canvas.width, canvas.height);
+  //   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  //   const qrCode = jsQR(imageData.data, canvas.width, canvas.height);
 
-    if (qrCode?.data) {
-        console.log('QR détecté:', qrCode.data);
+  //   if (qrCode?.data) {
+  //       console.log('QR détecté:', qrCode.data);
 
-        this.isScanning = false;              // Stop immédiat de la boucle
-        cancelAnimationFrame(this.animationFrameId!);
+  //       this.isScanning = false;              // Stop immédiat de la boucle
+  //       cancelAnimationFrame(this.animationFrameId!);
 
-        this.processQRCode(qrCode.data);      // Un seul appel
-        return;                               
-    }
+  //       this.processQRCode(qrCode.data);      // Un seul appel
+  //       return;                               
+  //   }
 
-    this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
-  }
-    // OPTIMISATION : Gestion du cycle de scan plus efficace
+  //   this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
+  // }
+  // OPTIMISATION : Gestion du cycle de scan plus efficace
   scanQRCode() {
     if (!this.cameraActive() || !this.isScanning) return;
 
@@ -349,7 +349,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     );
   }
 
-    // OPTIMISATION : Recherche instantanée
+  // OPTIMISATION : Recherche instantanée
   addCheckIn(){
     const now = new Date().toISOString();
     const checkinTime = now.split('.')[0].replace('T', ' ');
@@ -415,66 +415,66 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         });
     }
   }
-  addCheckIns(){
-    const now = new Date().toISOString();
-    const checkinTime = now.split('.')[0].replace('T', ' ');
-    const data = {
-        eventId: 0,
-        guestId: 0,
-        invitationId: 0,
-        token: '',
-        scannedBy: '',
-        scanStatus: 'VALID',
-        checkinTime: checkinTime
-    };
-    for (const elt of this.datas) {
-        if(elt.guestId == this.guestId){
-            data.eventId = elt.eventId;
-            data.guestId = elt.guestId;
-            data.token = this.token;
-            data.invitationId = elt.invitationId;
-            data.scannedBy = this.userConnected.name;
-            this.data.eventTitle = elt.title;
-            this.data.guestName = elt.guestName;
-            this.data.hasPlusOne = elt.hasPlusOne;
-            this.data.plusOneName = elt.plusOneName;
-        }
-    }
-    console.log('data:: ', data);
-    this.qrcodeService.addCheckIn(data).subscribe(
-    (response) => {
-        console.log("[addCheckIn] response :: ", response);
-        const guest = response;
-        const event = response;
-        this.successCount.update(count => count + 1);
+  // addCheckIns(){
+  //   const now = new Date().toISOString();
+  //   const checkinTime = now.split('.')[0].replace('T', ' ');
+  //   const data = {
+  //       eventId: 0,
+  //       guestId: 0,
+  //       invitationId: 0,
+  //       token: '',
+  //       scannedBy: '',
+  //       scanStatus: 'VALID',
+  //       checkinTime: checkinTime
+  //   };
+  //   for (const elt of this.datas) {
+  //       if(elt.guestId == this.guestId){
+  //           data.eventId = elt.eventId;
+  //           data.guestId = elt.guestId;
+  //           data.token = this.token;
+  //           data.invitationId = elt.invitationId;
+  //           data.scannedBy = this.userConnected.name;
+  //           this.data.eventTitle = elt.title;
+  //           this.data.guestName = elt.guestName;
+  //           this.data.hasPlusOne = elt.hasPlusOne;
+  //           this.data.plusOneName = elt.plusOneName;
+  //       }
+  //   }
+  //   console.log('data:: ', data);
+  //   this.qrcodeService.addCheckIn(data).subscribe(
+  //   (response) => {
+  //       console.log("[addCheckIn] response :: ", response);
+  //       const guest = response;
+  //       const event = response;
+  //       this.successCount.update(count => count + 1);
 
-        this.isValid = true;
+  //       this.isValid = true;
 
-        // 🎉 Son + message + stop caméra (comme avant)
-        if (this.soundEnabled()) this.playSuccessSound();
+  //       // 🎉 Son + message + stop caméra (comme avant)
+  //       if (this.soundEnabled()) this.playSuccessSound();
 
-        this.scanResult.set({
-            success: true,
-            guestName: guest.has_plus_one ? guest.guestName+' et '+guest.plus_one_name : guest.guestName,
-            eventName: event.title,
-            tableNumber: guest.table_number,
-            message: 'Code QR validé avec succès !'
-        });
-      this.manageCheckInParameter();
-    },
-    (error) => {
-        console.error('❌ [getGuestById] Erreur :', error.message);
-        this.isValid = false;
-        if (this.soundEnabled()) this.playErrorSound();
-        this.errorCount.update(count => count + 1);
-        this.manageCheckInParameter();
-        if(error.message.includes('409 Conflict'))console.warn(error.error.error);
-        this.scanResult.set({
-            success: false,
-            message: error.error.error ? error.error.error : 'Code QR invalide ou non reconnu',
-        });
-    });
-  }
+  //       this.scanResult.set({
+  //           success: true,
+  //           guestName: guest.has_plus_one ? guest.guestName+' et '+guest.plus_one_name : guest.guestName,
+  //           eventName: event.title,
+  //           tableNumber: guest.table_number,
+  //           message: 'Code QR validé avec succès !'
+  //       });
+  //     this.manageCheckInParameter();
+  //   },
+  //   (error) => {
+  //       console.error('❌ [getGuestById] Erreur :', error.message);
+  //       this.isValid = false;
+  //       if (this.soundEnabled()) this.playErrorSound();
+  //       this.errorCount.update(count => count + 1);
+  //       this.manageCheckInParameter();
+  //       if(error.message.includes('409 Conflict'))console.warn(error.error.error);
+  //       this.scanResult.set({
+  //           success: false,
+  //           message: error.error.error ? error.error.error : 'Code QR invalide ou non reconnu',
+  //       });
+  //   });
+  // }
 
   getListScannedGuest(){
     const guestIds = this.datas.filter(g => g.guestId != null).map(g => g.guestId);

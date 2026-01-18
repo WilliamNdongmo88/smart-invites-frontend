@@ -87,6 +87,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminDashboardComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'events/:eventId/guests',

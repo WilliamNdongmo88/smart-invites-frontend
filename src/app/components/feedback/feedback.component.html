@@ -169,7 +169,8 @@
                 type="email"
                 [(ngModel)]="feedback.email"
                 placeholder="votre@email.com"
-                class="form-input"
+                class="form-input review-value"
+                [class.disabled]="feedback.email"
                 />
                 <p class="help-text">Pour que nous puissions vous contacter si besoin</p>
             </div>

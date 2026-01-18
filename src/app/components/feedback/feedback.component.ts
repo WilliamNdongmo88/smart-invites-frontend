@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { FeedbackService } from '../../services/feedback.service';
+import { AuthService, User } from '../../services/auth.service';
 
 interface FeedbackSubmission {
   id?: string;
@@ -47,14 +48,25 @@ export class FeedbackComponent implements OnInit {
     message: '',
     email: '',
   };
+  currentUser: User | null = null;
 
   feedbackStats: any = null;
   recentFeedback: any[] = [];
   loading = true;
 
-  constructor(private feedbackService: FeedbackService) {}
+  constructor(
+    private feedbackService: FeedbackService,
+    private authService: AuthService,
+  ) {}
 
   ngOnInit() {
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      console.log("[currentUser] :: ", this.currentUser);
+      if (this.currentUser) {
+        this.feedback.email = this.currentUser.email;
+      }
+    });
     this.loadStats();
     this.loadRecentFeedback();
   }

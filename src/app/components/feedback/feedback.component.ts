@@ -38,10 +38,9 @@ export class FeedbackComponent implements OnInit {
   currentStep = 1;
   hoverRating = 0;
   submissionSuccess = false;
-
   Math = Math;
 
-  feedback: FeedbackSubmission = {
+  feedback = {
     rating: 0,
     category: 'feature',
     title: '',
@@ -49,58 +48,9 @@ export class FeedbackComponent implements OnInit {
     email: '',
   };
 
-  feedbackStats: FeedbackStats = {
-    totalFeedback: 247,
-    averageRating: 4.3,
-    ratingDistribution: {
-      5: 120,
-      4: 80,
-      3: 30,
-      2: 12,
-      1: 5,
-    },
-    categoryDistribution: {
-      feature: 85,
-      design: 62,
-      performance: 45,
-      support: 38,
-      other: 17,
-    },
-  };
-
-    recentFeedback: FeedbackSubmission[] = [];
-//   recentFeedback: FeedbackSubmission[] = [
-//     {
-//       id: '1',
-//       rating: 5,
-//       category: 'feature',
-//       title: 'Excellente plateforme',
-//       message: 'J\'adore Smart Invite ! Très facile à utiliser et les fonctionnalités sont exactement ce qu\'il me fallait.',
-//       email: 'user1@example.com',
-//       createdAt: '2025-01-15',
-//       status: 'reviewed',
-//     },
-//     {
-//       id: '2',
-//       rating: 4,
-//       category: 'design',
-//       title: 'Design magnifique',
-//       message: 'L\'interface est très élégante et intuitive. Quelques petites améliorations pourraient être apportées.',
-//       email: 'user2@example.com',
-//       createdAt: '2025-01-14',
-//       status: 'reviewed',
-//     },
-//     {
-//       id: '3',
-//       rating: 3,
-//       category: 'performance',
-//       title: 'Performance à améliorer',
-//       message: 'L\'application fonctionne bien mais peut être un peu lente lors du chargement des images.',
-//       email: 'user3@example.com',
-//       createdAt: '2025-01-13',
-//       status: 'pending',
-//     },
-//   ];
+  feedbackStats: any = null;
+  recentFeedback: any[] = [];
+  loading = true;
 
   constructor(private feedbackService: FeedbackService) {}
 
@@ -218,14 +168,5 @@ export class FeedbackComponent implements OnInit {
     this.currentStep = 1;
     this.submissionSuccess = false;
     this.hoverRating = 0;
-  }
-
-  updateAverageRating() {
-    const total = Object.values(this.feedbackStats.ratingDistribution).reduce((a, b) => a + b, 0);
-    const sum = Object.entries(this.feedbackStats.ratingDistribution).reduce(
-      (acc, [rating, count]) => acc + parseInt(rating) * count,
-      0
-    );
-    this.feedbackStats.averageRating = sum / total;
   }
 }

@@ -21,6 +21,8 @@ import { EventReportComponent } from './pages/event-report/event-report.componen
 import { ProfileComponent } from './pages/profile/profile.component';
 import { EventScanListComponent } from './pages/event-scan-list/event-scan-list';
 import { InvitationEditorComponent } from './pages/invitation-editor/invitation-editor.component';
+import { FeedbackComponent } from './components/feedback/feedback.component';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -76,6 +78,15 @@ export const routes: Routes = [
   path: 'invitation-editor',
     component: InvitationEditorComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'feedback',
+    component: FeedbackComponent,
+    // canActivate: [AuthGuard]
+  },
+  {
+    path: 'admin',
+    component: AdminDashboardComponent,
   },
   {
     path: 'events/:eventId/guests',

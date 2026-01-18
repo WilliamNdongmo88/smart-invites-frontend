@@ -1,0 +1,20 @@
+<div class="floating-btn-container">
+    <!-- Tooltip -->
+    <div class="tooltip" [class.show]="showTooltip">
+    Partager votre avis
+    </div>
+
+    <!-- Floating Button -->
+    <a
+    routerLink="/feedback"
+    class="floating-btn"
+    (mouseenter)="showTooltip = true"
+    (mouseleave)="showTooltip = false"
+    title="Partager votre avis"
+    >
+    <span class="btn-icon">💬</span>
+    </a>
+
+    <!-- Pulse animation -->
+    <div class="pulse"></div>
+</div>

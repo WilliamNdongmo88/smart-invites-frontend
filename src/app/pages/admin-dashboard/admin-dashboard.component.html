@@ -1,0 +1,379 @@
+<div class="admin-dashboard">
+    <!-- Header -->
+    <div class="admin-header">
+    <div class="container">
+        <a routerLink="/dashboard" class="back-link">← Retour</a>
+        <h1>Panneau d'Administration</h1>
+        <p>Gestion complète de la plateforme</p>
+    </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="container py-12">
+    <!-- Navigation Tabs -->
+    <div class="admin-tabs">
+        <button
+        *ngFor="let tab of tabs"
+        [class.active]="activeTab === tab.id"
+        (click)="activeTab = tab.id"
+        class="tab-btn"
+        >
+        {{ tab.label }}
+        </button>
+    </div>
+
+    <!-- TAB 1: FEEDBACK MANAGEMENT -->
+    <div *ngIf="activeTab === 'feedback'" class="tab-content">
+        <div class="section-card">
+        <h2>Gestion des Retours d'Impression</h2>
+
+        <!-- Filters -->
+        <div class="filters">
+            <input
+            type="text"
+            [(ngModel)]="feedbackSearch"
+            placeholder="Rechercher par titre ou utilisateur..."
+            class="form-input"
+            />
+            <select [(ngModel)]="feedbackStatusFilter" class="form-select">
+            <option value="">Tous les statuts</option>
+            <option value="pending">En attente</option>
+            <option value="reviewed">Examiné</option>
+            <option value="resolved">Résolu</option>
+            </select>
+        </div>
+
+        <!-- Feedback List -->
+        <div class="list-container">
+            <table class="data-table">
+            <thead>
+                <tr>
+                <th>Utilisateur</th>
+                <th>Note</th>
+                <th>Titre</th>
+                <th>Catégorie</th>
+                <th>Statut</th>
+                <th>Date</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let feedback of getFilteredFeedback()" class="feedback-row">
+                <td>{{ feedback.userName }}</td>
+                <td>
+                    <div class="rating-display">
+                    <span *ngFor="let i of [1,2,3,4,5]" class="star" [class.filled]="i <= feedback.rating">★</span>
+                    </div>
+                </td>
+                <td>{{ feedback.title }}</td>
+                <td>{{ feedback.category }}</td>
+                <td>
+                    <select [(ngModel)]="feedback.status" class="status-select" (change)="updateFeedbackStatus(feedback)">
+                    <option value="pending">En attente</option>
+                    <option value="reviewed">Examiné</option>
+                    <option value="resolved">Résolu</option>
+                    </select>
+                </td>
+                <td>{{ formatDate(feedback.createdAt) }}</td>
+                <td>
+                    <button class="btn-small btn-view" (click)="viewFeedbackDetails(feedback)">
+                    👁️ Voir
+                    </button>
+                </td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+
+        <!-- Feedback Details Modal -->
+        <div *ngIf="selectedFeedback" class="modal-overlay" (click)="selectedFeedback = null">
+            <div class="modal-content" (click)="$event.stopPropagation()">
+            <button class="modal-close" (click)="selectedFeedback = null">✕</button>
+            <h3>{{ selectedFeedback.title }}</h3>
+            <p class="feedback-message">{{ selectedFeedback.message }}</p>
+            <div class="modal-actions">
+                <textarea
+                [(ngModel)]="selectedFeedback.adminNotes"
+                placeholder="Ajouter une note interne..."
+                class="form-textarea"
+                ></textarea>
+                <button class="btn btn-primary" (click)="saveFeedbackNotes()">
+                💾 Enregistrer les notes
+                </button>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: VISITORS -->
+    <div *ngIf="activeTab === 'visitors'" class="tab-content">
+        <div class="section-card">
+        <h2>Visiteurs du Site</h2>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-box">
+            <span class="stat-label">Total des visites</span>
+            <span class="stat-value">{{ visitors.length }}</span>
+            </div>
+            <div class="stat-box">
+            <span class="stat-label">Pays uniques</span>
+            <span class="stat-value">{{ getUniqueCountries().length }}</span>
+            </div>
+            <div class="stat-box">
+            <span class="stat-label">Appareils uniques</span>
+            <span class="stat-value">{{ getUniqueDevices().length }}</span>
+            </div>
+            <div class="stat-box">
+            <span class="stat-label">Navigateurs uniques</span>
+            <span class="stat-value">{{ getUniqueBrowsers().length }}</span>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <input
+            type="text"
+            [(ngModel)]="visitorSearch"
+            placeholder="Rechercher par pays, ville ou IP..."
+            class="form-input"
+            />
+        </div>
+
+        <!-- Visitors List -->
+        <div class="list-container">
+            <table class="data-table">
+            <thead>
+                <tr>
+                <th>IP</th>
+                <th>Pays/Ville</th>
+                <th>Appareil</th>
+                <th>Navigateur</th>
+                <th>Page visitée</th>
+                <th>Durée</th>
+                <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let visitor of getFilteredVisitors()">
+                <td class="mono">{{ visitor.ipAddress }}</td>
+                <td>{{ visitor.country }} / {{ visitor.city }}</td>
+                <td>{{ visitor.device }}</td>
+                <td>{{ visitor.browser }}</td>
+                <td>{{ visitor.pageVisited }}</td>
+                <td>{{ formatDuration(visitor.duration) }}</td>
+                <td>{{ formatDate(visitor.visitDate) }}</td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: USERS -->
+    <div *ngIf="activeTab === 'users'" class="tab-content">
+        <div class="section-card">
+        <h2>Utilisateurs de la Plateforme</h2>
+
+        <!-- Filters -->
+        <div class="filters">
+            <input
+            type="text"
+            [(ngModel)]="userSearch"
+            placeholder="Rechercher par nom ou email..."
+            class="form-input"
+            />
+            <select [(ngModel)]="userPlanFilter" class="form-select">
+            <option value="">Tous les forfaits</option>
+            <option value="gratuit">Gratuit</option>
+            <option value="professionnel">Professionnel</option>
+            <option value="entreprise">Entreprise</option>
+            </select>
+        </div>
+
+        <!-- Users List -->
+        <div class="list-container">
+            <table class="data-table">
+            <thead>
+                <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Événements</th>
+                <th>Forfait</th>
+                <th>Dernière connexion</th>
+                <th>Créé le</th>
+                <th>Statut</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of getFilteredUsers()" [class.blocked]="user.isBlocked">
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.eventsCreated }}</td>
+                <td>
+                    <span class="plan-badge" [class]="user.plan">{{ user.plan }}</span>
+                </td>
+                <td>{{ formatDate(user.lastLogin) }}</td>
+                <td>{{ formatDate(user.createdAt) }}</td>
+                <td>
+                    <span class="status-badge" [class]="user.isBlocked ? 'blocked' : 'active'">
+                    {{ user.isBlocked ? 'Bloqué' : 'Actif' }}
+                    </span>
+                </td>
+                <td>
+                    <button class="btn-small btn-view" (click)="viewUserEvents(user)">
+                    👁️ Événements
+                    </button>
+                    <button class="btn-small btn-danger" (click)="toggleBlockUser(user)">
+                    {{ user.isBlocked ? '🔓 Débloquer' : '🔒 Bloquer' }}
+                    </button>
+                    <button class="btn-small btn-danger" (click)="deleteUser(user)">
+                    🗑️ Supprimer
+                    </button>
+                </td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+        </div>
+
+        <!-- User Events Detail -->
+        <div *ngIf="selectedUser" class="section-card detail-card">
+        <h3>Événements de {{ selectedUser.name }}</h3>
+        <button class="btn-close" (click)="selectedUser = null">✕ Fermer</button>
+
+        <div class="list-container">
+            <table class="data-table">
+            <thead>
+                <tr>
+                <th>Titre</th>
+                <th>Type</th>
+                <th>Invités</th>
+                <th>Étape</th>
+                <th>Date/Heure</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let event of selectedUserEvents" class="event-row">
+                <td>{{ event.title }}</td>
+                <td>{{ event.type }}</td>
+                <td>
+                    <span class="guest-count">{{ event.guestCount }}</span>
+                    <span class="guest-status">
+                    ✓ {{ event.confirmedGuests }} | ⏳ {{ event.pendingGuests }} | ✕ {{ event.declinedGuests }}
+                    </span>
+                </td>
+                <td>
+                    <span class="stage-badge" [class]="event.stage">{{ event.stage }}</span>
+                </td>
+                <td>{{ event.date }} {{ event.time }}</td>
+                <td>
+                    <button class="btn-small btn-view" (click)="viewEventGuests(event)">
+                    👥 Invités
+                    </button>
+                    <button class="btn-small btn-danger" (click)="deleteEvent(event)">
+                    🗑️ Supprimer
+                    </button>
+                </td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: EVENT GUESTS -->
+    <div *ngIf="activeTab === 'guests'" class="tab-content">
+        <div *ngIf="selectedEvent" class="section-card">
+        <h3>Invités de l'événement: {{ selectedEvent.title }}</h3>
+        <button class="btn-close" (click)="selectedEvent = null; selectedEventGuests = []">✕ Fermer</button>
+
+        <!-- Guest Filters -->
+        <div class="filters">
+            <select [(ngModel)]="guestStatusFilter" class="form-select">
+            <option value="">Tous les statuts</option>
+            <option value="confirmed">Confirmés</option>
+            <option value="pending">En attente</option>
+            <option value="declined">Refusés</option>
+            </select>
+        </div>
+
+        <!-- Guests List -->
+        <div class="list-container">
+            <table class="data-table">
+            <thead>
+                <tr>
+                <th>
+                    <input type="checkbox" (change)="toggleSelectAllGuests($event)" />
+                </th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Statut</th>
+                <th>QR Code</th>
+                <th>Restrictions</th>
+                <th>+1</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let guest of getFilteredEventGuests()">
+                <td>
+                    <input type="checkbox" [(ngModel)]="guest.selected" />
+                </td>
+                <td>{{ guest.name }}</td>
+                <td>{{ guest.email }}</td>
+                <td>
+                    <span class="status-badge" [class]="guest.status">{{ guest.status }}</span>
+                </td>
+                <td>
+                    <span *ngIf="guest.qrCodeGenerated" class="qr-badge">✓ Généré</span>
+                    <span *ngIf="!guest.qrCodeGenerated" class="qr-badge not-generated">✕ Non généré</span>
+                </td>
+                <td>{{ guest.dietaryRestrictions || '-' }}</td>
+                <td>{{ guest.plusOne ? '✓' : '-' }}</td>
+                <td>
+                    <button *ngIf="guest.qrCodeGenerated" class="btn-small btn-view" (click)="viewQRCode(guest)">
+                    📱 QR Code
+                    </button>
+                    <button class="btn-small btn-danger" (click)="deleteGuest(guest)">
+                    🗑️ Supprimer
+                    </button>
+                </td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+
+        <!-- Bulk Actions -->
+        <div class="bulk-actions">
+            <button class="btn btn-danger" (click)="deleteSelectedGuests()">
+            🗑️ Supprimer les invités sélectionnés
+            </button>
+            <button class="btn btn-danger" (click)="deleteSelectedQRCodes()">
+            📱 Supprimer les QR Codes sélectionnés
+            </button>
+        </div>
+        </div>
+
+        <!-- QR Code Viewer Modal -->
+        <div *ngIf="selectedGuest && selectedGuest.qrCodeUrl" class="modal-overlay" (click)="selectedGuest = null">
+        <div class="modal-content qr-modal" (click)="$event.stopPropagation()">
+            <button class="modal-close" (click)="selectedGuest = null">✕</button>
+            <h3>QR Code de {{ selectedGuest.name }}</h3>
+            <img [src]="selectedGuest.qrCodeUrl" alt="QR Code" class="qr-image" />
+            <div class="modal-actions">
+            <a [href]="selectedGuest.qrCodeUrl" download class="btn btn-primary">
+                📥 Télécharger
+            </a>
+            <button class="btn btn-danger" (click)="deleteQRCode(selectedGuest)">
+                🗑️ Supprimer le QR Code
+            </button>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>

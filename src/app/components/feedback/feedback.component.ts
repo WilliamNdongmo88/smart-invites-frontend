@@ -1,0 +1,231 @@
+import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { FeedbackService } from '../../services/feedback.service';
+
+interface FeedbackSubmission {
+  id?: string;
+  rating: number;
+  category: 'feature' | 'design' | 'performance' | 'support' | 'other';
+  title: string;
+  message: string;
+  email: string;
+  attachments?: string[];
+  createdAt?: string;
+  status?: 'pending' | 'reviewed' | 'resolved';
+}
+
+interface FeedbackStats {
+  totalFeedback: number;
+  averageRating: number;
+  ratingDistribution: {
+    [key: number]: number;
+  };
+  categoryDistribution: {
+    [key: string]: number;
+  };
+}
+
+@Component({
+  selector: 'app-feedback',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
+  templateUrl: './feedback.component.html',
+  styleUrls: ['./feedback.component.scss']
+})
+export class FeedbackComponent implements OnInit {
+  currentStep = 1;
+  hoverRating = 0;
+  submissionSuccess = false;
+
+  Math = Math;
+
+  feedback: FeedbackSubmission = {
+    rating: 0,
+    category: 'feature',
+    title: '',
+    message: '',
+    email: '',
+  };
+
+  feedbackStats: FeedbackStats = {
+    totalFeedback: 247,
+    averageRating: 4.3,
+    ratingDistribution: {
+      5: 120,
+      4: 80,
+      3: 30,
+      2: 12,
+      1: 5,
+    },
+    categoryDistribution: {
+      feature: 85,
+      design: 62,
+      performance: 45,
+      support: 38,
+      other: 17,
+    },
+  };
+
+    recentFeedback: FeedbackSubmission[] = [];
+//   recentFeedback: FeedbackSubmission[] = [
+//     {
+//       id: '1',
+//       rating: 5,
+//       category: 'feature',
+//       title: 'Excellente plateforme',
+//       message: 'J\'adore Smart Invite ! Très facile à utiliser et les fonctionnalités sont exactement ce qu\'il me fallait.',
+//       email: 'user1@example.com',
+//       createdAt: '2025-01-15',
+//       status: 'reviewed',
+//     },
+//     {
+//       id: '2',
+//       rating: 4,
+//       category: 'design',
+//       title: 'Design magnifique',
+//       message: 'L\'interface est très élégante et intuitive. Quelques petites améliorations pourraient être apportées.',
+//       email: 'user2@example.com',
+//       createdAt: '2025-01-14',
+//       status: 'reviewed',
+//     },
+//     {
+//       id: '3',
+//       rating: 3,
+//       category: 'performance',
+//       title: 'Performance à améliorer',
+//       message: 'L\'application fonctionne bien mais peut être un peu lente lors du chargement des images.',
+//       email: 'user3@example.com',
+//       createdAt: '2025-01-13',
+//       status: 'pending',
+//     },
+//   ];
+
+  constructor(private feedbackService: FeedbackService) {}
+
+  ngOnInit() {
+    this.loadStats();
+    this.loadRecentFeedback();
+  }
+
+  setRating(rating: number) {
+    this.feedback.rating = rating;
+  }
+
+  getRatingText(rating: number): string {
+    const texts: { [key: number]: string } = {
+      0: 'Cliquez sur une étoile pour noter',
+      1: 'Mauvais - Nous pouvons faire mieux',
+      2: 'Moyen - Il y a place à l\'amélioration',
+      3: 'Acceptable - Pas mal',
+      4: 'Bon - Très satisfait',
+      5: 'Excellent - Absolument parfait !',
+    };
+    return texts[rating] || '';
+  }
+
+  getCategoryLabel(category: string): string {
+    const labels: { [key: string]: string } = {
+      feature: 'Demande de fonctionnalité',
+      design: 'Design et interface',
+      performance: 'Performance et vitesse',
+      support: 'Support client',
+      other: 'Autre',
+    };
+    return labels[category] || category;
+  }
+
+  getStatusLabel(status?: string): string {
+    const labels: { [key: string]: string } = {
+      pending: 'En attente',
+      reviewed: 'Examiné',
+      resolved: 'Résolu',
+    };
+    return labels[status || 'pending'] || 'En attente';
+  }
+
+  getCategoryList() {
+    return Object.entries(this.feedbackStats.categoryDistribution).map(([key, value]) => ({
+      name: this.getCategoryLabel(key),
+      count: value,
+    }));
+  }
+
+  formatDate(date?: string): string {
+    if (!date) return '';
+    return new Date(date).toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  }
+
+  nextStep() {
+    if (this.currentStep < 3) {
+      this.currentStep++;
+    }
+  }
+
+  previousStep() {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+    }
+  }
+
+  submitFeedback() {
+    console.log('Retour soumis:', this.feedback);
+    this.submissionSuccess = true;
+
+    // Simuler l'envoi au backend
+    this.feedbackService.createFeedback(this.feedback).subscribe({
+        next: (response: any) => {
+          console.log('[submitFeedback] response :: ', response);
+          this.resetForm();
+          this.loadStats();
+          this.loadRecentFeedback();
+        },
+        error: (err) => {
+          console.error('[submitFeedback] Erreur :', err);
+        }
+      });
+  }
+
+  loadStats() {
+    this.feedbackService.getFeedbackStats().subscribe({
+      next: stats => this.feedbackStats = stats,
+      error: err => console.error(err)
+    });
+  }
+
+  loadRecentFeedback() {
+    this.feedbackService.getRecentFeedback().subscribe({
+      next: data => {
+        this.recentFeedback = data;
+      },
+      error: err => console.error(err)
+    });
+  }
+
+  resetForm() {
+    this.feedback = {
+      rating: 0,
+      category: 'feature',
+      title: '',
+      message: '',
+      email: '',
+    };
+    this.currentStep = 1;
+    this.submissionSuccess = false;
+    this.hoverRating = 0;
+  }
+
+  updateAverageRating() {
+    const total = Object.values(this.feedbackStats.ratingDistribution).reduce((a, b) => a + b, 0);
+    const sum = Object.entries(this.feedbackStats.ratingDistribution).reduce(
+      (acc, [rating, count]) => acc + parseInt(rating) * count,
+      0
+    );
+    this.feedbackStats.averageRating = sum / total;
+  }
+}

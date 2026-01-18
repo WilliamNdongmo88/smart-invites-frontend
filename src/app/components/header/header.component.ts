@@ -76,8 +76,9 @@ export class HeaderComponent implements OnInit {
       console.log("---this.currentUser :: ", this.currentUser)
     });
     this.communicationService.message$.subscribe(msg => {
-      console.log("msg :: ", localStorage.getItem('variable'));
-      if (msg!=null && msg!=undefined) {
+      console.log("msg = ", localStorage.getItem('variable'));
+      if (msg && msg!==null && msg!==undefined) {
+        console.log("[msg] :: ", msg);
         this.isScanning = true;
         this.eventId = msg;
       }else{
@@ -125,6 +126,15 @@ export class HeaderComponent implements OnInit {
 
   navigateToAccueil() {
     this.router.navigate(['/user-accueil']);
+  }
+
+  goToPageAdmin() {
+    if(this.currentUser?.role !== 'admin'){
+      return;
+    }
+    this.router.navigate(['/admin']);
+    this.isScanning = false;
+    this.mobileMenuOpen.set(false);
   }
 
   goToProfile() {

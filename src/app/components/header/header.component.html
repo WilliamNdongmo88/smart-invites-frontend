@@ -31,6 +31,7 @@
           </div>
         </div>
         <span class="welcome" (click)="goToProfile()">Bienvenue, {{ currentUser?.name }} !</span>
+        <a *ngIf="currentUser?.role=='admin'" (click)="goToPageAdmin()" class="nav-link bg-c">Administré</a>
         <a *ngIf="isScanning" (click)="scanQrCode()" class="nav-link nav-link-cursor nav-hover">Scanner</a>
         <button class="btns btns-primary" (click)="logout()">Déconnexion</button>
       </ng-template>

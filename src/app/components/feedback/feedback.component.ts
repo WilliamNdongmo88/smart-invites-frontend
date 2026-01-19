@@ -50,7 +50,12 @@ export class FeedbackComponent implements OnInit {
   };
   currentUser: User | null = null;
 
-  feedbackStats: any = null;
+  feedbackStats: FeedbackStats = {
+    totalFeedback: 0,
+    averageRating: 0,
+    ratingDistribution: {},
+    categoryDistribution: {},
+};
   recentFeedback: any[] = [];
   loading = true;
 
@@ -108,7 +113,8 @@ export class FeedbackComponent implements OnInit {
   }
 
   getCategoryList() {
-    return Object.entries(this.feedbackStats.categoryDistribution).map(([key, value]) => ({
+    const distribution = this.feedbackStats?.categoryDistribution || {};
+    return Object.entries(distribution).map(([key, value]) => ({
       name: this.getCategoryLabel(key),
       count: value,
     }));

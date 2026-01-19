@@ -24,7 +24,7 @@
             <div class="stat-item">
             <span class="stat-label">Note moyenne</span>
             <div class="rating-display">
-                <span class="rating-number">{{ feedbackStats.averageRating | number:'1.1-1' }}</span>
+                <span class="rating-number">{{ (feedbackStats.averageRating) | number:'1.1-1' }}</span>
                 <div class="stars-display">
                 <span *ngFor="let i of [1,2,3,4,5]" class="star" [class.filled]="i <= Math.round(feedbackStats.averageRating)">
                     ★

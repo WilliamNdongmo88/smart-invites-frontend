@@ -198,10 +198,41 @@
 }
 
 .status-select {
-    padding: 0.5rem;
-    border: 1px solid #E0E0E0;
-    border-radius: 0.25rem;
-    cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &.pending {
+    color: #D4AF37;
+    background-color: #fff7ed;
+    border-color: #D4AF37;
+  }
+
+  &.reviewed {
+    color: #1d4ed8;
+    background-color: #eff6ff;
+    border-color: #3b82f6;
+  }
+
+  &.resolved {
+    color: #15803d;
+    background-color: #ecfdf5;
+    border-color: #22c55e;
+  }
+}
+
+.email-cell {
+  &.unsbscribed {
+    background-color: #fffcf7;
+  }
+
+  &.subscribed {
+    // font-weight: 600;
+    background-color: #ecfdf5;
+  }
 }
 
 .btn-small {

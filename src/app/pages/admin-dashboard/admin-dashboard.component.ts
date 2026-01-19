@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { FeedbackService } from '../../services/feedback.service';
+import { AuthService } from '../../services/auth.service';
 
 // Interfaces
 interface Visitor {
@@ -56,7 +58,7 @@ interface Guest {
 interface Feedback {
   id: string;
   userId: string;
-  userName: string;
+  email: string;
   rating: number;
   category: string;
   title: string;
@@ -64,6 +66,7 @@ interface Feedback {
   status: 'pending' | 'reviewed' | 'resolved';
   createdAt: string;
   adminNotes?: string;
+  isSubscriber: 'subscribed' | 'unsbscribed';
 }
 
 @Component({
@@ -77,31 +80,7 @@ export class AdminDashboardComponent implements OnInit {
   activeTab = 'feedback';
 
   // Data
-  feedbacks: Feedback[] = [
-    {
-      id: '1',
-      userId: '1',
-      userName: 'Sophie Martin',
-      rating: 5,
-      category: 'feature',
-      title: 'Excellente plateforme',
-      message: 'J\'adore Smart Invite ! Très facile à utiliser.',
-      status: 'reviewed',
-      createdAt: '2025-01-15',
-      adminNotes: 'Retour très positif',
-    },
-    {
-      id: '2',
-      userId: '2',
-      userName: 'Pierre Dupont',
-      rating: 3,
-      category: 'performance',
-      title: 'Performance à améliorer',
-      message: 'L\'application peut être lente lors du chargement.',
-      status: 'pending',
-      createdAt: '2025-01-14',
-    },
-  ];
+  feedbacks: Feedback[] = [];
 
   visitors: Visitor[] = [
     {
@@ -199,6 +178,7 @@ export class AdminDashboardComponent implements OnInit {
   userSearch = '';
   userPlanFilter = '';
   guestStatusFilter = '';
+  isSubscriber = false;
 
   // Selected items
   selectedFeedback: Feedback | null = null;
@@ -215,19 +195,52 @@ export class AdminDashboardComponent implements OnInit {
     { id: 'guests', label: '🎫 Invités' },
   ];
 
-  constructor() {}
+  constructor(
+    private feedbackService: FeedbackService,
+    private authService: AuthService,
+  ) {}
 
   ngOnInit() {
-    // Initialiser les données
+    this.loadRecentFeedback();
   }
 
   // FEEDBACK METHODS
   getFilteredFeedback(): Feedback[] {
     return this.feedbacks.filter(f =>
       (f.title.toLowerCase().includes(this.feedbackSearch.toLowerCase()) ||
-       f.userName.toLowerCase().includes(this.feedbackSearch.toLowerCase())) &&
+       f.email.toLowerCase().includes(this.feedbackSearch.toLowerCase())) &&
       (!this.feedbackStatusFilter || f.status === this.feedbackStatusFilter)
     );
+  }
+
+  loadRecentFeedback() {
+    this.feedbackService.getRecentFeedback().subscribe({
+      next: datas => {
+        // console.log('Feedbacks récents chargés:', datas);
+        const feedbacks: Feedback[] = [];
+        const userEmails: { email: string }[] = [];
+        for (const data of datas) {
+          const userData: Feedback = {
+            id: data.id,
+            userId: data.userId,
+            email: data.email,
+            rating: data.rating,
+            category: data.category,
+            title: data.title,
+            message: data.message,
+            status: data.status,
+            createdAt: data.created_at.split('T')[0],
+            isSubscriber: 'unsbscribed'
+          };
+          feedbacks.push(userData);
+          userEmails.push({ email: data.email });
+        }
+        this.feedbacks = feedbacks;
+        // console.log('Feedbacks récents formatés:', this.feedbacks);
+        this.getAllUsers(userEmails);
+      },
+      error: err => console.error(err)
+    });
   }
 
   viewFeedbackDetails(feedback: Feedback) {
@@ -235,8 +248,41 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   updateFeedbackStatus(feedback: Feedback) {
-    console.log('Statut mis à jour:', feedback.status);
+    console.log('Statut mis à jour:', feedback);
+    const data = {
+        status: feedback.status
+    }
+    this.feedbackService.putRecentFeedback(feedback.id, data).subscribe({
+      next: data => {
+        console.log('Feedbacks récents rechargés après mise à jour du statut:', data);
+        this.loadRecentFeedback();
+      },
+      error: err => console.error(err)
+    });
   }
+
+getAllUsers(dataEmails: any) {
+  this.feedbackService.getAllUsers(dataEmails).subscribe({
+    next: (datas: any[]) => {
+      console.log('[allUsers]:', datas);
+
+      // 1️⃣ Extraire les emails abonnés
+      const subscriberEmails = new Set(datas);
+
+      // 2️⃣ Marquer chaque feedback
+      this.feedbacks = this.feedbacks.map(feedback => ({
+        ...feedback,
+        isSubscriber: subscriberEmails.has(feedback.email)
+            ? 'subscribed'
+            : 'unsbscribed'
+     }));
+
+      console.log('[feedbacks enriched]:', this.feedbacks);
+    },
+    error: err => console.error(err)
+  });
+}
+
 
   saveFeedbackNotes() {
     console.log('Notes enregistrées');

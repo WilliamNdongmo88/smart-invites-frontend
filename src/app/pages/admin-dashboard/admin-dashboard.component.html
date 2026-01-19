@@ -59,27 +59,32 @@
             </thead>
             <tbody>
                 <tr *ngFor="let feedback of getFilteredFeedback()" class="feedback-row">
-                <td>{{ feedback.userName }}</td>
-                <td>
-                    <div class="rating-display">
-                    <span *ngFor="let i of [1,2,3,4,5]" class="star" [class.filled]="i <= feedback.rating">★</span>
-                    </div>
-                </td>
-                <td>{{ feedback.title }}</td>
-                <td>{{ feedback.category }}</td>
-                <td>
-                    <select [(ngModel)]="feedback.status" class="status-select" (change)="updateFeedbackStatus(feedback)">
-                    <option value="pending">En attente</option>
-                    <option value="reviewed">Examiné</option>
-                    <option value="resolved">Résolu</option>
-                    </select>
-                </td>
-                <td>{{ formatDate(feedback.createdAt) }}</td>
-                <td>
-                    <button class="btn-small btn-view" (click)="viewFeedbackDetails(feedback)">
-                    👁️ Voir
-                    </button>
-                </td>
+                    <td
+                        class="email-cell"
+                        [ngClass]="feedback.isSubscriber">
+                        {{ feedback.email }}
+                    </td>
+                    <td>
+                        <div class="rating-display">
+                        <span *ngFor="let i of [1,2,3,4,5]" class="star" [class.filled]="i <= feedback.rating">★</span>
+                        </div>
+                    </td>
+                    <td>{{ feedback.title }}</td>
+                    <td>{{ feedback.category }}</td>
+                    <td>
+                        <select [(ngModel)]="feedback.status" class="status-select" 
+                        [ngClass]="feedback.status" (change)="updateFeedbackStatus(feedback)">
+                        <option value="pending">En attente</option>
+                        <option value="reviewed">Examiné</option>
+                        <option value="resolved">Résolu</option>
+                        </select>
+                    </td>
+                    <td>{{ formatDate(feedback.createdAt) }}</td>
+                    <td>
+                        <button class="btn-small btn-view" (click)="viewFeedbackDetails(feedback)">
+                        👁️ Voir
+                        </button>
+                    </td>
                 </tr>
             </tbody>
             </table>

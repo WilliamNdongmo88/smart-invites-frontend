@@ -31,4 +31,12 @@ export class FeedbackService {
   getRecentFeedback(): Observable<any> {
     return this.http.get(`${this.apiUrl}/feedback/recent`);
   }
+
+  putRecentFeedback(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/feedback/${id}`, data);
+  }
+
+  getAllUsers(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/feedback-users`, data);
+  }
 }

@@ -69,6 +69,7 @@
     <!-- Utilisateur connecté -->
     <ng-template #loggedInMobile>
       <a *ngIf="isScanning" (click)="scanQrCode(); toggleMobileMenu(false)" class="mobile-nav-link nav-hover">Scanner</a>
+      <a *ngIf="currentUser?.role=='admin'" (click)="goToPageAdmin()" class="nav-link bg-c">Administré</a>
       <p class="mobile-nav-link welcome" (click)="goToProfile()">Bienvenue, {{ currentUser?.name }}!</p>
       <button class="btns btns-primary w-100" (click)="logout(); toggleMobileMenu(false)">Déconnexion</button>
     </ng-template>

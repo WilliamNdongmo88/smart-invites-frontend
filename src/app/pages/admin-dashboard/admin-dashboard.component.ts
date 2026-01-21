@@ -322,7 +322,7 @@ export class AdminDashboardComponent implements OnInit {
       // console.log('Sauvegarde de la maintenance:', this.maintenance);
       const data = {
         maintenanceProgress: this.maintenance.maintenance_progress,
-        subscribed: this.maintenance.maintenance_progress,
+        subscribed: this.maintenance.subscribed,
         estimatedTime: this.maintenance.estimated_time,
         email: this.maintenance.email,
         status: this.maintenance.status

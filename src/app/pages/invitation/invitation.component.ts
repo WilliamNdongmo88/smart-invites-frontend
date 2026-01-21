@@ -65,14 +65,16 @@ export class InvitationComponent implements OnInit{
       private qrCodeService: QrCodeService,
       private guestService: GuestService,
       private eventService: EventService,
-      private route: ActivatedRoute
-        ) {}
+      private route: ActivatedRoute,
+      private router: Router
+  ) {}
 
   ngOnInit(): void {
       const result = this.route.snapshot.paramMap.get('token') || '';
       this.token = result;
       this.linkType = result.split(":")[1].split("-")[2];
       console.log("Token reçu :: ", result);
+      this.getUser(this.token.split(':')[1]);
       if(result.includes('a11a') || result.includes('a22a')){
         this.isFromGeneratedLink = true;
         this.eventId = Number(result.split(':')[0]);
@@ -83,6 +85,20 @@ export class InvitationComponent implements OnInit{
       }
       this.getQrCodeImageUrl();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  getUser(token: string) {
+      this.eventService.getUserByToken(token).subscribe({
+        next: (response: any) => {
+          console.log('[getUser] response :: ', response);
+        },
+        error: (error) => {
+          if (error.message.includes('503 Service Unavailable') || 
+                  error.message.includes('Le service est en maintenance.')) {
+          this.router.navigate(['/maintenance']);
+        }
+        }
+      });
   }
 
   checkResponse() {

@@ -1,17 +1,34 @@
-<div class="admin-dashboard">
+<div class="admin-layout">
+  <!-- Sidebar à gauche -->
+  <aside *ngIf="!(isMobile | async)" class="admin-sidebar">
+    <div class="sidebar-header">
+      <h3>Admin Panel</h3>
+    </div>
+    <nav class="sidebar-nav">
+      <button 
+        *ngFor="let tab of tabs" 
+        [class.active]="activeTab === tab.id"
+        (click)="activeTab = tab.id; currentPage = 1"
+        class="nav-item"
+      >
+        <span class="nav-label">{{ tab.label }}</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- Contenu principal à droite -->
+  <main class="admin-main">
     <!-- Header -->
     <div class="admin-header">
     <div class="container">
-        <a routerLink="/dashboard" class="back-link">← Retour</a>
+        <a routerLink="/evenements" class="back-link">← Retour</a>
         <h1>Panneau d'Administration</h1>
         <p>Gestion complète de la plateforme</p>
     </div>
     </div>
 
-    <!-- Main content -->
-    <div class="container py-12">
     <!-- Navigation Tabs -->
-    <div class="admin-tabs">
+    <div *ngIf="isMobile | async" class="admin-tabs">
         <button
         *ngFor="let tab of tabs"
         [class.active]="activeTab === tab.id"
@@ -22,43 +39,28 @@
         </button>
     </div>
 
-    <!-- TAB 1: FEEDBACK MANAGEMENT -->
+    <!-- TAB: FEEDBACK -->
     <div *ngIf="activeTab === 'feedback'" class="tab-content">
-        <div class="section-card">
-        <h2>Gestion des Retours d'Impression</h2>
-
-        <!-- Filters -->
+      <div class="section-card">
+        <h2>Retours d'Impression</h2>
+        
         <div class="filters">
-            <input
-            type="text"
-            [(ngModel)]="feedbackSearch"
-            placeholder="Rechercher par titre ou utilisateur..."
-            class="form-input"
-            />
-            <select [(ngModel)]="feedbackStatusFilter" class="form-select">
-            <option value="">Tous les statuts</option>
-            <option value="pending">En attente</option>
-            <option value="reviewed">Examiné</option>
-            <option value="resolved">Résolu</option>
-            </select>
+          <input type="text" [(ngModel)]="feedbackSearch" placeholder="Rechercher..." class="form-input" (ngModelChange)="currentPage = 1">
         </div>
 
-        <!-- Feedback List -->
         <div class="list-container">
-            <table class="data-table">
+          <table class="data-table">
             <thead>
-                <tr>
-                <th>Utilisateur</th>
+              <tr>
+                <th>Email</th>
                 <th>Note</th>
                 <th>Titre</th>
-                <th>Catégorie</th>
                 <th>Statut</th>
                 <th>Date</th>
-                <th>Actions</th>
-                </tr>
+              </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let feedback of getFilteredFeedback()" class="feedback-row">
+                <tr *ngFor="let feedback of getPaginatedData(getFilteredFeedback())" class="feedback-row">
                     <td
                         class="email-cell"
                         [ngClass]="feedback.isSubscriber">
@@ -87,28 +89,35 @@
                     </td>
                 </tr>
             </tbody>
-            </table>
+          </table>
+
+          <!-- Feedback Details Modal -->
+            <div *ngIf="selectedFeedback" class="modal-overlay" (click)="selectedFeedback = null">
+                <div class="modal-content" (click)="$event.stopPropagation()">
+                <button class="modal-close" (click)="selectedFeedback = null">✕</button>
+                <h3>{{ selectedFeedback.title }}</h3>
+                <p class="feedback-message">{{ selectedFeedback.message }}</p>
+                <div class="modal-actions">
+                    <textarea
+                    [(ngModel)]="selectedFeedback.adminNotes"
+                    placeholder="Ajouter une note interne..."
+                    class="form-textarea"
+                    ></textarea>
+                    <button class="btn btn-primary" (click)="saveFeedbackNotes()">
+                    💾 Enregistrer les notes
+                    </button>
+                </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Feedback Details Modal -->
-        <div *ngIf="selectedFeedback" class="modal-overlay" (click)="selectedFeedback = null">
-            <div class="modal-content" (click)="$event.stopPropagation()">
-            <button class="modal-close" (click)="selectedFeedback = null">✕</button>
-            <h3>{{ selectedFeedback.title }}</h3>
-            <p class="feedback-message">{{ selectedFeedback.message }}</p>
-            <div class="modal-actions">
-                <textarea
-                [(ngModel)]="selectedFeedback.adminNotes"
-                placeholder="Ajouter une note interne..."
-                class="form-textarea"
-                ></textarea>
-                <button class="btn btn-primary" (click)="saveFeedbackNotes()">
-                💾 Enregistrer les notes
-                </button>
-            </div>
-            </div>
+        <!-- Pagination Controls -->
+        <div class="pagination" *ngIf="getFilteredFeedback().length > pageSize">
+          <button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">Précédent</button>
+          <span>Page {{ currentPage }} sur {{ getTotalPages(getFilteredFeedback()) }}</span>
+          <button [disabled]="currentPage === getTotalPages(getFilteredFeedback())" (click)="changePage(currentPage + 1)">Suivant</button>
         </div>
-        </div>
+      </div>
     </div>
 
     <!-- TAB 2: VISITORS -->
@@ -161,7 +170,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let visitor of getFilteredVisitors()">
+                <tr *ngFor="let visitor of getPaginatedData(getFilteredVisitors())" >
                 <td class="mono">{{ visitor.ipAddress }}</td>
                 <td>{{ visitor.country }} / {{ visitor.city }}</td>
                 <td>{{ visitor.device }}</td>
@@ -262,7 +271,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let event of selectedUserEvents" class="event-row">
+                <tr *ngFor="let event of getPaginatedData(selectedUserEvents)" class="event-row">
                 <td>{{ event.title }}</td>
                 <td>{{ event.type }}</td>
                 <td>
@@ -324,7 +333,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let guest of getFilteredEventGuests()">
+                <tr *ngFor="let guest of getPaginatedData(getFilteredEventGuests())">
                 <td>
                     <input type="checkbox" [(ngModel)]="guest.selected" />
                 </td>
@@ -380,5 +389,26 @@
         </div>
         </div>
     </div>
+    
+    <!-- TAB: MAINTENANCE -->
+    <div *ngIf="activeTab === 'maintenance'" class="tab-content">
+      <div class="section-card">
+        <h2>Gérer la Maintenance</h2>
+        <div class="maintenance-form">
+          <div class="form-group">
+            <label>Statut</label>
+            <select [(ngModel)]="maintenance.status" class="form-select">
+              <option value="disabled">Désactivée</option>
+              <option value="enabled">Activée</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Progression : {{ maintenance.maintenance_progress }}%</label>
+            <input type="range" [(ngModel)]="maintenance.maintenance_progress" min="0" max="100" class="form-range">
+          </div>
+          <button class="btn btn-primary" (click)="saveMaintenance()">{{ loading ? '⏳ En cours...' : 'Enregistrer' }}</button>
+        </div>
+      </div>
     </div>
+  </main>
 </div>

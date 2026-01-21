@@ -23,6 +23,7 @@ import { EventScanListComponent } from './pages/event-scan-list/event-scan-list'
 import { InvitationEditorComponent } from './pages/invitation-editor/invitation-editor.component';
 import { FeedbackComponent } from './components/feedback/feedback.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+import { MaintenanceComponent } from './pages/maintenance/maintenance.component';
 
 export const routes: Routes = [
   {
@@ -83,6 +84,10 @@ export const routes: Routes = [
     path: 'feedback',
     component: FeedbackComponent,
     // canActivate: [AuthGuard]
+  },
+  {
+    path: 'maintenance',
+    component: MaintenanceComponent,
   },
   {
     path: 'admin',

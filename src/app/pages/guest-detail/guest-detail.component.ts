@@ -8,7 +8,6 @@ import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-mod
 import { QrCodeService } from '../../services/qr-code.service';
 import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 import { CommunicationService } from '../../services/share.service';
-import { FooterDetailComponent } from "../../components/footer/footer.component";
 
 interface Guest {
   id: number;
@@ -32,7 +31,7 @@ interface Guest {
 @Component({
   selector: 'app-guest-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, SpinnerComponent, ConfirmDeleteModalComponent, ErrorModalComponent, FooterDetailComponent],
+  imports: [CommonModule, FormsModule, SpinnerComponent, ConfirmDeleteModalComponent, ErrorModalComponent],
   templateUrl:'guest-detail.component.html',
   styleUrl: 'guest-detail.component.scss'
 })

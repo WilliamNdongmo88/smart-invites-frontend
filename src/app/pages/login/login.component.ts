@@ -79,6 +79,9 @@ export class LoginComponent implements  OnInit{
       error: (err) => {
         this.isLoading = false;
         console.error('Erreur d\'authentification Google :', err);
+        if (err.message.includes('503 Service Unavailable')) {
+          this.router.navigate(['/maintenance']);
+        }
       },
       complete: () => {
         this.cd.detectChanges(); // MAJ l’UI quand c’est fini
@@ -120,7 +123,10 @@ export class LoginComponent implements  OnInit{
           this.errorMessage = 'Trop de tentatives de connexion. Réessayez plus tard.';
         }else if (error.message.includes('Veuillez activer votre compte!')){
           this.isActiveAccount = true;
-          this.errorMessage = error.message || 'Erreur de connexion';
+          this.errorMessage = error.message;
+        }else if (error.message.includes('503 Service Unavailable') || 
+                  error.message.includes('Le service est en maintenance. Veuillez réessayer plus tard.')) {
+          this.router.navigate(['/maintenance']);
         }else {
           this.errorMessage = error.message || 'Erreur de connexion';
         }

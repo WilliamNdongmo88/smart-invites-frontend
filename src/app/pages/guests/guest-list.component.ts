@@ -12,7 +12,6 @@ import { ImportGuestsModalComponent } from "../../components/import-guests-modal
 import { ImportedGuest } from '../../services/import-guest.service';
 import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
-import { FooterDetailComponent } from "../../components/footer/footer.component";
 import { AlertConfig, ConditionalAlertComponent } from '../../components/conditional-alert/conditional-alert.component';
 
 interface Guest {
@@ -35,7 +34,7 @@ type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
   selector: 'app-guest-list',
   standalone: true,
   imports: [CommonModule, FormsModule, SpinnerComponent, AddGuestModalComponent,
-    ImportGuestsModalComponent, ErrorModalComponent, ConfirmDeleteModalComponent, FooterDetailComponent, ConditionalAlertComponent],
+    ImportGuestsModalComponent, ErrorModalComponent, ConfirmDeleteModalComponent, ConditionalAlertComponent],
   templateUrl: 'guest-list.component.html',
   styleUrl: 'guest-list.component.scss',
 })

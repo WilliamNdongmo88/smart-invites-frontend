@@ -8,7 +8,6 @@ import { GuestService } from '../../services/guest.service';
 import { EventService } from '../../services/event.service';
 import { map, Observable } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { FooterDetailComponent } from "../../components/footer/footer.component";
 import { NotificationService } from '../../services/notification.service';
 
 interface ScanResult {
@@ -40,7 +39,7 @@ type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
 @Component({
   selector: 'app-qr-scanner',
   standalone: true,
-  imports: [CommonModule, FormsModule, FooterDetailComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: 'qr-scanner.component.html',
   styleUrl: 'qr-scanner.component.scss'
 })

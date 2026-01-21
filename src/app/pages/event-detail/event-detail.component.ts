@@ -13,7 +13,6 @@ import { SpinnerComponent } from "../../components/spinner/spinner";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { map, Observable } from 'rxjs';
-import { FooterDetailComponent } from "../../components/footer/footer.component";
 import { QrCodeService } from '../../services/qr-code.service';
 import { AlertConfig, ConditionalAlertComponent } from "../../components/conditional-alert/conditional-alert.component";
 import { AddLinkModalComponent } from "../../components/add-invitation-link-modal/add-link-modal";
@@ -61,7 +60,7 @@ type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
   imports: [CommonModule, FormsModule, RouterLink,
     AddGuestModalComponent, ErrorModalComponent,
     ImportGuestsModalComponent, SpinnerComponent,
-    ConfirmDeleteModalComponent, FooterDetailComponent,
+    ConfirmDeleteModalComponent,
     ConditionalAlertComponent, AddLinkModalComponent, MatIcon],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.scss']

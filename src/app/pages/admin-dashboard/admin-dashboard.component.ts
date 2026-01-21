@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { FeedbackService } from '../../services/feedback.service';
 import { AuthService } from '../../services/auth.service';
+import { Maintenance, MaintenanceService } from '../../services/maintenance.service';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { map, Observable } from 'rxjs';
 
 // Interfaces
 interface Visitor {
@@ -79,9 +82,21 @@ interface Feedback {
 export class AdminDashboardComponent implements OnInit {
   activeTab = 'feedback';
 
+  // Pagination
+  currentPage = 1;
+  pageSize = 6;
+
   // Data
   feedbacks: Feedback[] = [];
-
+  
+  // Maintenance Data
+  maintenance: Maintenance = {
+    maintenance_progress: 0,
+    subscribed: false,
+    estimated_time: '',
+    email: '',
+    status: 'disabled'
+  };
   visitors: Visitor[] = [
     {
       id: '1',
@@ -179,6 +194,8 @@ export class AdminDashboardComponent implements OnInit {
   userPlanFilter = '';
   guestStatusFilter = '';
   isSubscriber = false;
+  loading = false;
+  isMobile!: Observable<boolean>;
 
   // Selected items
   selectedFeedback: Feedback | null = null;
@@ -193,15 +210,20 @@ export class AdminDashboardComponent implements OnInit {
     { id: 'visitors', label: '👥 Visiteurs' },
     { id: 'users', label: '👤 Utilisateurs' },
     { id: 'guests', label: '🎫 Invités' },
+    { id: 'maintenance', label: '🛠️ Maintenance' },
   ];
 
   constructor(
     private feedbackService: FeedbackService,
     private authService: AuthService,
+    private breakpointObserver: BreakpointObserver,
+    private maintenanceService: MaintenanceService 
   ) {}
 
   ngOnInit() {
+    this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
     this.loadRecentFeedback();
+    this.loadMaintenanceData();
   }
 
   // FEEDBACK METHODS
@@ -244,6 +266,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   viewFeedbackDetails(feedback: Feedback) {
+    console.log('Détails du feedback:', feedback);
     this.selectedFeedback = feedback;
   }
 
@@ -261,28 +284,62 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-getAllUsers(dataEmails: any) {
-  this.feedbackService.getAllUsers(dataEmails).subscribe({
-    next: (datas: any[]) => {
-      console.log('[allUsers]:', datas);
+  getAllUsers(dataEmails: any) {
+    this.feedbackService.getAllUsers(dataEmails).subscribe({
+      next: (datas: any[]) => {
+        console.log('[allUsers]:', datas);
 
-      // 1️⃣ Extraire les emails abonnés
-      const subscriberEmails = new Set(datas);
+        // 1️⃣ Extraire les emails abonnés
+        const subscriberEmails = new Set(datas);
 
-      // 2️⃣ Marquer chaque feedback
-      this.feedbacks = this.feedbacks.map(feedback => ({
-        ...feedback,
-        isSubscriber: subscriberEmails.has(feedback.email)
-            ? 'subscribed'
-            : 'unsbscribed'
-     }));
+        // 2️⃣ Marquer chaque feedback
+        this.feedbacks = this.feedbacks.map(feedback => ({
+          ...feedback,
+          isSubscriber: subscriberEmails.has(feedback.email)
+              ? 'subscribed'
+              : 'unsbscribed'
+      }));
 
-      console.log('[feedbacks enriched]:', this.feedbacks);
-    },
-    error: err => console.error(err)
-  });
-}
+        console.log('[feedbacks enriched]:', this.feedbacks);
+      },
+      error: err => console.error(err)
+    });
+  }
 
+  // MAINTENANCE METHODS
+  loadMaintenanceData() {
+    this.maintenanceService.getMaintenance().subscribe({
+      next: (data) => {
+        console.log('Données de maintenance chargées:', data);
+          this.maintenance = data; // On récupère la première configuration
+      },
+      error: (err) => console.error('Erreur chargement maintenance:', err)
+    });
+  }
+
+  saveMaintenance() {
+    if (this.maintenance.id) {
+      // console.log('Sauvegarde de la maintenance:', this.maintenance);
+      const data = {
+        maintenanceProgress: this.maintenance.maintenance_progress,
+        subscribed: this.maintenance.maintenance_progress,
+        estimatedTime: this.maintenance.estimated_time,
+        email: this.maintenance.email,
+        status: this.maintenance.status
+      };
+      this.loading = true;
+      this.maintenanceService.updateMaintenance(this.maintenance.id, data).subscribe({
+        next: () => {
+          alert('Configuration de maintenance mise à jour !'),
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('Erreur mise à jour maintenance:', err)
+          this.loading = false;
+        }
+      });
+    }
+  }
 
   saveFeedbackNotes() {
     console.log('Notes enregistrées');
@@ -412,5 +469,19 @@ getAllUsers(dataEmails: any) {
       month: 'long',
       day: 'numeric',
     });
+  }
+
+  // PAGINATION LOGIC
+  getPaginatedData(data: any[]): any[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return data.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  getTotalPages(data: any[]): number {
+    return Math.ceil(data.length / this.pageSize);
+  }
+
+  changePage(page: number) {
+    this.currentPage = page;
   }
 }

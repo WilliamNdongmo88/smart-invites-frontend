@@ -7,7 +7,6 @@ import { AuthService, User } from '../../services/auth.service';
 import { CommunicationService } from '../../services/share.service';
 import { map, Observable } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { FooterDetailComponent } from "../../components/footer/footer.component";
 import { SpinnerComponent } from "../../components/spinner/spinner";
 
 interface Event {
@@ -24,7 +23,7 @@ interface Event {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MatIcon, FooterDetailComponent, SpinnerComponent],
+  imports: [CommonModule, MatIcon, SpinnerComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })

@@ -263,6 +263,11 @@ export class EventService {
     );;
   }
 
+  getUserByToken(token: string): Observable<any> {
+    console.log("[getUserByToken] token :: ",token);
+    return this.http.get<any>(`${this.apiUrl}/link/user-role/${token}`);
+  }
+
   clearLinkCache() {
     console.log('CLEAR LINK CACHE');
     this.linkCache$ = undefined;

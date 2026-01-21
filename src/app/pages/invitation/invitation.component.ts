@@ -91,12 +91,14 @@ export class InvitationComponent implements OnInit{
       this.eventService.getUserByToken(token).subscribe({
         next: (response: any) => {
           console.log('[getUser] response :: ', response);
+          if(response.message == 'Le service est en maintenance.'){
+            this.router.navigate(['/maintenance']);
+          }else{
+            console.log("Service accessible.");
+          }
         },
         error: (error) => {
-          if (error.message.includes('503 Service Unavailable') || 
-                  error.message.includes('Le service est en maintenance.')) {
-          this.router.navigate(['/maintenance']);
-        }
+          console.error('[getUser] Erreur :', error);
         }
       });
   }

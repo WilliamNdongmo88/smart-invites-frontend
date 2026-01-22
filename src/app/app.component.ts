@@ -19,11 +19,7 @@ import { FooterDetailComponent } from "./components/footer/footer.component";
       <app-footer *ngIf="showFooter"></app-footer>
     </main>
   `,
-  styles: [`
-    main {
-      min-height: calc(100vh - 60px);
-    }
-  `]
+  styles: []
 })
 export class AppComponent {
   title = 'Smart Invite - Wedding Management Platform';

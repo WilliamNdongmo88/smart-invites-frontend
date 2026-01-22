@@ -610,6 +610,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
 
   resetScanner() {
     this.scanResult.set(null);
+    this.isEffetScanning = false;
     this.startCamera();
   }
 

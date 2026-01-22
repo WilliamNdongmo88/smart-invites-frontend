@@ -64,7 +64,8 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   eventId: number = 0;
   isValid: boolean = false;
   loading: boolean = false;
-  private isScanning = false;
+  private isScanning: boolean = false;
+  public isEffetScanning: boolean = false;
   datas: any[] = [];
   data = {
         eventTitle: '',
@@ -278,6 +279,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
 
     if (qrCode?.data) {
         this.isScanning = false;
+        this.isEffetScanning = true;
         cancelAnimationFrame(this.animationFrameId!);
         this.processQRCode(qrCode.data);
         return;                               
@@ -310,7 +312,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
 
     if (qrCode?.data) {
         console.log('QR détecté:', qrCode.data);
-
+        this.isEffetScanning = true;
         this.isScanning = false;              // Stop immédiat de la boucle
         cancelAnimationFrame(this.animationFrameId!);
 
@@ -393,8 +395,10 @@ export class QRScannerComponent implements OnInit, OnDestroy {
                 message: 'Code QR validé avec succès !'
             });
           this.manageCheckInParameter();
+          this.isEffetScanning = false;
         },
         (error) => {
+            this.isEffetScanning = false;
             console.error('❌ [getGuestById] Erreur :', error.message);
             this.isValid = false;
             if (this.soundEnabled()) this.playErrorSound();

@@ -24,6 +24,17 @@
                   [style.display]="cameraActive() ? 'block' : 'none'"
                 ></video>
 
+                  <!-- L'effet de scan (affiché uniquement si isScanning est vrai) -->
+                  @if (isEffetScanning) {
+                    <div class="scan-overlay">
+                      <div class="scan-line"></div>
+                      <div class="scan-corner top-left"></div>
+                      <div class="scan-corner top-right"></div>
+                      <div class="scan-corner bottom-left"></div>
+                      <div class="scan-corner bottom-right"></div>
+                    </div>
+                  }
+
                 <!-- Overlay + cadre -->
                 <div class="scan-overlay" *ngIf="cameraActive()">
                   <div class="scan-frame"></div>

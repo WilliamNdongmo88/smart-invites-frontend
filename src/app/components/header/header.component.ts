@@ -112,7 +112,7 @@ export class HeaderComponent implements OnInit {
           .filter(n => n.organizer_id === this.currentUser?.id)
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-        console.log('[loadNotifications] notifications filtrées ::', this.notifications);
+        //console.log('[loadNotifications] notifications filtrées ::', this.notifications);
       },
       error: (err) => {
         this.errorMessage = err?.error?.error || 'Erreur lors du chargement des notifications.';

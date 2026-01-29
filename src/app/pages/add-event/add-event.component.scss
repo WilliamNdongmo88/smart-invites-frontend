@@ -48,6 +48,7 @@
   justify-content: space-between;
   margin-bottom: 1rem;
   margin-top: -2rem;
+  cursor: pointer;
 }
 
 .step {
@@ -163,6 +164,73 @@
   font-size: 0.875rem;
 }
 
+.checkbox-group {
+  margin-top: 1rem;
+
+  .custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.95rem;
+    color: #6a6b6c; // gris foncé
+    line-height: 1.4;
+
+    input {
+      display: none;
+    }
+
+    /* Switch */
+    .checkmark {
+      position: relative;
+      width: 42px;
+      height: 22px;
+      background-color: #e5e7eb;
+      border-radius: 999px;
+      transition: background-color 0.25s ease;
+      flex-shrink: 0;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 18px;
+        height: 18px;
+        background: #fff;
+        border-radius: 50%;
+        transition: transform 0.25s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    /* Checked */
+    input:checked + .checkmark {
+      background-color: #D4AF37; // bleu principal
+
+      &::before {
+        transform: translateX(20px);
+      }
+    }
+
+    /* Focus (accessibilité) */
+    input:focus-visible + .checkmark {
+      outline: 2px solid #93c5fd;
+      outline-offset: 2px;
+    }
+
+    .label-text {
+      transition: color 0.2s ease;
+    }
+
+    input:checked ~ .label-text {
+      color: #D4AF37;
+      font-weight: 500;
+    }
+  }
+}
+
 .conditional-fields {
   margin-top: 1rem;
   padding: 1rem;
@@ -200,6 +268,17 @@
   border: 1px solid #D4AF37;
   color: #D4AF37;
   &:hover { background-color: rgba(212, 175, 55, 0.05); }
+}
+
+.txt-title{
+  display: flex;
+  justify-content: center;
+}
+.c-size{
+  font-size: 2rem;
+}
+.c_j_txt{
+  justify-content: center;
 }
 
 /* Invitation Editor Specific Styles */
@@ -301,15 +380,46 @@
   .value { color: #666; }
 }
 
-    .btn-text{
-      display: flex;
-      justify-content: end;
-    }
+.btn-text{
+  display: flex;
+  justify-content: end;
+}
 
-    .btn-text-center{
-      display: flex;
-      justify-content: center;
+.btn-text-center{
+  display: flex;
+  justify-content: center;
+}
+
+.pdf-preview-container {
+  margin-top: 1rem;
+  border: 2px dashed #D4AF37;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #f9f9f9;
+
+  .pdf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: #D4AF37;
+    color: #1A1A1A;
+    font-weight: bold;
+
+    .btn-remove {
+      background: none;
+      border: none;
+      color: #1A1A1A;
+      font-size: 1.2rem;
+      cursor: pointer;
+      &:hover { color: #ff0000; }
     }
+  }
+
+  iframe {
+    border: none;
+  }
+}
 
 @media (max-width: 768px) {
   .editor-wrapper { grid-template-columns: 1fr; }
@@ -330,7 +440,7 @@
     height: 600px;
     }
 
-          .step-indicator {
+      .step-indicator {
         margin-bottom: 2rem;
       }
 

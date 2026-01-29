@@ -6,6 +6,9 @@ import { AuthService, User } from '../../services/auth.service';
 import { CreateEventRequest, EventService } from '../../services/event.service';
 import { SpinnerComponent } from "../../components/spinner/spinner";
 import { CommunicationService } from '../../services/share.service';
+import { Pipe, PipeTransform } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 
 interface InvitationData {
   // Informations de l'événement
@@ -17,6 +20,7 @@ interface InvitationData {
   religiousLocation?: string;
   religiousTime?: string;
   showReligiousCeremony: boolean;
+  hasInvitationModelCard: boolean;
   banquetTime: string;
 
   // Personnes concernées
@@ -45,10 +49,18 @@ interface InvitationData {
   heartIconUrl?: string;
 }
 
+
+@Pipe({ name: 'safe', standalone: true })
+export class SafePipe implements PipeTransform {
+  constructor(private sanitizer: DomSanitizer) {}
+  transform(url: any) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+}
 @Component({
   selector: 'app-add-event',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, SpinnerComponent],
+  imports: [CommonModule, FormsModule, RouterLink, SpinnerComponent, SafePipe, ErrorModalComponent],
   templateUrl: './add-event.component.html',
   styleUrls: ['./add-event.component.scss']
 })
@@ -61,8 +73,15 @@ export class AddEventComponent implements OnInit{
   showAnniversaryNames = false;
   showBirthdayNames = false;
   showAnother = false;
+  showErrorModal = false;
+  isDefaultPdfUrl = false;
   showWeddingCivilLocation = false;
   showWeddingReligiousLocation = false;
+  hasInvitationModelCard = false;
+  selectedPdfFile: File | null = null; // Pour stocker le fichier réel
+  pdfModelUrl: string | null = null;   // Pour l'aperçu (base64)
+  newFile = false;
+  defaultPdfUrl = 'pdfs/default_invitation_card.pdf';
 
   eventData = {
     title: '',
@@ -81,6 +100,7 @@ export class AddEventComponent implements OnInit{
     eventNameConcerned2: '',
     allowDietaryRestrictions: true,
     showWeddingReligiousLocation: false,
+    hasInvitationModelCard : false,
     allowPlusOne: true,
   };
 
@@ -93,6 +113,7 @@ export class AddEventComponent implements OnInit{
     religiousLocation: '',
     religiousTime: '',
     showReligiousCeremony: false,
+    hasInvitationModelCard: false,
     banquetTime: '',
     nameConcerned1: '',
     nameConcerned2: '',
@@ -132,8 +153,11 @@ export class AddEventComponent implements OnInit{
   }
   nextStep() {
     if (this.currentStep() < 5) {
-      console.log('this.eventData:', this.eventData);
-      console.log("this.invitationData: ", this.invitationData)
+      console.log('this.currentStep():', this.currentStep()+1);
+      // console.log('this.eventData:', this.eventData);
+      // console.log("this.invitationData: ", this.invitationData);
+      console.log("this.isDefaultPdfUrl: ", this.isDefaultPdfUrl);
+      console.log("hasInvitationModelCard: ", this.hasInvitationModelCard);
       if (this.eventData.type=='wedding') {
         this.showWeddingNames = true;
         this.showEngagementNames = false;
@@ -169,7 +193,67 @@ export class AddEventComponent implements OnInit{
         this.showAnniversaryNames = false;
         this.showBirthdayNames = false;
       }
+      if(this.currentStep()+1 === 4 && 
+        this.hasInvitationModelCard && !this.isDefaultPdfUrl &&
+        !this.selectedPdfFile){
+          this.triggerError();
+          this.errorMessage = "Veuillez sélectionner votre modèle PDF."; 
+          this.currentStep.update(step => step);
+          return;
+      }
       this.currentStep.update(step => step + 1);
+      this.syncEventToInvitation();
+    }
+  }
+  changeStep(step: number) {
+    if (step < 5) {
+      console.log("Step: ", step);
+      // console.log('this.eventData:', this.eventData);
+      // console.log("this.invitationData: ", this.invitationData);
+      console.log("this.isDefaultPdfUrl: ", this.isDefaultPdfUrl);
+      console.log("hasInvitationModelCard: ", this.hasInvitationModelCard);
+      if (this.eventData.type=='wedding') {
+        this.showWeddingNames = true;
+        this.showEngagementNames = false;
+        this.showAnniversaryNames = false;
+        this.showBirthdayNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='engagement') {
+        this.showEngagementNames = true;
+        this.showWeddingNames = false;
+        this.showAnniversaryNames = false;
+        this.showBirthdayNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='anniversary') {
+        this.showAnniversaryNames = true;
+        this.showWeddingNames = false;
+        this.showEngagementNames = false;
+        this.showBirthdayNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='birthday') {
+        this.showBirthdayNames = true;
+        this.showWeddingNames = false;
+        this.showEngagementNames = false;
+        this.showAnniversaryNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='other') {
+        this.showAnother = true;
+        this.showWeddingNames = false;
+        this.showEngagementNames = false;
+        this.showAnniversaryNames = false;
+        this.showBirthdayNames = false;
+      }
+      if(step === 4 && this.hasInvitationModelCard && !this.isDefaultPdfUrl && !this.selectedPdfFile){
+          this.triggerError();
+          this.errorMessage = "Veuillez sélectionner votre modèle PDF."; 
+          this.currentStep.update(step => step);
+          return;
+      }
+      this.currentStep.set(step);
       this.syncEventToInvitation();
     }
   }
@@ -197,66 +281,119 @@ export class AddEventComponent implements OnInit{
 
   onSubmit() {
     const datas = [];
-    const eventDatas : CreateEventRequest = {
-      organizerId: this.organizerId,
-      title: this.eventData.title,
-      description: this.invitationData.mainMessage,
-      eventDate: this.eventData.date+' '+ this.eventData.time+':00',
-      banquetTime: this.eventData.banquetTime,
-      religiousLocation: this.eventData.religiousLocation,
-      religiousTime: this.eventData.religiousTime,
-      eventCivilLocation: this.eventData.civilLocation,
-      eventLocation: this.eventData.location,
-      maxGuests: this.eventData.totalGuests,
-      hasPlusOne: this.eventData.allowPlusOne,
-      budget: this.eventData.budget,
-      type: this.eventData.type,
-      eventNameConcerned1: this.eventData.eventNameConcerned1 || '',
-      eventNameConcerned2: this.eventData.eventNameConcerned2 || '',
-      footRestriction: this.eventData.allowDietaryRestrictions,
-      showWeddingReligiousLocation: this.eventData.showWeddingReligiousLocation,
-      status: 'active'
-    }
+    if (this.selectedPdfFile) {
+      const formData = new FormData();
+      // 'pdfFile' est la clé que le backend utilisera pour récupérer le fichier
+      formData.append('pdfFile', this.selectedPdfFile, this.selectedPdfFile.name);
 
-    const eventInvitationNote = {
-      invTitle: this.invitationData.title,
-      mainMessage: this.invitationData.mainMessage,
-      eventTheme: this.invitationData.eventTheme,
-      priorityColors: this.invitationData.priorityColors,
-      qrInstructions: this.invitationData.qrInstructions,
-      dressCodeMessage: this.invitationData.dressCodeMessage,
-      thanksMessage1: this.invitationData.thanksMessage1,
-      sousMainMessage: this.invitationData.sousMainMessage,
-      closingMessage: this.invitationData.closingMessage,
-      titleColor: this.invitationData.titleColor,
-      topBandColor: this.invitationData.topBandColor,
-      bottomBandColor: this.invitationData.bottomBandColor,
-      textColor: this.invitationData.textColor,
-      logoUrl: this.invitationData.logoUrl,
-      heartIconUrl: this.invitationData.heartIconUrl,
-    }
-    
-    datas.push(eventDatas);
-    const data = {
-      eventDatas: datas,
-      eventInvitationNote: eventInvitationNote
-    }
-    console.log('Event created:', data);
-    this.isLoading = true;
-    this.eventService.createEvent(data).subscribe(
-      (response) => {
-        console.log("Response :: ", response)
-        this.isLoading = false;
-        this.triggerBAction();
-        this.router.navigate(['/evenements']);//dashboard
-      },
-      (error) => {
-        this.isLoading = false;
-        console.error('❌ Erreur de creation :', error);
-        console.log("Message :: ", error.message);
-        this.errorMessage = error.message || 'Erreur de connexion';
+      const eventDatas : CreateEventRequest = {
+        organizerId: this.organizerId,
+        title: this.eventData.title,
+        description: this.invitationData.mainMessage,
+        eventDate: this.eventData.date+' '+'10:00:00',
+        banquetTime: this.eventData.banquetTime,
+        religiousLocation: this.eventData.religiousLocation,
+        religiousTime: this.eventData.religiousTime,
+        eventCivilLocation: this.eventData.civilLocation,
+        eventLocation: this.eventData.location,
+        maxGuests: this.eventData.totalGuests,
+        hasPlusOne: this.eventData.allowPlusOne,
+        budget: this.eventData.budget,
+        type: this.eventData.type,
+        eventNameConcerned1: this.eventData.eventNameConcerned1 || '',
+        eventNameConcerned2: this.eventData.eventNameConcerned2 || '',
+        footRestriction: this.eventData.allowDietaryRestrictions,
+        showWeddingReligiousLocation: this.eventData.showWeddingReligiousLocation,
+        status: 'active'
       }
-    );
+      const eventInvitationNote = {
+        hasInvitationModelCard: this.eventData.hasInvitationModelCard,
+      }
+      datas.push(eventDatas);
+      formData.append('eventDatas', JSON.stringify(datas));
+      formData.append('eventInvitationNote', JSON.stringify(eventInvitationNote));
+      // console.log('PDF Firebase URL :', formData.get('pdfFile'));
+      // console.log('eventDatas :', formData.get('eventDatas'));
+      // console.log('eventInvitationNote :', formData.get('eventInvitationNote'));
+      this.isLoading = true;
+      this.eventService.createEventWihtFile(formData).subscribe(
+        (response) => {
+          console.log("Response :: ", response)
+          this.isLoading = false;
+          this.triggerBAction();
+          this.router.navigate(['/evenements']);
+        },
+        (error) => {
+          this.isLoading = false;
+          console.error('❌ Erreur de creation :', error);
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
+    }else{
+      const eventDatas : CreateEventRequest = {
+        organizerId: this.organizerId,
+        title: this.eventData.title,
+        description: this.invitationData.mainMessage,
+        eventDate: this.eventData.date+' '+ this.eventData.time+':00',
+        banquetTime: this.eventData.banquetTime,
+        religiousLocation: this.eventData.religiousLocation,
+        religiousTime: this.eventData.religiousTime,
+        eventCivilLocation: this.eventData.civilLocation,
+        eventLocation: this.eventData.location,
+        maxGuests: this.eventData.totalGuests,
+        hasPlusOne: this.eventData.allowPlusOne,
+        budget: this.eventData.budget,
+        type: this.eventData.type,
+        eventNameConcerned1: this.eventData.eventNameConcerned1 || '',
+        eventNameConcerned2: this.eventData.eventNameConcerned2 || '',
+        footRestriction: this.eventData.allowDietaryRestrictions,
+        showWeddingReligiousLocation: this.eventData.showWeddingReligiousLocation,
+        status: 'active'
+      }
+
+      const eventInvitationNote = {
+        invTitle: this.invitationData.title,
+        mainMessage: this.invitationData.mainMessage,
+        eventTheme: this.invitationData.eventTheme,
+        priorityColors: this.invitationData.priorityColors,
+        qrInstructions: this.invitationData.qrInstructions,
+        dressCodeMessage: this.invitationData.dressCodeMessage,
+        thanksMessage1: this.invitationData.thanksMessage1,
+        sousMainMessage: this.invitationData.sousMainMessage,
+        closingMessage: this.invitationData.closingMessage,
+        titleColor: this.invitationData.titleColor,
+        topBandColor: this.invitationData.topBandColor,
+        bottomBandColor: this.invitationData.bottomBandColor,
+        textColor: this.invitationData.textColor,
+        logoUrl: this.invitationData.logoUrl,
+        hasInvitationModelCard: this.eventData.hasInvitationModelCard,
+        heartIconUrl: this.invitationData.heartIconUrl,
+      }
+      
+      datas.push(eventDatas);
+      const data = {
+        eventDatas: datas,
+        eventInvitationNote: eventInvitationNote
+      }
+
+      //console.log('Event created:', data);
+      this.isLoading = true;
+      this.eventService.createEvent(data).subscribe(
+        (response) => {
+          console.log("Response :: ", response)
+          this.isLoading = false;
+          this.triggerBAction();
+          this.router.navigate(['/evenements']);//dashboard
+        },
+        (error) => {
+          this.isLoading = false;
+          console.error('❌ Erreur de creation :', error);
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
+    }
   }
 
   toggleReligiousCeremony() {
@@ -265,6 +402,17 @@ export class AddEventComponent implements OnInit{
       this.eventData.religiousLocation = '';
       this.eventData.religiousTime = '';
     }
+  }
+  toggleInvitationModelCard(){
+    this.eventData.hasInvitationModelCard = this.hasInvitationModelCard;
+    console.log("this.hasInvitationModelCard: ", this.hasInvitationModelCard)
+  }
+  get currentPdfUrl(): string {
+    if (this.newFile && this.pdfModelUrl) {
+      return this.pdfModelUrl;
+    }
+    //console.log("this.defaultPdfUrl: ", this.defaultPdfUrl);
+    return this.pdfModelUrl ?? this.defaultPdfUrl;
   }
 
   formatDate(date: string): string {
@@ -301,13 +449,36 @@ export class AddEventComponent implements OnInit{
     this.communicationService.triggerSenderAction('refresh');
   }
 
-    // Invitation Editor Methods
-  generatePDF() {
-    console.log('Génération du PDF avec les données:', this.invitationData);
-    // Logique de génération PDF (à implémenter selon les besoins du projet)
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) return;
+
+    const file: File = input.files[0];
+
+    if (file.type === 'application/pdf') {
+      this.selectedPdfFile = file;
+      console.log('Fichier PDF sélectionné :', this.selectedPdfFile);
+
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        this.pdfModelUrl = e.target?.result as string;
+        this.hasInvitationModelCard = true;
+      };
+      reader.readAsDataURL(file);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      alert('Veuillez sélectionner un fichier PDF valide.');
+    }
   }
 
-  resetForm() {
+  removePdfModel() {
+    this.pdfModelUrl = null;
+    this.selectedPdfFile = null;
+  }
+
+  resetForm(hasInvitationModelCard: boolean) {
+    if(hasInvitationModelCard)
     this.syncEventToInvitation();
     this.invitationData.mainMessage = "C'est avec un immense bonheur que nous vous invitons à célébrer notre union. Votre présence à nos côtés rendra cette journée inoubliable.";
     this.invitationData.eventTheme = 'CHIC ET GLAMOUR';
@@ -315,6 +486,15 @@ export class AddEventComponent implements OnInit{
     this.invitationData.titleColor = '#b58b63';
     this.invitationData.topBandColor = '#0055A4';
     this.invitationData.bottomBandColor = '#EF4135';
+  }
+
+  // Logique error-modal
+  triggerError() {
+    this.showErrorModal = true;
+  }
+
+  closeErrorModal() {
+    this.showErrorModal = false;
   }
 }
 

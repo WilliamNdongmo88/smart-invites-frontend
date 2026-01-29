@@ -246,7 +246,7 @@ export class EventDetailComponent implements OnInit{
       this.isLoading = true;
       this.guestService.getGuestsForEvent(this.eventId).subscribe(
         (response) => {
-          console.log("Response :: ", response.guests);
+          //console.log("Response :: ", response.guests);
           response.guests.map(res => {
             if (!res.response_date){
               console.error('response_date manquant');
@@ -493,7 +493,7 @@ export class EventDetailComponent implements OnInit{
 //   try {
 //     // Récupération de l'image via ton backend proxy
 //     const imageUrl = await this.getQrCodeImageUrl();
-//     const proxyUrl = `${this.apiUrl}/image-proxy?url=${encodeURIComponent(imageUrl)}`;
+//     const proxyUrl = `${this.apiUrl}/file?url=${encodeURIComponent(imageUrl)}`;
 
 //     const response = await fetch(proxyUrl);
 //     if (!response.ok) throw new Error(`Erreur proxy : ${response.status}`);

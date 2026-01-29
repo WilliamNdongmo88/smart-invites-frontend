@@ -46,6 +46,7 @@ export interface CreateEventRequest {
   footRestriction?: boolean;
   allowDietaryRestrictions?: boolean;
   showWeddingReligiousLocation?: boolean;
+  hasInvitationModelCard?: boolean;
   status: string;
   budget?: number;
   type?: string;
@@ -129,21 +130,8 @@ export class EventService {
   }
 
   getEventInvitNote(eventId: number): Observable<any> {
-    if (this.cachedEventInvtNote.has(eventId)) {
-      console.log('CACHE HIT for eventId:', eventId);
-      return this.cachedEventInvtNote.get(eventId)!;
-    }
-
-    console.log('API CALL for eventId:', eventId);
-
-    const request$ = this.http
-      .get<Event[]>(`${this.apiUrl}/event/event-inv-note/${eventId}`)
-      .pipe(
-        shareReplay(1)
-      );
-
-    this.cachedEventInvtNote.set(eventId, request$);
-    return request$;
+    console.log("eventId :: ",eventId);
+    return this.http.get<Event[]>(`${this.apiUrl}/event/event-inv-note/${eventId}`);
   }
 
   // Vider le cache pour un event
@@ -169,6 +157,16 @@ export class EventService {
     .pipe(
       tap(() => this.clearCache())
     );
+  }
+
+  createEventWihtFile(formData: any): Observable<any> {
+    console.log('Creating event with data:', formData);
+    return this.http.post<any>(`${this.apiUrl}/file/create-event-file`, formData);
+  }
+
+  updateEventWihtFile(eventId: number, formData: any): Observable<any> {
+    return this.http
+      .put<any>(`${this.apiUrl}/file/update-event-file/${eventId}`, formData);
   }
 
   updateEvent(eventId: number, request: Partial<any>): Observable<Event> {

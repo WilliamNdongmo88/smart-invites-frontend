@@ -824,7 +824,8 @@
 
                 <div class="confirmation-item">
                   <span class="label">Date :</span>
-                  <span class="value">{{ formatDate(eventData.date) }} à {{ eventData.time }}</span>
+                  <span ngIf="eventData.time" class="value">{{ formatDate(eventData.date) }} à {{ eventData.time }}</span>
+                  <span ngIf="!eventData.time" class="value">{{ formatDate(eventData.date) }}</span>
                 </div>
 
                 <div class="confirmation-item">

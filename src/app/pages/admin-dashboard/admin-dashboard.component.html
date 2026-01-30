@@ -392,23 +392,76 @@
     
     <!-- TAB: MAINTENANCE -->
     <div *ngIf="activeTab === 'maintenance'" class="tab-content">
-      <div class="section-card">
+
+    <!-- Gérer la Maintenance -->
+    <div class="section-card">
         <h2>Gérer la Maintenance</h2>
         <div class="maintenance-form">
-          <div class="form-group">
+        <div class="form-group">
             <label>Statut</label>
             <select [(ngModel)]="maintenance.status" class="form-select">
-              <option value="disabled">Désactivée</option>
-              <option value="enabled">Activée</option>
+            <option value="disabled">Désactivée</option>
+            <option value="enabled">Activée</option>
             </select>
-          </div>
-          <div class="form-group">
+        </div>
+        <div class="form-group">
             <label>Progression : {{ maintenance.maintenance_progress }}%</label>
             <input type="range" [(ngModel)]="maintenance.maintenance_progress" min="0" max="100" class="form-range">
-          </div>
-          <button class="btn btn-primary" (click)="saveMaintenance()">{{ loading ? '⏳ En cours...' : 'Enregistrer' }}</button>
         </div>
-      </div>
+        <button class="btn btn-primary" (click)="saveMaintenance()">{{ loading ? '⏳ En cours...' : 'Enregistrer' }}</button>
+        </div>
     </div>
+
+    <!-- Actions Rapides -->
+    <div class="section-card">
+        <h2>Actions Rapides</h2>
+        <div class="quick-actions">
+        <button class="btn btn-secondary" (click)="restartScheduler()">
+            {{ loading ? '⏳ Relance...' : '🔄 Relancer le Schedule des Événements' }}
+        </button>
+        <button class="btn btn-info" (click)="clearCache()">
+            {{ loading ? '⏳ En cours...' : '🧹 Vider le Cache de l\'Application' }}
+        </button>
+        </div>
+    </div>
+
+    <!-- Notifications Utilisateurs -->
+    <div class="section-card">
+        <h2>Notifier les Utilisateurs</h2>
+        <div class="notification-form">
+        <div class="form-group">
+            <label>Titre de la Notification</label>
+            <input type="text" [(ngModel)]="notification.title" class="form-control form-input" placeholder="Ex: Nouvelle fonctionnalité !">
+        </div>
+        <div class="form-group">
+            <label>Message</label>
+            <textarea [(ngModel)]="notification.message" class="form-control form-input" rows="3" placeholder="Décrivez ici les nouveautés..."></textarea>
+        </div>
+        <button class="btn btn-success" (click)="sendNotification()">
+            <i class="fas fa-paper-plane"></i> Envoyer la Notification
+        </button>
+        </div>
+    </div>
+
+    <!-- Export de Données -->
+    <div class="section-card">
+        <h2>Export de Données</h2>
+        <div class="export-actions">
+            <div class="form-group">
+                <label>Type de données à exporter</label>
+                <select [(ngModel)]="exportType" class="form-select">
+                    <option value="users">Utilisateurs</option>
+                    <option value="events">Événements</option>
+                    <option value="logs">Logs d'activité</option>
+                </select>
+            </div>
+            <button class="btn btn-dark" (click)="exportData()">
+                <i class="fas fa-download"></i> Télécharger les Données
+            </button>
+        </div>
+    </div>
+
+    </div>
+
   </main>
 </div>

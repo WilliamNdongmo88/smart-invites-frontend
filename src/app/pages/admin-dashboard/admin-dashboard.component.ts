@@ -97,6 +97,16 @@ export class AdminDashboardComponent implements OnInit {
     email: '',
     status: 'disabled'
   };
+
+  // Modèle pour le formulaire de notification
+  notification = {
+    title: '',
+    message: ''
+  };
+
+  // Modèle pour le type d'export
+  exportType: 'users' | 'events' | 'logs' = 'users';
+
   visitors: Visitor[] = [
     {
       id: '1',
@@ -339,6 +349,68 @@ export class AdminDashboardComponent implements OnInit {
         }
       });
     }
+  }
+
+  restartScheduler(): void {
+    console.log('Relance du schedule des événements...');
+    this.loading = true;
+    alert('Le schedule des événements a été relancé.');
+    this.maintenanceService.restart().subscribe({
+      next: (response) => {
+        console.log('🔄 Scheduler redémarré avec succès', response);
+        // éventuellement un toast / message UI ici
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors du redémarrage du scheduler', error);
+        // message d’erreur utilisateur si besoin
+        this.loading = false;
+      },
+      complete: () => {
+        console.log('✅ Action restart terminée');
+      }
+    });
+  }
+
+  clearCache(): void {
+    console.log("Vidage du cache de l'application...");
+    alert("Le cache de l'application a été vidé.");
+    // Logique pour appeler votre service de gestion du cache
+    // this.cacheService.clear().subscribe(...);
+  }
+
+  sendNotification(): void {
+    if (!this.notification.title || !this.notification.message) {
+      alert('Veuillez remplir le titre et le message de la notification.');
+      return;
+    }
+    console.log('Envoi de la notification :', this.notification);
+    alert('Notification envoyée aux utilisateurs.');
+    // Logique pour appeler votre service de notification
+    this.loading = true;
+    this.maintenanceService.send(this.notification).subscribe({
+      next: (response) => {
+        console.log('✅ Notification envoyée :', response);
+        this.loading = false;
+
+        // Réinitialiser le formulaire
+        this.notification = { title: '', message: '' };
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors de l’envoi de la notification :', error);
+        this.loading = false;
+        //this.errorMessage = error?.message || 'Erreur lors de l’envoi de la notification';
+      }
+    });
+  }
+
+  exportData(): void {
+    console.log(`Export des données de type : ${this.exportType}`);
+    alert(`Le téléchargement des données "${this.exportType}" va commencer.`);
+    // Logique pour appeler votre service d'export
+    // this.dataExportService.export(this.exportType).subscribe(blob => {
+    //   // Logique pour déclencher le téléchargement du fichier (blob)
+    // });
   }
 
   saveFeedbackNotes() {

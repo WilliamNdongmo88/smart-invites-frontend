@@ -824,8 +824,16 @@
 
                 <div class="confirmation-item">
                   <span class="label">Date :</span>
-                  <span ngIf="eventData.time" class="value">{{ formatDate(eventData.date) }} à {{ eventData.time }}</span>
-                  <span ngIf="!eventData.time" class="value">{{ formatDate(eventData.date) }}</span>
+
+                  <span *ngIf="eventData.time; else dateOnly" class="value">
+                    {{ formatDate(eventData.date) }} à {{ eventData.time }}
+                  </span>
+
+                  <ng-template #dateOnly>
+                    <span class="value">
+                      {{ formatDate(eventData.date) }}
+                    </span>
+                  </ng-template>
                 </div>
 
                 <div class="confirmation-item">

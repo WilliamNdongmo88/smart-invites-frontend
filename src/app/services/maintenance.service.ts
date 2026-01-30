@@ -36,4 +36,18 @@ export class MaintenanceService {
     console.log('Updating maintenance with data:', data);
     return this.http.put(`${this.apiUrl}/maintenance/${id}`, data);
   }
+
+  restart(): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/maintenance/restart`,
+      {} // body obligatoire
+    );
+  }
+
+  send(notification: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/maintenance/notification/send`,
+      notification
+    );
+  }
 }

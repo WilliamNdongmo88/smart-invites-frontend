@@ -1,6 +1,6 @@
 import { Component, signal, OnInit, PipeTransform, Pipe } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CreateEventRequest, EventService } from '../../services/event.service';
 import { N } from '@angular/cdk/keycodes';
@@ -262,7 +262,48 @@ export class EditEventComponent implements OnInit {
     );
   }
 
-  nextStep() {
+  isStepValid(step: number, form: NgForm): boolean {
+    if (step === 1) {
+      // 🟢 SI le modèle PDF est importé → on ignore les validations
+      if (this.hasInvitationModelCard) {
+        return true;
+      }
+
+      // 🔴 SINON → validations normales
+      return !!(
+        this.eventData.title &&
+        this.eventData.type &&
+        this.eventData.date &&
+        this.eventData.time &&
+        this.eventData.location &&
+        this.eventData.banquetTime
+      );
+    }else if (step === 2) {
+      return !!(
+        this.eventData.eventNameConcerned1 &&
+        this.eventData.eventNameConcerned2 &&
+        this.eventData.totalGuests
+      );
+    }
+
+    return true;
+  }
+
+  markStepFieldsAsTouched(form: NgForm) {
+    Object.entries(form.controls).forEach(([name, control]) => {
+      control.markAsTouched();
+
+      if (control.invalid) {
+        console.warn(`❌ Champ invalide: ${name}`, {
+          value: control.value,
+          errors: control.errors
+        });
+      }
+    });
+  }
+
+
+  nextStep(form: NgForm) {
     if (this.currentStep() < 5) {
       console.log('this.currentStep():', this.currentStep()+1);
       // console.log('this.eventData:', this.eventData);
@@ -312,12 +353,70 @@ export class EditEventComponent implements OnInit {
           this.currentStep.update(step => step);
           return;
       }
+      if (!this.isStepValid(this.currentStep(), form)) {
+        console.log("Form: ", form.controls);
+        this.markStepFieldsAsTouched(form);
+        return;
+      }
       this.currentStep.update(step => step + 1);
     }
   }
 
-  changeStep(step: number) {
-    this.currentStep.set(step);
+  changeStep(form: NgForm, step: number) {
+    if (step < 5) {
+      console.log("Step: ", step);
+      // console.log('this.eventData:', this.eventData);
+      // console.log("this.invitationData: ", this.invitationData);
+      console.log("this.isDefaultPdfUrl: ", this.isDefaultPdfUrl);
+      console.log("hasInvitationModelCard: ", this.hasInvitationModelCard);
+      if (this.eventData.type=='wedding') {
+        this.showWeddingNames = true;
+        this.showEngagementNames = false;
+        this.showAnniversaryNames = false;
+        this.showBirthdayNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='engagement') {
+        this.showEngagementNames = true;
+        this.showWeddingNames = false;
+        this.showAnniversaryNames = false;
+        this.showBirthdayNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='anniversary') {
+        this.showAnniversaryNames = true;
+        this.showWeddingNames = false;
+        this.showEngagementNames = false;
+        this.showBirthdayNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='birthday') {
+        this.showBirthdayNames = true;
+        this.showWeddingNames = false;
+        this.showEngagementNames = false;
+        this.showAnniversaryNames = false;
+        this.showAnother = false;
+      }
+      if (this.eventData.type=='other') {
+        this.showAnother = true;
+        this.showWeddingNames = false;
+        this.showEngagementNames = false;
+        this.showAnniversaryNames = false;
+        this.showBirthdayNames = false;
+      }
+      if(step === 4 && this.hasInvitationModelCard && !this.isDefaultPdfUrl && !this.selectedPdfFile){
+          this.triggerError();
+          this.errorMessage = "Veuillez sélectionner votre modèle PDF."; 
+          this.currentStep.update(step => step);
+          return;
+      }
+      if (!this.isStepValid(this.currentStep(), form)) {
+        console.log("Form: ", form.controls);
+        this.markStepFieldsAsTouched(form);
+        return;
+      }
+      this.currentStep.set(step);
+    }
   }
 
   previousStep() {

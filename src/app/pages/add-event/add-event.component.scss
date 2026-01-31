@@ -421,6 +421,16 @@
   }
 }
 
+.error {
+  color: #e53935;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+.form-input.ng-invalid.ng-touched {
+  border: 1px solid #e53935;
+}
+
 @media (max-width: 768px) {
   .editor-wrapper { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }

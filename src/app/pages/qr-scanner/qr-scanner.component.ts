@@ -9,6 +9,7 @@ import { EventService } from '../../services/event.service';
 import { map, Observable } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { NotificationService } from '../../services/notification.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface ScanResult {
   success: boolean;
@@ -336,17 +337,25 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         console.log("###response :: ", response);
         this.addCheckIn();
     },
-    (error) => {
-        console.error('❌ [viewPdfs] Erreur :', error.message);
-        console.error('❌ [viewPdfs] Error :', error.error.error);
+    (error: HttpErrorResponse) => {
+        console.error('❌ [viewPdfs] Erreur HTTP');
+        console.error('➡️ Message :', error.message);
 
         if (this.soundEnabled()) this.playErrorSound();
-        this.errorCount.update(count => count + 1);
-        this.scanResult.set({
-            success: false,
-            message: 'Code QR invalide ou non reconnu',
-        });
+        if(error.status == 404){
+          this.errorCount.update(count => count + 1);
+          this.scanResult.set({
+              success: false,
+              message: 'Invité introuvable',
+          });
+        }else{
+          this.errorCount.update(count => count + 1);
+          this.scanResult.set({
+              success: false,
+              message: 'Code QR invalide ou non reconnu',
+          });
         }
+      }
     );
   }
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../services/auth.service';
 import { CreateEventRequest, EventService } from '../../services/event.service';
@@ -151,13 +151,52 @@ export class AddEventComponent implements OnInit{
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  nextStep() {
+
+  isStepValid(step: number, form: NgForm): boolean {
+    if (step === 1) {
+      // 🟢 SI le modèle PDF est importé → on ignore les validations
+      if (this.hasInvitationModelCard) {
+        return true;
+      }
+
+      // 🔴 SINON → validations normales
+      return !!(
+        this.eventData.title &&
+        this.eventData.type &&
+        this.eventData.date &&
+        this.eventData.time &&
+        this.eventData.location &&
+        this.eventData.banquetTime
+      );
+    }else if (step === 2) {
+      return !!(
+        this.eventData.eventNameConcerned1 &&
+        this.eventData.eventNameConcerned2 &&
+        this.eventData.totalGuests
+      );
+    }
+
+    return true;
+  }
+
+  markStepFieldsAsTouched(form: NgForm) {
+    Object.entries(form.controls).forEach(([name, control]) => {
+      control.markAsTouched();
+
+      if (control.invalid) {
+        console.warn(`❌ Champ invalide: ${name}`, {
+          value: control.value,
+          errors: control.errors
+        });
+      }
+    });
+  }
+
+  nextStep(form: NgForm) {
     if (this.currentStep() < 5) {
       console.log('this.currentStep():', this.currentStep()+1);
       // console.log('this.eventData:', this.eventData);
       // console.log("this.invitationData: ", this.invitationData);
-      console.log("this.isDefaultPdfUrl: ", this.isDefaultPdfUrl);
-      console.log("hasInvitationModelCard: ", this.hasInvitationModelCard);
       if (this.eventData.type=='wedding') {
         this.showWeddingNames = true;
         this.showEngagementNames = false;
@@ -201,11 +240,16 @@ export class AddEventComponent implements OnInit{
           this.currentStep.update(step => step);
           return;
       }
+      if (!this.isStepValid(this.currentStep(), form)) {
+        console.log("Form: ", form.controls);
+        this.markStepFieldsAsTouched(form);
+        return;
+      }
       this.currentStep.update(step => step + 1);
       this.syncEventToInvitation();
     }
   }
-  changeStep(step: number) {
+  changeStep(form: NgForm, step: number) {
     if (step < 5) {
       console.log("Step: ", step);
       // console.log('this.eventData:', this.eventData);
@@ -252,6 +296,11 @@ export class AddEventComponent implements OnInit{
           this.errorMessage = "Veuillez sélectionner votre modèle PDF."; 
           this.currentStep.update(step => step);
           return;
+      }
+      if (!this.isStepValid(this.currentStep(), form)) {
+        console.log("Form: ", form.controls);
+        this.markStepFieldsAsTouched(form);
+        return;
       }
       this.currentStep.set(step);
       this.syncEventToInvitation();

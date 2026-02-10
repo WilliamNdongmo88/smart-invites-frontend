@@ -740,7 +740,7 @@ $breakpoint-tablet: 1024px;
 // ============================================================================
 
 .notifications-list {
-  max-height: 450px;
+  max-height: 500px;
   overflow-y: auto;
 
   .notification-item {
@@ -1070,7 +1070,7 @@ $breakpoint-tablet: 1024px;
     display: flex;
     flex-direction: column;
     margin-left: 40px;
-    height: 100%;
+    height: 78%;
 
     z-index: 1100;
     transform: translateZ(0);

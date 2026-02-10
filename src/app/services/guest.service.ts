@@ -147,6 +147,10 @@ export class GuestService {
     this.cache.delete(eventId);
   }
 
+  getInfoForfait(eventId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/guest/event-info/${eventId}`);
+  }
+
   getGuestById(guestId: number): Observable<any> {
     console.log("guestId :: ", guestId);
     return this.http.get<any>(`${this.apiUrl}/guest/${guestId}` );

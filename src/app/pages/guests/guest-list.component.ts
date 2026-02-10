@@ -13,6 +13,8 @@ import { ImportedGuest } from '../../services/import-guest.service';
 import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 import { AlertConfig, ConditionalAlertComponent } from '../../components/conditional-alert/conditional-alert.component';
+import { GuestLimitAlertComponent } from "../../components/guest-limit-alert/guest-limit-alert.component";
+import { animate, style, transition, trigger } from '@angular/animations';
 
 interface Guest {
   id: number;
@@ -28,15 +30,39 @@ interface Guest {
   qrCodeUrl?: string;
 }
 
+interface GuestLimitAlertConfig {
+  currentGuests: number;        // Nombre d'invités actuels
+  maxGuests: number;            // Limite selon le forfait
+  currentPlan: 'free' | 'professional' | 'enterprise';
+  eventName: string;            // Nom de l'événement
+}
+
 type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
 
 @Component({
   selector: 'app-guest-list',
   standalone: true,
   imports: [CommonModule, FormsModule, SpinnerComponent, AddGuestModalComponent,
-    ImportGuestsModalComponent, ErrorModalComponent, ConfirmDeleteModalComponent, ConditionalAlertComponent],
+    ImportGuestsModalComponent, ErrorModalComponent, ConfirmDeleteModalComponent, ConditionalAlertComponent, GuestLimitAlertComponent],
   templateUrl: 'guest-list.component.html',
   styleUrl: 'guest-list.component.scss',
+  animations: [
+    trigger('slideDown', [
+      transition(':enter', [
+        style({ height: 0, opacity: 0, transform: 'translateY(-10px)' }),
+        animate(
+          '300ms ease-out',
+          style({ height: '*', opacity: 1, transform: 'translateY(0)' })
+        )
+      ]),
+      transition(':leave', [
+        animate(
+          '200ms ease-in',
+          style({ height: 0, opacity: 0, transform: 'translateY(-10px)' })
+        )
+      ])
+    ])
+  ]
 })
 export class GuestListComponent implements OnInit{
   viewMode: 'grid' | 'table' = 'grid'; 
@@ -67,6 +93,8 @@ export class GuestListComponent implements OnInit{
   warningMessage: string = "";
   eventsId: number | undefined;
   guest_list_header_extended: string = '';
+  showGuestLimitAlert = false;
+  alertConfigs: GuestLimitAlertConfig | null = null;
 
   filterStatus = signal<FilterStatus>('all');
   filters: { label: string; value: FilterStatus }[] = [
@@ -102,6 +130,7 @@ export class GuestListComponent implements OnInit{
     const result = this.route.snapshot.paramMap.get('eventId') || '';
     this.eventId = Number(result);
     console.log("this.eventId :: ", this.eventId);
+    this.getInfoForfait();
     this.getGuestsByEvent();
     this.loadGuestsData();
     this.communicationService.message$.subscribe(msg => {
@@ -118,6 +147,13 @@ export class GuestListComponent implements OnInit{
         if(this.eventTitle.length > 29){
           this.guest_list_header_extended = "guest-list-header-extended";
         }
+      }
+    });
+    this.communicationService.triggerAction$.subscribe((action) => {
+      console.log('Action reçue:', action);
+
+      if (action.msg === 'reload') {
+        this.closeImportModal(action.alertConfig);
       }
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -154,6 +190,27 @@ export class GuestListComponent implements OnInit{
         (error) => {
           this.isLoading = false;
           console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
+    }
+  }
+
+  getInfoForfait(){
+    if (this.eventId) {
+      this.guestService.getInfoForfait(this.eventId).subscribe(
+        (response) => {
+          console.log("[getInfoForfait] Response :: ", response);
+          this.alertConfigs = {
+            currentGuests: response.total_guests,
+            maxGuests: response.max_guests,
+            currentPlan: response.plan,
+            eventName: response.title
+          }
+          console.log("[getInfoForfait] alertConfigs :: ", this.alertConfigs);
+        },
+        (error) => {
           console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';
         }
@@ -497,17 +554,36 @@ export class GuestListComponent implements OnInit{
       (error) => {
         this.isLoading = false;
 
-        console.error('❌ Erreur HTTP :', error);
+        console.error('❌ Erreur HTTP :', error.error.error);
 
         if (error.status === 409) {
           this.triggerError();
           this.errorMessage = "Vous essayez d'enregistrer un invité qui existe déjà.";
           return;
         }
+        if (error.error.error === "PAYMENT_REQUIRED") {
+          // Afficher l'alerte
+          this.showAddGuestModal.set(false);
+          this.alertConfigs = this.alertConfigs;
+          this.showGuestLimitAlert = true;
+          return;
+        }
 
         this.errorMessage = "Une erreur est survenue, veuillez réessayer.";
       }
     );
+  }
+
+  onAlertDismissed(): void {
+    this.showGuestLimitAlert = false;
+  }
+
+  onUpgradeClicked(): void {
+    console.log('Redirection vers les tarifs');
+  }
+
+  onManageClicked(): void {
+    console.log('Redirection vers la gestion des invités');
   }
 
   downloadQRCode(guest: any) {
@@ -571,8 +647,10 @@ export class GuestListComponent implements OnInit{
     this.eventsId = this.eventId;
   }
 
-  closeImportModal() {
+  closeImportModal(alertConfig?: any) {
     this.showImportModal.set(false);
+    this.alertConfigs = alertConfig;
+    this.showGuestLimitAlert = true;
   }
 
   navigateToEventPage(){

@@ -336,6 +336,17 @@
 <div>
 <!-- <app-footer></app-footer> -->
 
+    <div *ngIf="showGuestLimitAlert" @slideDown>
+        <app-guest-limit-alert
+            [config]="alertConfigs"
+            [showAlert]="showGuestLimitAlert"
+            (dismissed)="onAlertDismissed()"
+            (upgradeClicked)="onUpgradeClicked()"
+            (manageClicked)="onManageClicked()"
+            >
+        </app-guest-limit-alert>
+    </div>
+
     <!-- Add Guest Modal -->
     <app-add-guest-modal
         *ngIf="showAddGuestModal()"

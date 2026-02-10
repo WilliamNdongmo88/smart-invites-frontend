@@ -80,7 +80,7 @@ interface Feedback {
   styleUrls: ['./admin-dashboard.component.scss']
 })
 export class AdminDashboardComponent implements OnInit {
-  activeTab = 'feedback';
+  activeTab = 'visitors';
 
   // Pagination
   currentPage = 1;
@@ -216,10 +216,10 @@ export class AdminDashboardComponent implements OnInit {
   selectedGuest: Guest | null = null;
 
   tabs = [
-    { id: 'feedback', label: '💬 Retours d\'Impression' },
     { id: 'visitors', label: '👥 Visiteurs' },
     { id: 'users', label: '👤 Utilisateurs' },
     { id: 'guests', label: '🎫 Invités' },
+    { id: 'feedback', label: '💬 Retours d\'Impression' },
     { id: 'maintenance', label: '🛠️ Maintenance' },
   ];
 
@@ -297,7 +297,7 @@ export class AdminDashboardComponent implements OnInit {
   getAllUsers(dataEmails: any) {
     this.feedbackService.getAllUsers(dataEmails).subscribe({
       next: (datas: any[]) => {
-        console.log('[allUsers]:', datas);
+        //console.log('[allUsers 1]:', datas);
 
         // 1️⃣ Extraire les emails abonnés
         const subscriberEmails = new Set(datas);
@@ -309,6 +309,15 @@ export class AdminDashboardComponent implements OnInit {
               ? 'subscribed'
               : 'unsbscribed'
       }));
+
+        console.log('[feedbacks enriched]:', this.feedbacks);
+      },
+      error: err => console.error(err)
+    });
+    this.authService.getAllUsers().subscribe({
+      next: (datas: any[]) => {
+        console.log('[allUsers 2]:', datas);
+        this.users = datas;
 
         console.log('[feedbacks enriched]:', this.feedbacks);
       },

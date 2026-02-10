@@ -324,7 +324,7 @@
                 </div>
               </div>
 
-              <div class="form-row">
+              <div *ngIf="currentUser?.plan == 'professionnel'" class="form-row">
                 <div class="form-group">
                   <label for="totalGuests">Nombre d'invités max</label>
                   <input type="number" id="totalGuests" name="totalGuests" [(ngModel)]="eventData.totalGuests"
@@ -337,7 +337,14 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="budget">Budget estimé (€)</label>
+                  <!-- Budget estimé (€) -->
+                  <label for="budget">Budget estimé (XAF)</label>
+                  <input type="number" id="budget" name="budget" [(ngModel)]="eventData.budget" class="form-input" />
+                </div>
+              </div>
+              <div *ngIf="currentUser?.plan == 'gratuit'" class="form-rows">
+                <div class="form-group">
+                  <label for="budget">Budget estimé (XAF)</label>
                   <input type="number" id="budget" name="budget" [(ngModel)]="eventData.budget" class="form-input" />
                 </div>
               </div>
@@ -902,3 +909,13 @@
         [message]="errorMessage"
         (closed)="closeErrorModal()">
     </app-error-modal>
+    <div *ngIf="showGuestLimitAlert" @slideDown>
+        <app-guest-limit-alert
+            [configEvent]="alertConfigEvent"
+            [showAlert]="showGuestLimitAlert"
+            (dismissed)="onAlertDismissed()"
+            (upgradeClicked)="onUpgradeClicked()"
+            (manageClicked)="onManageClicked()"
+            >
+        </app-guest-limit-alert>
+    </div>

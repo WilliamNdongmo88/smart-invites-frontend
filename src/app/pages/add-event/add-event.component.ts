@@ -9,6 +9,8 @@ import { CommunicationService } from '../../services/share.service';
 import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ErrorModalComponent } from "../../components/error-modal/error-modal";
+import { animate, style, transition, trigger } from '@angular/animations';
+import { GuestLimitAlertComponent } from '../../components/guest-limit-alert/guest-limit-alert.component';
 
 interface InvitationData {
   // Informations de l'événement
@@ -49,6 +51,11 @@ interface InvitationData {
   heartIconUrl?: string;
 }
 
+interface EventLimitAlertConfig {
+  currentEvents: number;
+  maxEvents: number;
+  currentPlan: 'free' | 'professional' | 'enterprise';
+}
 
 @Pipe({ name: 'safe', standalone: true })
 export class SafePipe implements PipeTransform {
@@ -60,12 +67,30 @@ export class SafePipe implements PipeTransform {
 @Component({
   selector: 'app-add-event',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, SpinnerComponent, SafePipe, ErrorModalComponent],
+  imports: [CommonModule, FormsModule, RouterLink, SpinnerComponent, SafePipe, ErrorModalComponent, GuestLimitAlertComponent],
   templateUrl: './add-event.component.html',
-  styleUrls: ['./add-event.component.scss']
+  styleUrls: ['./add-event.component.scss'],
+  animations: [
+      trigger('slideDown', [
+        transition(':enter', [
+          style({ height: 0, opacity: 0, transform: 'translateY(-10px)' }),
+          animate(
+            '300ms ease-out',
+            style({ height: '*', opacity: 1, transform: 'translateY(0)' })
+          )
+        ]),
+        transition(':leave', [
+          animate(
+            '200ms ease-in',
+            style({ height: 0, opacity: 0, transform: 'translateY(-10px)' })
+          )
+        ])
+      ])
+    ]
 })
 export class AddEventComponent implements OnInit{
   currentStep = signal(1);
+  showAddGuestModal = signal(false);
   errorMessage : string ='';
   isLoading = false;
   showWeddingNames = false;
@@ -82,6 +107,8 @@ export class AddEventComponent implements OnInit{
   pdfModelUrl: string | null = null;   // Pour l'aperçu (base64)
   newFile = false;
   defaultPdfUrl = 'pdfs/default_invitation_card.pdf';
+  showGuestLimitAlert = false;
+  alertConfigEvent: EventLimitAlertConfig | null = null;
 
   eventData = {
     title: '',
@@ -104,7 +131,7 @@ export class AddEventComponent implements OnInit{
     allowPlusOne: true,
   };
 
-    invitationData: InvitationData = {
+  invitationData: InvitationData = {
     eventName: '',
     eventDate: '',
     eventTime: '',
@@ -147,8 +174,9 @@ export class AddEventComponent implements OnInit{
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
-      this.organizerId = user?.id 
+      this.organizerId = user?.id;
     });
+    this.getInfoForfait();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -168,12 +196,15 @@ export class AddEventComponent implements OnInit{
         this.eventData.location &&
         this.eventData.banquetTime
       );
-    }else if (step === 2) {
+    }else if (step === 2 && this.currentUser?.plan == 'professionnel') {
       return !!(
         this.eventData.eventNameConcerned1 &&
         this.eventData.eventNameConcerned2 &&
         this.eventData.totalGuests
       );
+    }else if (step === 2 && this.currentUser?.plan == 'gratuit') {
+      this.eventData.totalGuests = 50;
+      console.log("totalGuests: ", this.eventData.totalGuests);
     }
 
     return true;
@@ -195,8 +226,8 @@ export class AddEventComponent implements OnInit{
   nextStep(form: NgForm) {
     if (this.currentStep() < 5) {
       console.log('this.currentStep():', this.currentStep()+1);
-      // console.log('this.eventData:', this.eventData);
-      // console.log("this.invitationData: ", this.invitationData);
+      //console.log('this.eventData:', this.eventData);
+      //console.log("this.invitationData: ", this.invitationData);
       if (this.eventData.type=='wedding') {
         this.showWeddingNames = true;
         this.showEngagementNames = false;
@@ -328,12 +359,32 @@ export class AddEventComponent implements OnInit{
     this.invitationData.nameConcerned2 = this.eventData.eventNameConcerned2;
   }
 
+  getInfoForfait(){
+    if (this.organizerId) {
+      this.authService.getUserInfoForfait(this.organizerId).subscribe(
+        (response) => {
+          console.log("[getInfoForfait] Response :: ", response);
+          this.alertConfigEvent = {
+            currentEvents: response.user.currentEvent,
+            maxEvents: 1,
+            currentPlan: response.user.plan,
+          }
+          console.log("[alertConfigEvent] :: ", this.alertConfigEvent);
+        },
+        (error) => {
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
+    }
+  }
+
   onSubmit() {
     const datas = [];
     if (this.selectedPdfFile) {
       const formData = new FormData();
       // 'pdfFile' est la clé que le backend utilisera pour récupérer le fichier
-      formData.append('pdfFile', this.selectedPdfFile, this.selectedPdfFile.name);
+      formData.append('file', this.selectedPdfFile, this.selectedPdfFile.name);
 
       const eventDatas : CreateEventRequest = {
         organizerId: this.organizerId,
@@ -345,7 +396,7 @@ export class AddEventComponent implements OnInit{
         religiousTime: this.eventData.religiousTime,
         eventCivilLocation: this.eventData.civilLocation,
         eventLocation: this.eventData.location,
-        maxGuests: this.eventData.totalGuests,
+        maxGuests: this.currentUser?.plan == 'professionnel' ? this.eventData.totalGuests : 50,
         hasPlusOne: this.eventData.allowPlusOne,
         budget: this.eventData.budget,
         type: this.eventData.type,
@@ -359,6 +410,7 @@ export class AddEventComponent implements OnInit{
         hasInvitationModelCard: this.eventData.hasInvitationModelCard,
       }
       datas.push(eventDatas);
+      console.log("datas: ", datas);
       formData.append('eventDatas', JSON.stringify(datas));
       formData.append('eventInvitationNote', JSON.stringify(eventInvitationNote));
       // console.log('PDF Firebase URL :', formData.get('pdfFile'));
@@ -376,6 +428,13 @@ export class AddEventComponent implements OnInit{
           this.isLoading = false;
           console.error('❌ Erreur de creation :', error);
           console.log("Message :: ", error.message);
+          if (error.error.error === "PAYMENT_REQUIRED") {
+            // Afficher l'alerte
+            this.showAddGuestModal.set(false);
+            this.alertConfigEvent = this.alertConfigEvent;
+            this.showGuestLimitAlert = true;
+            return;
+          }
           this.errorMessage = error.message || 'Erreur de connexion';
         }
       );
@@ -390,7 +449,7 @@ export class AddEventComponent implements OnInit{
         religiousTime: this.eventData.religiousTime,
         eventCivilLocation: this.eventData.civilLocation,
         eventLocation: this.eventData.location,
-        maxGuests: this.eventData.totalGuests,
+        maxGuests: this.currentUser?.plan == 'professionnel' ? this.eventData.totalGuests : 50,
         hasPlusOne: this.eventData.allowPlusOne,
         budget: this.eventData.budget,
         type: this.eventData.type,
@@ -426,7 +485,7 @@ export class AddEventComponent implements OnInit{
         eventInvitationNote: eventInvitationNote
       }
 
-      //console.log('Event created:', data);
+      console.log('Event created:', data);
       this.isLoading = true;
       this.eventService.createEvent(data).subscribe(
         (response) => {
@@ -437,8 +496,15 @@ export class AddEventComponent implements OnInit{
         },
         (error) => {
           this.isLoading = false;
-          console.error('❌ Erreur de creation :', error);
+          console.error('❌ Erreur de creation :', error.error.error);
           console.log("Message :: ", error.message);
+          if (error.error.error === "PAYMENT_REQUIRED") {
+            // Afficher l'alerte
+            this.showAddGuestModal.set(false);
+            this.alertConfigEvent = this.alertConfigEvent;
+            this.showGuestLimitAlert = true;
+            return;
+          }
           this.errorMessage = error.message || 'Erreur de connexion';
         }
       );
@@ -544,6 +610,18 @@ export class AddEventComponent implements OnInit{
 
   closeErrorModal() {
     this.showErrorModal = false;
+  }
+
+  onAlertDismissed(): void {
+    this.showGuestLimitAlert = false;
+  }
+
+  onUpgradeClicked(): void {
+    console.log('Redirection vers les tarifs');
+  }
+
+  onManageClicked(): void {
+    console.log('Redirection vers la gestion des invités');
   }
 }
 

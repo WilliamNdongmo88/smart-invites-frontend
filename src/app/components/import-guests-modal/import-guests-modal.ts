@@ -1,11 +1,12 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ImportedGuest, ImportGuestService } from '../../services/import-guest.service';
 import { GuestService } from '../../services/guest.service';
 import { SpinnerComponent } from "../spinner/spinner";
 import { ErrorModalComponent } from "../error-modal/error-modal";
-import { I } from '@angular/cdk/keycodes';
+import { GuestLimitAlertConfig, GuestLimitAlertComponent } from '../guest-limit-alert/guest-limit-alert.component';
+import { CommunicationService } from '../../services/share.service';
 
 type ImportStep = 'upload' | 'preview' | 'success';
 
@@ -14,9 +15,9 @@ type ImportStep = 'upload' | 'preview' | 'success';
   standalone: true,
   imports: [CommonModule, FormsModule, SpinnerComponent, ErrorModalComponent],
   templateUrl: `import-guests-modal.html`,
-  styleUrl: `import-guests-modal.scss`
+  styleUrl: `import-guests-modal.scss`,
 })
-export class ImportGuestsModalComponent {
+export class ImportGuestsModalComponent implements OnChanges {
   @Output() guestsImported = new EventEmitter<ImportedGuest[]>();
   @Output() closed = new EventEmitter<void>();
   @Output() refresh = new EventEmitter<void>();
@@ -25,21 +26,30 @@ export class ImportGuestsModalComponent {
   currentStep = signal<ImportStep>('upload');
   selectedFile = signal<File | null>(null);
   isDragOver = signal(false);
+  showAddGuestModal = signal(false);
   isLoading: boolean = false;
   isModalLoading: boolean = false;
   importedGuests: any = [];
   importErrors: string[] = [];
   showErrorModal = false;
   errorMessage = '';
+  showGuestLimitAlert = false;
+  alertConfigs: GuestLimitAlertConfig | null = null;
 
   itemsPerPage = 10;
   currentPage = 1;
 
   constructor(
     private importService: ImportGuestService,
-    private guestService: GuestService
+    private guestService: GuestService,
+    private communicationService: CommunicationService
     
   ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log("---On changes ---")
+    this.getInfoForfait();
+  }
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -105,6 +115,26 @@ export class ImportGuestsModalComponent {
     }
   }
 
+  getInfoForfait(){
+    if (this.eventId) {
+      this.guestService.getInfoForfait(this.eventId).subscribe(
+        (response) => {
+          // console.log("[getInfoForfait] Response :: ", response);
+          this.alertConfigs = {
+            currentGuests: response.total_guests,
+            maxGuests: response.max_guests,
+            currentPlan: response.plan,
+            eventName: response.title
+          }
+        },
+        (error) => {
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
+    }
+  }
+
   confirmImport() {
     this.isModalLoading = true;
     const datas = [];
@@ -132,8 +162,21 @@ export class ImportGuestsModalComponent {
       },
       (error) => {
         this.isModalLoading = false;
-        console.error('❌ Erreur :', error.message);
-        console.error('❌ Erreur :', error.error);
+        console.error('❌ Erreur :', error.error.error);
+        if (error.error.error === "PAYMENT_REQUIRED") {
+          // Afficher l'alerte
+          console.log("### Afficher l'alerte ###");
+          const data = {
+            msg:'reload',
+            alertConfig:{
+              currentGuests: 50,
+              currentPlan: this.alertConfigs?.currentPlan,
+              maxGuests: this.alertConfigs?.maxGuests,
+              eventName: this.alertConfigs?.eventName
+            }
+          }
+          this.communicationService.triggerSenderAction(data);
+        } 
         if(error.status === 409){
           this.triggerError();
           this.errorMessage = "Vous essayez d'enregistrer un ou plusieurs invités déjà présents.";
@@ -211,6 +254,18 @@ export class ImportGuestsModalComponent {
 
   closeErrorModal() {
     this.showErrorModal = false;
+  }
+
+  onAlertDismissed(): void {
+    this.showGuestLimitAlert = false;
+  }
+
+  onUpgradeClicked(): void {
+    console.log('Redirection vers les tarifs');
+  }
+
+  onManageClicked(): void {
+    console.log('Redirection vers la gestion des invités');
   }
 }
 

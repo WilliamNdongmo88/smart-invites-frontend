@@ -2,6 +2,7 @@
     <!-- Header -->
     <div class="pricing-header">
     <div class="container">
+        <a (click)="retour()" class="back-link">← Retour</a>
         <h1>Nos Tarifs</h1>
         <p>Choisissez le plan qui vous convient le mieux</p>
     </div>
@@ -10,9 +11,28 @@
     <!-- Main content -->
     <div class="container py-12">
     <!-- Pricing Toggle -->
-    <div class="pricing-toggle">
+    <!-- <div class="pricing-toggle">
         <button class="toggle-btn active">Facturation mensuelle</button>
         <button class="toggle-btn">Facturation annuelle</button>
+        <span class="save-badge">Économisez 20%</span>
+    </div> -->
+    <div class="pricing-toggle">
+        <button
+            class="toggle-btn"
+            [class.active]="billingCycle === 'monthly'"
+            (click)="setBillingCycle('monthly')"
+        >
+            Facturation mensuelle
+        </button>
+
+        <button
+            class="toggle-btn"
+            [class.active]="billingCycle === 'yearly'"
+            (click)="setBillingCycle('yearly')"
+        >
+            Facturation annuelle
+        </button>
+
         <span class="save-badge">Économisez 20%</span>
     </div>
 
@@ -25,12 +45,20 @@
         <p class="plan-description">{{ plan.description }}</p>
 
         <div class="price">
-            <span class="currency">€</span>
+            <!-- <span class="currency">€</span> -->
+            <span class="currency">XAF</span>
             <span class="amount">{{ plan.price }}</span>
             <span class="period">{{ plan.period }}</span>
         </div>
 
-        <button class="btn btn-primary" style="width: 100%; margin-bottom: 2rem;">
+        <!-- <button class="btn btn-primary" style="width: 100%; margin-bottom: 2rem;">
+            Commencer
+        </button> -->
+        <button
+            class="btn btn-primary"
+            style="width: 100%; margin-bottom: 2rem;"
+            (click)="startPlan(plan)"
+            >
             Commencer
         </button>
 
@@ -53,68 +81,68 @@
                 <th>Fonctionnalité</th>
                 <th>Gratuit</th>
                 <th>Professionnel</th>
-                <th>Entreprise</th>
+                <!-- <th>Entreprise</th> -->
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td>Nombre d'événements</td>
                 <td>1</td>
-                <td>Illimité</td>
+                <!-- <td>Illimité</td> -->
                 <td>Illimité</td>
             </tr>
             <tr>
                 <td>Nombre d'invités</td>
                 <td>50</td>
-                <td>500</td>
+                <!-- <td>500</td> -->
                 <td>Illimité</td>
             </tr>
             <tr>
                 <td>Codes QR</td>
                 <td>✓</td>
-                <td>✓</td>
+                <!-- <td>✓</td> -->
                 <td>✓</td>
             </tr>
             <tr>
                 <td>Gestion des invités</td>
                 <td>✓</td>
-                <td>✓</td>
+                <!-- <td>✓</td> -->
                 <td>✓</td>
             </tr>
             <tr>
                 <td>Import CSV/Excel</td>
                 <td>-</td>
-                <td>✓</td>
+                <!-- <td>✓</td> -->
                 <td>✓</td>
             </tr>
             <tr>
                 <td>Restrictions alimentaires</td>
                 <td>-</td>
-                <td>✓</td>
+                <!-- <td>✓</td> -->
                 <td>✓</td>
             </tr>
             <tr>
                 <td>Rapports avancés</td>
                 <td>-</td>
-                <td>✓</td>
+                <!-- <td>✓</td> -->
                 <td>✓</td>
             </tr>
             <tr>
                 <td>Support prioritaire</td>
                 <td>-</td>
-                <td>-</td>
+                <!-- <td>-</td> -->
                 <td>✓</td>
             </tr>
             <tr>
                 <td>API personnalisée</td>
                 <td>-</td>
-                <td>-</td>
+                <!-- <td>-</td> -->
                 <td>✓</td>
             </tr>
             <tr>
                 <td>Intégrations personnalisées</td>
                 <td>-</td>
-                <td>-</td>
+                <!-- <td>-</td> -->
                 <td>✓</td>
             </tr>
             </tbody>
@@ -138,7 +166,8 @@
 
         <div class="faq-item">
             <h4>Quels sont les modes de paiement acceptés ?</h4>
-            <p>Nous acceptons les cartes de crédit, PayPal, et les virements bancaires pour les plans Entreprise.</p>
+            <!-- <p>Nous acceptons les cartes de crédit, PayPal, et les virements bancaires pour les plans Entreprise.</p> -->
+            <p>Nous acceptons pour le moment uniquement <b>Orange Money</b> et <b>MTN Money</b> pour les plans Professionnel.</p>
         </div>
 
         <div class="faq-item">
@@ -173,3 +202,9 @@
     </div>
     </div>
 </div>
+<app-payment-modal
+  [isOpen]="isPaymentModalOpen"
+  [selectedPlan]="selectedPlan"
+  (closeEvent)="closePaymentModal()"
+  (paymentSubmitted)="onPaymentSubmitted($event)"
+></app-payment-modal>

@@ -9,6 +9,7 @@ import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 import { CommunicationService } from '../../services/share.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { NavigationService } from '../../services/navigationService ';
 
 interface InvitationData {
   // Contenu personnalisé
@@ -67,7 +68,7 @@ export class SafePipe implements PipeTransform {
 }@Component({
   selector: 'app-edit-event',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, 
+  imports: [CommonModule, FormsModule, 
     SpinnerComponent, ErrorModalComponent, 
     ConfirmDeleteModalComponent, SafePipe],
   templateUrl: 'edit-event.component.html',
@@ -140,6 +141,7 @@ export class EditEventComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private eventService: EventService,
+    private navigationService: NavigationService,
     private communicationService: CommunicationService,
     private router: Router) {}
 
@@ -429,7 +431,7 @@ export class EditEventComponent implements OnInit {
     if (this.selectedPdfFile) {
       const formData = new FormData();
       // 'pdfFile' est la clé que le backend utilisera pour récupérer le fichier
-      formData.append('pdfFile', this.selectedPdfFile, this.selectedPdfFile.name);
+      formData.append('file', this.selectedPdfFile, this.selectedPdfFile.name);
       //console.log('pdfModelUrl :', this.pdfModelUrl);
 
       const eventDatas : CreateEventRequest = {
@@ -571,11 +573,12 @@ export class EditEventComponent implements OnInit {
 
     if (file.type === 'application/pdf') {
       this.selectedPdfFile = file;
-      // console.log('Fichier PDF sélectionné :', this.selectedPdfFile);
+      //console.log('Fichier PDF sélectionné :', this.selectedPdfFile);
 
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
         this.pdfModelUrl = e.target?.result as string;
+        //console.log('Fichier PDF sélectionné :', this.pdfModelUrl);
       };
       reader.readAsDataURL(file);
       this.newFile = !this.newFile;
@@ -741,6 +744,10 @@ export class EditEventComponent implements OnInit {
     this.invitationData.titleColor = '#b58b63';
     this.invitationData.topBandColor = '#0055A4';
     this.invitationData.bottomBandColor = '#EF4135';
+  }
+
+  navigaToEvents(){
+    this.router.navigateByUrl(this.navigationService.back());
   }
 }
 

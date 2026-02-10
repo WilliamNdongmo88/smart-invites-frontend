@@ -8,7 +8,7 @@
 .edit-guest-header {
     background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
     border-bottom: 1px solid #E0E0E0;
-    padding: 2rem 0;
+    padding: 1rem 0;
 }
 
 .back-link {
@@ -53,7 +53,7 @@
 
 .form-wrapper {
     max-width: 696px;
-    margin: 0 auto;
+    margin: 0px 12px 0 4px;
 }
 
 .tabs {
@@ -370,20 +370,20 @@ small {
 
 @media (max-width: 768px) {
     .header-content {
-    flex-direction: column;
-    align-items: flex-start;
+        flex-direction: row;
+        align-items: flex-start;
     }
 
     .tabs {
-    gap: 0;
+        gap: 0;
     }
 
     .tab {
-    padding: 0.75rem 0.5rem;
-    font-size: 0.75rem;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.75rem;
     }
 
     .form-actions {
-    flex-direction: column;
+      flex-direction: column;
     }
 }

@@ -1,0 +1,135 @@
+<div class="alert-container" *ngIf="showAlert" [@slideDown] role="alertdialog" aria-labelledby="alertTitle" aria-describedby="alertMessage">
+    <div class="alert-content">
+        <!-- Icon -->
+        <!-- <div class="alert-icon" aria-hidden="true">
+            <span class="icon-emoji">⚠️</span>
+        </div> -->
+
+        <!-- Main Content -->
+        <div class="alert-main">
+            <!-- Title -->
+            <h3 *ngIf="maxEvents" id="alertTitle" class="alert-title">
+                <span class="icon-emoji">⚠️</span> Limite événements atteinte
+            </h3>
+            <h3 *ngIf="maxGuests" id="alertTitle" class="alert-title">
+                Limite d'invités atteinte
+            </h3>
+
+            <!-- Message -->
+            <p *ngIf="maxEvents" id="alertMessage" class="alert-message">
+                Vous avez atteint la limite de <strong>{{ maxEvents }} événement</strong>
+                pour le plan <strong>{{ getPlanLabel() }}</strong>.
+            </p>
+            <p *ngIf="maxGuests" id="alertMessage" class="alert-message">
+                Vous avez atteint la limite de <strong>{{ maxGuests }} invités</strong>
+                pour le plan <strong>{{ getPlanLabel() }}</strong> sur l'événement
+                <strong>"{{ eventName }}"</strong>.
+            </p>
+
+            <!-- Details -->
+            <div *ngIf="maxEvents"  class="alert-details">
+                <div class="detail-item">
+                    <span class="detail-label">Evénement actuel :</span>
+                    <span class="detail-value">{{ currentEvents }}/{{ maxEvents }}</span>
+                </div>
+                <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="currentGuests" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maxGuests">
+                    <div class="progress-fill" [style.width.%]="(currentGuests / maxGuests) * 100"></div>
+                </div>
+            </div>
+            <div *ngIf="maxGuests"  class="alert-details">
+                <div class="detail-item">
+                    <span class="detail-label">Invités actuels :</span>
+                    <span class="detail-value">{{ currentGuests }}/{{ maxGuests }}</span>
+                </div>
+                <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="currentGuests" [attr.aria-valuemin]="0" [attr.aria-valuemax]="maxGuests">
+                    <div class="progress-fill" [style.width.%]="(currentGuests / maxGuests) * 100"></div>
+                </div>
+            </div>
+
+            <!-- Options -->
+            <div class="alert-options">
+                <!-- Option 1: Upgrade Plan -->
+                <div *ngIf="maxEvents" class="option upgrade-option">
+                    <div class="option-header">
+                        <span class="option-icon" aria-hidden="true">⭐</span>
+                        <h4>Passer au plan Professionnel</h4>
+                    </div>
+                    <p class="option-description">
+                        Créez une <strong>infinité d'événements</strong> sans limite,
+                        accédez à toutes les fonctionnalités avancées et bénéficiez du support prioritaire.
+                    </p>
+                    <button class="btn btn-primary" (click)="upgradePlan()">
+                        Découvrir le plan Professionnel →
+                    </button>
+                </div>
+                <div *ngIf="maxGuests" class="option upgrade-option">
+                    <div class="option-header">
+                        <span class="option-icon" aria-hidden="true">⭐</span>
+                        <h4>Passer au plan Professionnel</h4>
+                    </div>
+                    <p class="option-description">
+                        Créez une <strong>infinité d'invités</strong> sans limite,
+                        accédez à toutes les fonctionnalités avancées et bénéficiez du support prioritaire.
+                    </p>
+                    <button class="btn btn-primary" (click)="upgradePlan()">
+                        Découvrir le plan Professionnel →
+                    </button>
+                </div>
+
+                <!-- Option 2: Manage Guests -->
+                <div *ngIf="maxGuests" class="option manage-option">
+                    <div class="option-header">
+                        <span class="option-icon" aria-hidden="true">👥</span>
+                        <h4>Gérer vos invités</h4>
+                    </div>
+                    <p class="option-description">
+                        Supprimez les invités non confirmés ou fusionnez les événements
+                        pour libérer de la place.
+                    </p>
+                    <button class="btn btn-outline" (click)="manageGuests()">
+                        Gérer les invités
+                    </button>
+                </div>
+            </div>
+
+            <!-- Benefits Preview -->
+            <div class="benefits-preview">
+                <h4>Avantages du plan Professionnel :</h4>
+                <ul class="benefits-list">
+                    <li>
+                        <span class="benefit-icon" aria-hidden="true">✓</span>
+                        <span>Invités illimités</span>
+                    </li>
+                    <li>
+                        <span class="benefit-icon" aria-hidden="true">✓</span>
+                        <span>Événements illimités</span>
+                    </li>
+                    <li>
+                        <span class="benefit-icon" aria-hidden="true">✓</span>
+                        <span>Codes QR avancés</span>
+                    </li>
+                    <li>
+                        <span class="benefit-icon" aria-hidden="true">✓</span>
+                        <span>Support prioritaire 24/7</span>
+                    </li>
+                    <li>
+                        <span class="benefit-icon" aria-hidden="true">✓</span>
+                        <span>Rapports détaillés</span>
+                    </li>
+                    <li>
+                        <span class="benefit-icon" aria-hidden="true">✓</span>
+                        <span>Intégrations avancées</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Close Button -->
+        <button class="close-btn" (click)="dismissAlert()" title="Fermer" aria-label="Fermer l'alerte">
+            ✕
+        </button>
+    </div>
+
+    <!-- Backdrop -->
+    <div class="alert-backdrop" (click)="dismissAlert()"></div>
+</div>

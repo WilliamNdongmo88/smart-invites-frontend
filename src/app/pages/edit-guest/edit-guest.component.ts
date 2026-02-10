@@ -7,6 +7,7 @@ import { SpinnerComponent } from "../../components/spinner/spinner";
 import { CommunicationService } from '../../services/share.service';
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 import { from } from 'rxjs';
+import { NavigationService } from '../../services/navigationService ';
 
 interface Guest {
   id: number;
@@ -72,6 +73,7 @@ export class EditGuestComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private guestService: GuestService,
+    private navigationService: NavigationService,
     private communicationService: CommunicationService,
     private router: Router) {}
 
@@ -253,7 +255,8 @@ export class EditGuestComponent implements OnInit {
 
   gobackToGuestList() {
     this.send(this.eventTile);
-    this.router.navigate(['/events', this.eventId, 'guests']);
+    // this.router.navigate(['/events', this.eventId, 'guests']);
+    this.router.navigateByUrl(this.navigationService.back());
   }
   send(message: any) {
     this.communicationService.sendMessage(message);

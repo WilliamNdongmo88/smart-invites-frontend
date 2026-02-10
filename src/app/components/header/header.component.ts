@@ -69,7 +69,7 @@ export class HeaderComponent implements OnInit {
     // On écoute l’état d’authentification
     this.authSub = this.authService.isAuthenticated$.subscribe(status => {
       this.isAuthenticated = status;
-      //console.log('Header rafraîchi - Connecté =', status);
+      console.log('[HeaderComponent] isAuthenticated ? ', this.isAuthenticated);
     });
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
@@ -92,15 +92,40 @@ export class HeaderComponent implements OnInit {
     this.communicationService.triggerAction$.subscribe((action) => {
       console.log('Action reçue:', action);
 
+      if (action) {
+        this.isAuthenticated = action;
+      }
       if (action === 'refresh') {
         this.loadNotifications();
       }
-
       if (action === 'hide-scanner') {
         this.isScanning = false;
       }
     });
     this.loadNotifications();
+    this.getUserInfoForfait();
+  }
+
+  getUserInfoForfait(){
+    if (this.currentUser?.id) {
+      this.authService.getUserInfoForfait(this.currentUser.id).subscribe(
+        (response) => {
+          console.log("[getUserInfoForfait] Response :: ", response.user);
+          console.log("[getUserInfoForfait] currentUser :: ", this.currentUser);
+          this.currentUser = {
+              id: response.user.id,
+              email: response.user.email,
+              name: response.user.name,
+              role: response.user.role,
+              plan: response.user.plan
+            }
+        },
+        (error) => {
+          console.log("Message :: ", error.message);
+          this.errorMessage = error.message || 'Erreur de connexion';
+        }
+      );
+    }
   }
 
   loadNotifications() {
@@ -209,6 +234,21 @@ export class HeaderComponent implements OnInit {
 
     // Si déjà connecté
     this.router.navigate(['/scanner']);
+  }
+
+  navigateToPricing(){
+    console.log('isAuthenticated:', this.isAuthenticated);
+
+    // if (!this.isAuthenticated) {
+    //   this.router.navigate(
+    //     ['/login'],
+    //     { queryParams: { returnUrl: '/pricing' } }
+    //   );
+    //   return;
+    // }
+
+    // Si déjà connecté
+    this.router.navigate(['/pricing']);
   }
 
   scanQrCode(){

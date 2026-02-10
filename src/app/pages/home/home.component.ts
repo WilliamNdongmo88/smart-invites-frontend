@@ -43,5 +43,33 @@ export class HomeComponent implements OnInit {
   navigateToSignup() {
     this.router.navigate(['/signup']);
   }
+
+  scrollTo(sectionId: string) {
+    const element = document.getElementById(sectionId);
+
+    if (element) {
+      const headerOffset = 30;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  }
+
+  navigateToHome(){
+    this.router.navigate(['/']);
+    this.scrollTo('features');
+  }
+
+  navigateToPricing(){
+    this.router.navigate(['/pricing']);
+  }
+
+  navigateToContact(){
+    this.router.navigate(['/contact']);
+  }
 }
 

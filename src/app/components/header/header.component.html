@@ -1,121 +1,199 @@
 <header class="header" *ngIf="isShowHeader">
-  <div class="container flex flex-between">
-
-    <!-- Logo -->
-    <a routerLink="/" class="logo">
-      <img src="img/logo-original.png" alt="Smart Invite" class="logo-img" />
-      <span class="logo-text hide-mobile">Smart Invite</span>
-    </a>
-
-    <!-- Desktop Navigation -->
-    <nav class="nav hide-mobile" *ngIf="!(isMobile | async)">
+  <div class="container">
+    <div class="header-wrapper">
       
-      <!-- Utilisateur NON connecté -->
-      <ng-container *ngIf="!isAuthenticated; else loggedInDesktop">
-        <a *ngIf="isMobile | async" (click)="scrollTo('accueil')" class="nav-link">Accueil</a>
-        <a (click)="navigateToHome()" class="nav-link">Fonctionnalités</a>
-        <a (click)="navigateToScanner()" class="nav-link nav-link-cursor nav-hover">Scanner</a>
-        <!-- <a routerLink="/pricing" class="nav-link">Tarifs</a> -->
-        <a routerLink="/contact" class="nav-link">Contact</a>
-        <button class="btn btn-primary" (click)="navigateToLogin()">Connexion</button>
-      </ng-container>
+      <!-- Logo Section -->
+      <a routerLink="/" class="logo">
+        <div class="logo-icon-wrapper">
+          <img src="img/logo-original.png" alt="Smart Invite" class="logo-img" />
+        </div>
+        <span class="logo-text hide-mobile">Smart Invite</span>
+      </a>
 
-      <!-- Utilisateur connecté -->
-      <ng-template #loggedInDesktop>
+      <!-- Desktop Navigation -->
+      <nav class="nav hide-mobile" *ngIf="!(isMobile | async)">
+        
+        <!-- Public Links -->
+        <ng-container *ngIf="!isAuthenticated">
+          <a (click)="navigateToHome()" class="nav-link">Fonctionnalités</a>
+          <a (click)="navigateToScanner()" class="nav-link">Scanner</a>
+          <a (click)="navigateToPricing()" class="nav-link">Tarifs</a>
+          <a routerLink="/contact" class="nav-link">Contact</a>
+        </ng-container>
+
+        <!-- Authenticated Links -->
+        <ng-container *ngIf="isAuthenticated">
+          <a *ngIf="currentUser?.role === 'admin'" (click)="goToPageAdmin()" class="nav-link admin-link">Administration</a>
+          <a (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="nav-link">Tarifs</a>
+          <a *ngIf="isScanning" (click)="scanQrCode()" class="nav-link">Scanner</a>
+        </ng-container>
+
+        <!-- Plan Indicator (Visible when logged in) -->
+        <div class="plan-indicator" *ngIf="isAuthenticated" [class.plan-pro]="currentUser?.plan === 'professionnel'">
+          <span class="plan-badge">
+            {{ currentUser?.plan === 'professionnel' ? 'PRO' : 'GRATUIT' }}
+          </span>
+        </div>
+
+        <!-- Actions -->
         <div class="header-actions">
-          <div class="notification-icon" role="button" (click)="openNotifications()">
-            🔔
+          <ng-container *ngIf="!isAuthenticated; else loggedInActions">
+            <button class="btn btn-primary btn-login" (click)="navigateToLogin()">
+              <span>Connexion</span>
+            </button>
+          </ng-container>
+
+          <ng-template #loggedInActions>
+            <!-- Notifications -->
+            <div class="notification-wrapper" role="button" (click)="openNotifications()">
+              <div class="notification-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <span class="notification-badge" *ngIf="unreadNotifications > 0">
+                  {{ unreadNotifications }}
+                </span>
+              </div>
+            </div>
+
+            <!-- User Profile -->
+            <div class="user-profile-trigger" (click)="goToProfile()">
+              <div class="user-avatar">
+                {{ currentUser?.name?.charAt(0) || 'U' }}
+              </div>
+              <span class="welcome-text">Bonjour, <strong>{{ currentUser?.name }}</strong></span>
+            </div>
+
+            <button class="btn btn-logout" (click)="logout()" title="Déconnexion">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </button>
+          </ng-template>
+        </div>
+      </nav>
+
+      <!-- Mobile Actions (Notifications + Menu Toggle) -->
+      <div *ngIf="isMobile | async" class="mobile-controls">
+        <div *ngIf="isAuthenticated" class="notification-wrapper" role="button" (click)="openNotifications()">
+          <div class="notification-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
             <span class="notification-badge" *ngIf="unreadNotifications > 0">
               {{ unreadNotifications }}
             </span>
           </div>
         </div>
-        <span class="welcome" (click)="goToProfile()">Bienvenue, {{ currentUser?.name }} !</span>
-        <a *ngIf="currentUser?.role=='admin'" (click)="goToPageAdmin()" class="nav-link bg-c">Administré</a>
-        <a *ngIf="isScanning" (click)="scanQrCode()" class="nav-link nav-link-cursor nav-hover">Scanner</a>
-        <button class="btns btns-primary" (click)="logout()">Déconnexion</button>
-      </ng-template>
-
-    </nav>
-
-    <!-- Mobile Menu Button -->
-    <div *ngIf="isMobile | async" class="header-actions">
-      <div *ngIf="isAuthenticated" class="notification-icon" role="button" (click)="openNotifications()">
-        🔔
-        <span class="notification-badge" *ngIf="unreadNotifications > 0">
-          {{ unreadNotifications }}
-        </span>
+        
+        <button class="mobile-menu-btn" (click)="toggleMobileMenu()" [class.active]="mobileMenuOpen()">
+          <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </button>
       </div>
+
     </div>
-    <button class="mobile-menu-btn show-mobile" (click)="toggleMobileMenu()">
-      <span *ngIf="!mobileMenuOpen()">☰</span>
-      <span *ngIf="mobileMenuOpen()">✕</span>
-    </button>
   </div>
 
-  <!-- Mobile Navigation -->
-  <nav class="mobile-nav show-mobile" *ngIf="mobileMenuOpen() && isMobile">
+  <!-- Mobile Navigation Overlay -->
+  <div class="mobile-nav-overlay" *ngIf="mobileMenuOpen() && (isMobile | async)" (click)="toggleMobileMenu(false)"></div>
+  
+  <nav class="mobile-nav" [class.open]="mobileMenuOpen() && (isMobile | async)">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">Menu</span>
+      <button class="close-btn" (click)="toggleMobileMenu(false)">✕</button>
+    </div>
 
-    <!-- Utilisateur NON connecté -->
-    <ng-container *ngIf="!isAuthenticated; else loggedInMobile">
-      <a (click)="scrollTo('accueil')" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Accueil</a>
-      <a (click)="navigateToHome()" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Fonctionnalités</a>
-      <a (click)="navigateToScanner()" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Scanner</a>
-      <!-- <a routerLink="/pricing" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Tarifs</a> -->
-      <a routerLink="/contact" class="mobile-nav-link" (click)="toggleMobileMenu(false)">Contact</a>
-      <button class="btn btn-primary w-100" (click)="navigateToLogin(); toggleMobileMenu(false)">Connexion</button>
-    </ng-container>
+    <div class="mobile-nav-content">
+      <!-- User Info in Mobile Menu -->
+      <div class="mobile-user-info" *ngIf="isAuthenticated">
+        <div class="user-avatar-large">
+          {{ currentUser?.name?.charAt(0) || 'U' }}
+        </div>
+        <div class="user-details">
+          <span class="user-name">{{ currentUser?.name }}</span>
+          <div class="plan-indicator-mobile" [class.plan-pro]="currentUser?.plan === 'professionnel'">
+            {{ currentUser?.plan === 'professionnel' ? 'Plan Professionnel' : 'Plan Gratuit' }}
+          </div>
+        </div>
+      </div>
 
-    <!-- Utilisateur connecté -->
-    <ng-template #loggedInMobile>
-      <a *ngIf="isScanning" (click)="scanQrCode(); toggleMobileMenu(false)" class="mobile-nav-link nav-hover">Scanner</a>
-      <a *ngIf="currentUser?.role=='admin'" (click)="goToPageAdmin()" class="nav-link bg-c">Administré</a>
-      <p class="mobile-nav-link welcome" (click)="goToProfile()">Bienvenue, {{ currentUser?.name }}!</p>
-      <button class="btns btns-primary w-100" (click)="logout(); toggleMobileMenu(false)">Déconnexion</button>
-    </ng-template>
+      <div class="mobile-links">
+        <ng-container *ngIf="!isAuthenticated">
+          <a (click)="scrollTo('accueil'); toggleMobileMenu(false)" class="mobile-nav-link">Accueil</a>
+          <a (click)="navigateToHome(); toggleMobileMenu(false)" class="mobile-nav-link">Fonctionnalités</a>
+          <a (click)="navigateToScanner(); toggleMobileMenu(false)" class="mobile-nav-link">Scanner</a>
+          <a (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="mobile-nav-link">Tarifs</a>
+          <a routerLink="/contact" (click)="toggleMobileMenu(false)" class="mobile-nav-link">Contact</a>
+          <div class="mobile-actions">
+            <button class="btn btn-primary btn-login w-100" (click)="navigateToLogin(); toggleMobileMenu(false)">Connexion</button>
+          </div>
+        </ng-container>
 
+        <ng-container *ngIf="isAuthenticated">
+          <div class="plan-indicator indicator" *ngIf="isAuthenticated" [class.plan-pro]="currentUser?.plan === 'professionnel'">
+            <span class="plan-badge">
+              {{ currentUser?.plan === 'professionnel' ? 'PRO' : 'GRATUIT' }}
+            </span>
+            <a (click)="goToProfile(); toggleMobileMenu(false)" class="mobile-nav-link">Mon Profil</a>
+            <a (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="mobile-nav-link">Tarifs</a>
+          </div>
+          <a *ngIf="isScanning" (click)="scanQrCode(); toggleMobileMenu(false)" class="mobile-nav-link">Scanner</a>
+          <a *ngIf="currentUser?.role === 'admin'" (click)="goToPageAdmin(); toggleMobileMenu(false)" class="mobile-nav-link admin-link">Administration</a>
+          <div class="mobile-actions">
+            <button class="btn btn-logout-mobile w-100" (click)="logout(); toggleMobileMenu(false)">Déconnexion</button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
   </nav>
 </header>
 
-<!-- Notifications Panel -->
+<!-- Notifications Panel (Modernized) -->
+<div class="notifications-backdrop" *ngIf="showNotifications()" (click)="closeNotifications()"></div>
 <div *ngIf="showNotifications()" class="notifications-panel">
   <div class="notifications-header">
-    <h2>Notifications</h2>
-    <button class="close-btn" (click)="closeNotifications()">✕</button>
+    <div class="header-title">
+      <h2>Notifications</h2>
+      <span class="notif-count" *ngIf="notifications.length > 0">{{ notifications.length }}</span>
+    </div>
+    <button class="close-btn-round" (click)="closeNotifications()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
   </div>
 
-  <div class="notifications-list">
+  <div class="notifications-list" *ngIf="notifications.length > 0; else noNotifs">
     <div *ngFor="let notification of notifications"
         class="notification-item"
-        (click)="!isSwiping && markAsRead(notification)"
-        [class.notif-read]="notification.is_read"
-        (touchstart)="startTouch($event, notification)"
-        (touchmove)="moveTouch($event, notification)"
-        (touchend)="endTouch($event, notification)">
+        [class.unread]="!notification.is_read"
+        (click)="!isSwiping && markAsRead(notification)">
         
-      <div class="notification-icon-panel">
+      <div class="notification-icon-circle" [attr.data-type]="notification.type">
         {{ getNotificationIcon(notification.type) }}
       </div>
-      <div class="notification-content">
-        <p class="notification-title">{{ notification.title }}</p>
+      
+      <div class="notification-body">
+        <div class="notification-top">
+          <p class="notification-title">{{ notification.title }}</p>
+          <span class="notification-time">{{ formatDate(notification.date) }}</span>
+        </div>
         <p class="notification-message">{{ notification.message }}</p>
-        <p class="notification-date">{{ formatDate(notification.date) }}</p>
-      </div>
-      <div class="icon">
-        <button class="mark-read" (click)="markAsRead(notification)" *ngIf="!notification.is_read">
-          <span>✓</span>
-        </button>
-        <button class="mark-read" (click)="markAsReadAndDelete(notification)">
-          <span>✕</span>
-        </button>
+        
+        <div class="notification-actions">
+          <button class="action-btn check" (click)="markAsRead(notification); $event.stopPropagation()" *ngIf="!notification.is_read" title="Marquer comme lu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </button>
+          <button class="action-btn delete" (click)="markAsReadAndDelete(notification); $event.stopPropagation()" title="Supprimer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-
-  <div *ngIf="notifications.length === 0" class="no-notifications">
-    <p>Aucune notification</p>
-  </div>
+  <ng-template #noNotifs>
+    <div class="no-notifications">
+      <div class="empty-icon">🔔</div>
+      <p>Vous n'avez aucune notification pour le moment.</p>
+    </div>
+  </ng-template>
 </div>
-<!-- Notification conditionnelle -->
+
 <app-conditional-alert [config]="alertConfig"></app-conditional-alert>

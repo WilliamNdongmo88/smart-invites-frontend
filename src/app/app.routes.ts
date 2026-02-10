@@ -14,7 +14,6 @@ import { EditEventComponent } from './pages/edit-event/edit-event.component';
 import { EditGuestComponent } from './pages/edit-guest/edit-guest.component';
 import { QRScannerComponent } from './pages/qr-scanner/qr-scanner.component';
 import { UserAccueilComponent } from './pages/user-accueil/user-accueil.component';
-import { FeaturesComponent } from './pages/features/features.component';
 import { PricingComponent } from './pages/pricing/pricing.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { EventReportComponent } from './pages/event-report/event-report.component';
@@ -113,10 +112,6 @@ export const routes: Routes = [
   {
     path: 'user-accueil',
     component: UserAccueilComponent
-  },
-  {
-  path: 'features',
-  component: FeaturesComponent,
   },
   {
     path: 'pricing',

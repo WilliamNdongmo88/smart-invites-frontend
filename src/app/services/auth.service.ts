@@ -10,6 +10,7 @@ export interface User {
   email: string;
   name: string;
   role: string;
+  plan: string
 }
 
 export interface LoginRequest {
@@ -113,6 +114,17 @@ export class AuthService {
     }
   }
 
+  getUserInfoForfait(organizerId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/user-info/${organizerId}`);
+      // .pipe(
+      //   tap(response => {
+      //     console.log('✅ Info plan utilisateur', response);
+      //     this.handleAuthResponse(response);
+      //   }),
+      //   catchError(this.handleError)
+      // );
+  }
+
   register(request: RegisterRequest): Observable<AuthResponse> {
     console.log('Registering user with request:', request);
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request)
@@ -147,7 +159,7 @@ export class AuthService {
     console.log('Google token received in AuthService:', tokenId);
     return this.http.post<AuthResponse>(`${this.apiUrl}/google`, { tokenId }).pipe(
       tap(response => {
-        // console.log('###[login] response :: ', response);
+        console.log('###[loginWithGoogle] response :: ', response);
         this.handleAuthResponse(response);
         this.loadUserFromStorage();
         this.notificationService.clearNotificationsCache();
@@ -287,6 +299,24 @@ export class AuthService {
             .pipe(shareReplay(1));
         }
         console.log('CACHE USER CALL');
+        return this.userCache$;
+      })
+    );
+  }
+
+  getAllUsers(): Observable<any> {
+    return this.refresh$.pipe(
+      startWith(void 0),
+      switchMap(() => {
+        if (!this.userCache$) {
+          console.log('USERS API CALL');
+          const headers = this.getAuthHeaders();
+
+          this.userCache$ = this.http
+            .get<any>(`${this.apiUrl}/users`, { headers })
+            .pipe(shareReplay(1));
+        }
+        console.log('CACHE USERS CALL');
         return this.userCache$;
       })
     );

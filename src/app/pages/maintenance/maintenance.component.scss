@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .maintenance-container {
     min-height: 100vh;
     display: flex;
@@ -321,7 +323,7 @@
     transition: color 0.3s ease;
 
     &:hover {
-    color: darken(#D4AF37, 10%);
+    color: color.adjust(#D4AF37, $lightness: 10%);
     text-decoration: underline;
     }
 }
@@ -381,7 +383,7 @@
     color: #FFFFFF;
 
     &:hover {
-    background-color: darken(#D4AF37, 10%);
+    background-color: color.adjust(#D4AF37, $lightness: 10%);
     transform: translateY(-2px);
     }
 

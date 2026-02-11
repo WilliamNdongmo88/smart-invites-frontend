@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { Maintenance, MaintenanceService } from '../../services/maintenance.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { map, Observable } from 'rxjs';
+import { PaymentService } from '../../services/payment.service';
 
 // Interfaces
 interface Visitor {
@@ -31,6 +32,7 @@ interface User {
   createdAt: string;
   isBlocked: boolean;
   totalGuests: number;
+  userPaymentProof?: string
 }
 
 interface Event {
@@ -206,9 +208,11 @@ export class AdminDashboardComponent implements OnInit {
   isSubscriber = false;
   loading = false;
   isMobile!: Observable<boolean>;
+  userId: number = 0;
 
   // Selected items
   selectedFeedback: Feedback | null = null;
+  selectedPaymentProof: User | null = null;
   selectedUser: User | null = null;
   selectedUserEvents: Event[] = [];
   selectedEvent: Event | null = null;
@@ -226,11 +230,13 @@ export class AdminDashboardComponent implements OnInit {
   constructor(
     private feedbackService: FeedbackService,
     private authService: AuthService,
+    private paymentService: PaymentService,
     private breakpointObserver: BreakpointObserver,
     private maintenanceService: MaintenanceService 
   ) {}
 
   ngOnInit() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
     this.loadRecentFeedback();
     this.loadMaintenanceData();
@@ -278,6 +284,11 @@ export class AdminDashboardComponent implements OnInit {
   viewFeedbackDetails(feedback: Feedback) {
     console.log('Détails du feedback:', feedback);
     this.selectedFeedback = feedback;
+  }
+
+  viewPaymentProof(user: User) {
+    console.log('Proof:', user);
+    this.selectedPaymentProof = user;
   }
 
   updateFeedbackStatus(feedback: Feedback) {
@@ -427,6 +438,29 @@ export class AdminDashboardComponent implements OnInit {
     alert('Notes enregistrées avec succès');
   }
 
+  changeUserPlan(user: User) {
+    const confirmation = confirm(
+      "Vous êtes sur le point d'activer le plan Professionnel de cet utilisateur. Continuer ?"
+    );
+
+    if (confirmation) {
+      const data = { plan: 'professionnel'};
+      this.paymentService.changeUserPlan(Number(user.id), data).subscribe({
+        next: (data) => {
+          console.log('[changeUserPlan]:', data);
+          this.closeModal();
+        },
+        error: err => console.error(err)
+      });
+    } else {
+      console.log('Action annulée');
+    }
+  }
+
+  closeModal() {
+    this.selectedPaymentProof = null;
+  }
+
   // VISITOR METHODS
   getFilteredVisitors(): Visitor[] {
     return this.visitors.filter(v =>
@@ -467,6 +501,10 @@ export class AdminDashboardComponent implements OnInit {
     this.selectedUser = user;
     this.selectedUserEvents = this.events.filter(e => e.id === user.id); // À adapter selon votre structure
     this.activeTab = 'users';
+  }
+
+  viewUserDetails(user: User){
+    console.log("User: ", user);
   }
 
   toggleBlockUser(user: User) {

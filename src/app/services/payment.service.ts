@@ -22,4 +22,8 @@ export class PaymentService {
       console.log('Données de paiement: ', formData);
       return this.http.post<any>(`${this.apiUrl}/file/payment/proof`, formData);
     }
+
+    changeUserPlan(userId: number,user: any): Observable<any> {
+      return this.http.post<any>(`${this.apiUrl}/payment/change/${userId}`, user);
+    }
 }

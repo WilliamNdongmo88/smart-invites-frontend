@@ -92,23 +92,23 @@
           </table>
 
           <!-- Feedback Details Modal -->
-            <div *ngIf="selectedFeedback" class="modal-overlay" (click)="selectedFeedback = null">
-                <div class="modal-content" (click)="$event.stopPropagation()">
+          <div *ngIf="selectedFeedback" class="modal-overlay" (click)="selectedFeedback = null">
+            <div class="modal-content" (click)="$event.stopPropagation()">
                 <button class="modal-close" (click)="selectedFeedback = null">✕</button>
                 <h3>{{ selectedFeedback.title }}</h3>
                 <p class="feedback-message">{{ selectedFeedback.message }}</p>
                 <div class="modal-actions">
-                    <textarea
-                    [(ngModel)]="selectedFeedback.adminNotes"
-                    placeholder="Ajouter une note interne..."
-                    class="form-textarea"
-                    ></textarea>
-                    <button class="btn btn-primary" (click)="saveFeedbackNotes()">
-                    💾 Enregistrer les notes
-                    </button>
-                </div>
+                        <textarea
+                        [(ngModel)]="selectedFeedback.adminNotes"
+                        placeholder="Ajouter une note interne..."
+                        class="form-textarea"
+                        ></textarea>
+                        <button class="btn btn-primary" (click)="saveFeedbackNotes()">
+                        💾 Enregistrer les notes
+                        </button>
                 </div>
             </div>
+          </div>
         </div>
 
         <!-- Pagination Controls -->
@@ -215,8 +215,9 @@
                 <th>Email</th>
                 <th>Événements</th>
                 <th>Forfait</th>
-                <th>Dernière connexion</th>
-                <th>Créé le</th>
+                <th>Preuve de payment</th>
+                <!-- <th>Dernière connexion</th>
+                <th>Créé le</th> -->
                 <th>Statut</th>
                 <th>Actions</th>
                 </tr>
@@ -225,18 +226,33 @@
                 <tr *ngFor="let user of getFilteredUsers()" [class.blocked]="user.isBlocked">
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.eventsCreated }}</td>
+                <td>
+                    <span class="status-badge">
+                        {{ user.eventsCreated }}
+                    </span>
+                </td>
                 <td>
                     <span class="plan-badge" [class]="user.plan">{{ user.plan }}</span>
                 </td>
-                <td>{{ formatDate(user.lastLogin) }}</td>
-                <td>{{ formatDate(user.createdAt) }}</td>
+                <td>
+                    <span *ngIf="!user.userPaymentProof" class="status-badge">
+                        -
+                    </span>
+                    <span *ngIf="user.userPaymentProof" class="status-badge">
+                        <button class="btn-small btn-view" (click)="viewPaymentProof(user)">
+                        👁️ Voir
+                        </button>
+                    </span>
+                </td>
                 <td>
                     <span class="status-badge" [class]="user.isBlocked ? 'blocked' : 'active'">
                     {{ user.isBlocked ? 'Bloqué' : 'Actif' }}
                     </span>
                 </td>
                 <td>
+                    <button class="btn-small btn-view" (click)="viewUserDetails(user)">
+                    👁️ Détails
+                    </button>
                     <button class="btn-small btn-view" (click)="viewUserEvents(user)">
                     👁️ Événements
                     </button>
@@ -250,6 +266,45 @@
                 </tr>
             </tbody>
             </table>
+        </div>
+        </div>
+
+        <!-- Payment Proof Modal -->
+        <div *ngIf="selectedPaymentProof" class="modal-overlay" (click)="closeModal()">
+
+        <div class="modal-card" (click)="$event.stopPropagation()">
+
+            <!-- Header -->
+            <div class="modal-header">
+            <div>
+                <h2>Preuve de paiement</h2>
+                <p class="subtitle">
+                Utilisateur : <strong>{{ selectedPaymentProof.name }}</strong>
+                </p>
+            </div>
+
+            <button class="close-btn" (click)="closeModal()">✕</button>
+            </div>
+
+            <!-- Image Preview -->
+            <div class="image-container">
+            <img 
+                [src]="selectedPaymentProof.userPaymentProof" 
+                alt="Preuve de paiement"
+            />
+            </div>
+
+            <!-- Actions -->
+            <div class="modal-actions">
+            <button class="btn btn-approve" (click)="changeUserPlan(selectedPaymentProof)">
+                ✔️ Valider le paiement
+            </button>
+
+            <button class="btn btn-cancel" (click)="closeModal()">
+                Annuler
+            </button>
+            </div>
+
         </div>
         </div>
 

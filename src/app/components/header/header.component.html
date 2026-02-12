@@ -24,7 +24,9 @@
         <!-- Authenticated Links -->
         <ng-container *ngIf="isAuthenticated">
           <a *ngIf="currentUser?.role === 'admin'" (click)="goToPageAdmin()" class="nav-link admin-link">Administration</a>
-          <a (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="nav-link">Tarifs</a>
+          <a (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="nav-link">
+            {{currentUser?.plan === 'gratuit' ? 'Passer en Pro' : ''}}
+          </a>
           <a *ngIf="isScanning" (click)="scanQrCode()" class="nav-link">Scanner</a>
         </ng-container>
 
@@ -133,7 +135,9 @@
               {{ currentUser?.plan === 'professionnel' ? 'PRO' : 'GRATUIT' }}
             </span>
             <a (click)="goToProfile(); toggleMobileMenu(false)" class="mobile-nav-link">Mon Profil</a>
-            <a (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="mobile-nav-link">Tarifs</a>
+            <a (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="mobile-nav-link">
+              {{currentUser?.plan === 'gratuit' ? 'Passer en Pro' : ''}}
+            </a>
           </div>
           <a *ngIf="isScanning" (click)="scanQrCode(); toggleMobileMenu(false)" class="mobile-nav-link">Scanner</a>
           <a *ngIf="currentUser?.role === 'admin'" (click)="goToPageAdmin(); toggleMobileMenu(false)" class="mobile-nav-link admin-link">Administration</a>

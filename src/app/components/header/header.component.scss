@@ -155,11 +155,11 @@ $breakpoint-tablet: 1024px;
     }
 
     &.admin-link {
-      color: $color-danger;
+      color: $color-primary;
       font-weight: 600;
 
       &:hover {
-        color: darken($color-danger, 10%);
+        color: darken($color-primary, 10%);
       }
     }
   }
@@ -452,9 +452,9 @@ $breakpoint-tablet: 1024px;
 }
 
 .mobile-actions {
-  margin-top: 2rem;
+  margin-top: 1rem;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(0,0,0,0.05);
+  //border-top: 1px solid rgba(0,0,0,0.05);
 }
 
 // ============================================================================
@@ -531,13 +531,13 @@ $breakpoint-tablet: 1024px;
     }
 
     &.admin-link {
-      color: $color-danger;
+      color: $color-primary;
       font-weight: 600;
     }
   }
 
   .mobile-actions {
-    padding: 1rem 1.5rem;
+    padding: 1rem 1rem;
     display: flex;
     gap: 0.75rem;
 
@@ -551,8 +551,8 @@ $breakpoint-tablet: 1024px;
       border: 1px solid $color-border;
 
       &:hover {
-        background-color: $color-border;
-        color: $color-dark;
+        background-color: $color-danger;
+        color: $white;
       }
     }
 

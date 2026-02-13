@@ -33,6 +33,7 @@ interface User {
   isBlocked: boolean;
   totalGuests: number;
   userPaymentProof?: string
+  expirationDate?: string
 }
 
 interface Event {
@@ -325,14 +326,51 @@ export class AdminDashboardComponent implements OnInit {
       },
       error: err => console.error(err)
     });
+    this.getUsers();
+  }
+
+  getUsers(){
     this.authService.getAllUsers().subscribe({
       next: (datas: any[]) => {
-        console.log('[allUsers 2]:', datas);
-        this.users = datas;
-
-        console.log('[feedbacks enriched]:', this.feedbacks);
+        //console.log('[getUsers]:', datas);
+        const response = []
+        for (const data of datas) {
+          let expirationDate = '';
+          if(data.userPaymentProofCreatedAt) expirationDate = this.addOneMonthAndFormat(data.userPaymentProofCreatedAt)
+          const res = {
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            eventsCreated: data.eventsCreated,
+            plan: data.plan,
+            lastLogin: data.last_login_at,
+            createdAt: data.created_at,
+            isBlocked: data.isBlocked,
+            totalGuests: data.totalGuests,
+            userPaymentProof: data.userPaymentProof,
+            expirationDate: expirationDate
+          }
+          response.push(res);
+        }
+        this.users = response;
+        console.log('[getUsers]:', this.users);
       },
       error: err => console.error(err)
+    });
+  }
+
+  addOneMonthAndFormat(dateString: string): string {
+    const date = new Date(dateString);
+
+    // ➕ Ajouter 1 mois
+    date.setMonth(date.getMonth() + 1);
+
+    // 🇫🇷 Format en français
+    return date.toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
     });
   }
 
@@ -373,8 +411,9 @@ export class AdminDashboardComponent implements OnInit {
 
   restartScheduler(): void {
     console.log('Relance du schedule des événements...');
+    const confirmation = confirm('La planification des événements va être relancé. Continuer ? ');
+    if(!confirmation) return;
     this.loading = true;
-    alert('Le schedule des événements a été relancé.');
     this.maintenanceService.restart().subscribe({
       next: (response) => {
         console.log('🔄 Scheduler redémarré avec succès', response);
@@ -438,22 +477,37 @@ export class AdminDashboardComponent implements OnInit {
     alert('Notes enregistrées avec succès');
   }
 
-  changeUserPlan(user: User) {
-    const confirmation = confirm(
+  changeUserPlan(user: User, bool: boolean) {
+    let confirmation = false;
+    let cancelation = false;
+
+    if(bool) confirmation = confirm(
       "Vous êtes sur le point d'activer le plan Professionnel de cet utilisateur. Continuer ?"
     );
+    if(!bool) cancelation = confirm(
+      "Vous êtes sur le point d'annuler le plan Professionnel de cet utilisateur. Continuer ?"
+    );
 
-    if (confirmation) {
+    if (confirmation && bool) {
       const data = { plan: 'professionnel'};
       this.paymentService.changeUserPlan(Number(user.id), data).subscribe({
         next: (data) => {
           console.log('[changeUserPlan]:', data);
+          this.getUsers();
           this.closeModal();
         },
         error: err => console.error(err)
       });
-    } else {
-      console.log('Action annulée');
+    } else if (cancelation && !bool){
+      const data = { plan: 'gratuit'};
+      this.paymentService.changeUserPlan(Number(user.id), data).subscribe({
+        next: (data) => {
+          console.log('[changeUserPlan]:', data);
+          this.getUsers();
+          this.closeModal();
+        },
+        error: err => console.error(err)
+      });
     }
   }
 

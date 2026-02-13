@@ -305,21 +305,8 @@ export class AuthService {
   }
 
   getAllUsers(): Observable<any> {
-    return this.refresh$.pipe(
-      startWith(void 0),
-      switchMap(() => {
-        if (!this.userCache$) {
-          console.log('USERS API CALL');
-          const headers = this.getAuthHeaders();
-
-          this.userCache$ = this.http
-            .get<any>(`${this.apiUrl}/users`, { headers })
-            .pipe(shareReplay(1));
-        }
-        console.log('CACHE USERS CALL');
-        return this.userCache$;
-      })
-    );
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(`${this.apiUrl}/users`, { headers });
   }
 
   updateProfile(userId: number, data: any): Observable<Event> {

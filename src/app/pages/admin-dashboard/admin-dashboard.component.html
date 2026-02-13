@@ -281,6 +281,9 @@
                 <p class="subtitle">
                 Utilisateur : <strong>{{ selectedPaymentProof.name }}</strong>
                 </p>
+                <p class="subtitle">
+                Date expiration : <strong>{{ selectedPaymentProof.expirationDate }}</strong>
+                </p>
             </div>
 
             <button class="close-btn" (click)="closeModal()">✕</button>
@@ -296,12 +299,12 @@
 
             <!-- Actions -->
             <div class="modal-actions">
-            <button class="btn btn-approve" (click)="changeUserPlan(selectedPaymentProof)">
+            <button class="btn btn-approve" (click)="changeUserPlan(selectedPaymentProof, true)">
                 ✔️ Valider le paiement
             </button>
 
-            <button class="btn btn-cancel" (click)="closeModal()">
-                Annuler
+            <button class="btn btn-cancel" (click)="changeUserPlan(selectedPaymentProof, false)">
+                ❌ Annuler le plan Pro
             </button>
             </div>
 

@@ -23,6 +23,8 @@ import { InvitationEditorComponent } from './pages/invitation-editor/invitation-
 import { FeedbackComponent } from './components/feedback/feedback.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { MaintenanceComponent } from './pages/maintenance/maintenance.component';
+import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
+import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 
 export const routes: Routes = [
   {
@@ -124,6 +126,14 @@ export const routes: Routes = [
   {
     path: 'event-report',
     component: EventReportComponent,
+  },
+  {
+    path: 'terms-of-service',
+    component: TermsOfServiceComponent,
+  },
+  {
+    path: 'privacy-policy',
+    component: PrivacyPolicyComponent,
   },
   // {
   //   path: '/404',

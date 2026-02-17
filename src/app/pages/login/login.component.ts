@@ -5,6 +5,7 @@ import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { CommunicationService } from '../../services/share.service';
 import { SpinnerComponent } from "../../components/spinner/spinner";
+import { finalize } from 'rxjs';
 
 declare const google: any;
 @Component({
@@ -49,6 +50,7 @@ export class LoginComponent implements  OnInit{
 
     // Rendu du bouton
     const googleDiv = document.getElementById('googleSignInDiv');
+    console.log('googleDiv: ', googleDiv);
 
     if (googleDiv) {
       google.accounts.id.renderButton(googleDiv, {
@@ -64,30 +66,42 @@ export class LoginComponent implements  OnInit{
   }
 
   handleCredentialResponse(response: any) {
+
     this.isLoading = true;
-    this.cd.detectChanges(); //Force Angular à mettre à jour l’UI
+    this.cd.detectChanges();
 
     const googleIdToken = response.credential;
 
-    this.authService.loginWithGoogle(googleIdToken).subscribe({
-      next: (result) => {
-        console.log('✅ Connexion Google réussie', result);
-        if (result) {
-          this.router.navigateByUrl(this.returnUrl);
+    this.authService.loginWithGoogle(googleIdToken)
+      .pipe(
+        finalize(() => {
+          // toujours exécuté
+          this.isLoading = false;
+          this.cd.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (result) => {
+          console.log('✅ Connexion Google réussie', result);
+          if (result) {
+            this.router.navigateByUrl(this.returnUrl);
+          }
+        },
+        error: (error) => {
+          console.error(
+            "Erreur Google :",
+            error.error?.error ||
+            error.error?.message ||
+            error.message
+          );
+
+          if (error.message?.includes('503')) {
+            this.router.navigate(['/maintenance']);
+          }
+
+          this.errorMessage = error.message || 'Erreur de connexion';
         }
-      },
-      error: (err) => {
-        this.isLoading = false;
-        console.error('Erreur d\'authentification Google :', err);
-        if (err.message.includes('503 Service Unavailable')) {
-          this.router.navigate(['/maintenance']);
-        }
-      },
-      complete: () => {
-        this.cd.detectChanges(); // MAJ l’UI quand c’est fini
-        this.isLoading = false;
-      }
-    });
+      });
   }
 
   // gestion de la soumission du formulaire

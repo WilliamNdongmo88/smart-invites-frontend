@@ -87,7 +87,7 @@ export class GuestListComponent implements OnInit{
   canSend: boolean = true;
   canDelete: boolean = true;
   selectedGuestId: number | null = null;
-  itemsPerPage = 10;
+  itemsPerPage = 12;
   currentPage = 1;
   modalAction: string | undefined;
   warningMessage: string = "";

@@ -118,10 +118,14 @@
               </div>
 
               <!-- Terms checkbox -->
-              <div class="form-group">
-                <label class="checkbox-label">
+              <div class="terms-checkbox-wrapper">
+                <label class="custom-checkbox">
                   <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms" required />
-                  <span>J'accepte les <a href="#" class="link-inline">conditions d'utilisation</a> et la <a href="#" class="link-inline">politique de confidentialité</a></span>
+                  <span class="checkmark"></span>
+                  <span class="text-inline">
+                    J'accepte les <a href="#" class="link-inline" (click)="$event.preventDefault()">conditions d'utilisation</a> 
+                    et la <a href="#" class="link-inline" (click)="$event.preventDefault()">politique de confidentialité</a>
+                  </span>
                 </label>
               </div>
 
@@ -153,17 +157,23 @@
             </form>
 
             <!-- Divider -->
-            <!-- <div class="divider">
+            <div class="divider">
               <span>ou</span>
-            </div> -->
-
+            </div>
+          </div>
+          <div [hidden]="showActiveAccount">
             <!-- Social signup -->
-            <!-- <button class="social-btn google" (click)="signupWithGoogle()">
-              <span>🌐</span> Google
-            </button> -->
-            <!-- <div class="social-login">
-              <div id="googleSignInDiv"></div>
-            </div> -->
+            <div class="social-signup">
+              <div class="google-wrapper">
+                <div id="googleSignUpDiv"></div>
+
+                <!-- Overlay gris si non accepté -->
+                <div
+                  class="disabled-overlay"
+                  *ngIf="!isGoogleEnabled()">
+                </div>
+              </div>
+            </div>
 
             <!-- Login link -->
             <div class="login-link">
@@ -176,6 +186,7 @@
               <p>🔒 Vos données sont sécurisées et chiffrées</p>
             </div>
           </div>
+
           <div *ngIf="showActiveAccount">
             <!-- Right side - Form -->
             <div class="forgot-password-form-container">

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
@@ -15,7 +15,7 @@ declare const google: any;
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
 })
-export class SignupComponent {
+export class SignupComponent implements  OnInit{
   currentStep = signal<ActivatedAccoutStep>('verification');
   verificationCode = '';
   newPassword = '';
@@ -45,6 +45,10 @@ export class SignupComponent {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+  isGoogleEnabled(): boolean {
+    return this.acceptTerms;
+  }
+
   ngOnInit(): void {
     google.accounts.id.initialize({
       client_id: '1054058117713-j8or7mvfn32k9r2rk5issg9137bm944a.apps.googleusercontent.com',
@@ -52,19 +56,20 @@ export class SignupComponent {
     });
 
     // Rendu du bouton
-    const googleDiv = document.getElementById('googleSignInDiv');
+    const googleDiv = document.getElementById('googleSignUpDiv');
+    console.log('googleDiv: ', googleDiv);
 
     if (googleDiv) {
       google.accounts.id.renderButton(googleDiv, {
         theme: 'outline',
         size: 'large',
-        text: 'signin_with',
+        text: 'signup_with',
         shape: 'rectangular',
         logo_alignment: 'center',
-        width: 400,
+        width: 340,
         type: 'standard'
       });
-    };
+    }
 
     this.communicationService.message$.subscribe(msg => {
       console.log("isActive :: ", msg);
@@ -72,7 +77,6 @@ export class SignupComponent {
       this.showActiveAccount = msg;
       this.isActiveAccount = msg;
     });
-    console.log('storage: ', localStorage.getItem('refreshToken'));
   }
 
   handleCredentialResponse(response: any) {
@@ -80,8 +84,12 @@ export class SignupComponent {
     this.cd.detectChanges(); //Force Angular à mettre à jour l’UI
 
     const googleIdToken = response.credential;
-
-    this.authService.loginWithGoogle(googleIdToken).subscribe({
+    const request = { 
+      tokenId: googleIdToken,
+      acceptTerms: this.acceptTerms
+    };
+    console.log('Google request: ', request);
+    this.authService.signupWithGoogle(request).subscribe({
       next: (result) => {
         console.log('✅ Connexion Google réussie', result);
         if (result) {
@@ -89,7 +97,10 @@ export class SignupComponent {
         }
       },
       error: (err) => {
-        console.error('Erreur d\'authentification Google :', err);
+        this.loading = false;
+        console.error('❌ Erreur d’inscription :', err.message);
+        this.errorMessage = err.message || 'Une erreur est survenue lors de l’inscription.';
+        localStorage.clear();
       },
       complete: () => {
         // this.loading = false;

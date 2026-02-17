@@ -359,6 +359,7 @@
 @media (max-width: 1024px) {
   .login-container {
     grid-template-columns: 1fr;
+    display: contents;
   }
 
   .login-image {

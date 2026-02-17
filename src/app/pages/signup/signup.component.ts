@@ -197,7 +197,8 @@ export class SignupComponent implements  OnInit{
     const request: RegisterRequest = {
       name: this.name,
       email: this.email,
-      password: this.password
+      password: this.password,
+      acceptTerms: this.acceptTerms
     };
     this.loading = true;
     this.authService.register(request).subscribe({

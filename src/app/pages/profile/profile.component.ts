@@ -157,12 +157,13 @@ export class ProfileComponent implements OnInit {
       (response) => {
         console.log("[saveProfile] Response :: ", response);
         this.loading = false;
+        this.errorMessage = '';
       },
       (error) => {
         this.loading = false;
-        console.error('❌ Erreur de creation :', error.message.split(':')[4]);
-        console.log("Message :: ", error.message);
-        this.errorMessage = error.message || 'Erreur de connexion';
+        console.error('❌ Erreur de creation :', error.error.error);
+        console.log("Message :: ", error.error);
+        this.errorMessage = error.error.error || 'Erreur de connexion';
       }
     );
   }

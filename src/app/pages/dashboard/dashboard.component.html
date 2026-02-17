@@ -10,7 +10,7 @@
         <!-- affichage desktop -->
         <button *ngIf="!(isMobile | async)" (click)="openEventDialog()" class="btn btn-primary c-mtop">+ Nouvel événement</button>
         <!-- affichage mobile -->
-        <button *ngIf="isMobile | async" (click)="openEventDialog()" class="btn btn-primary c-mtop">
+        <button *ngIf="(isMobile | async) && events.length != 0" (click)="openEventDialog()" class="btn btn-primary c-mtop">
           <span class="icon-add">+ Ajouter</span>
         </button>
       </div>

@@ -23,6 +23,7 @@ export interface RegisterRequest {
   email: string;
   password: string;
   name: string;
+  acceptTerms?: boolean;
 }
 
 export interface AuthResponse {
@@ -157,7 +158,7 @@ export class AuthService {
 
   loginWithGoogle(tokenId: string) {
     console.log('Google token received in AuthService:', tokenId);
-    return this.http.post<AuthResponse>(`${this.apiUrl}/google`, { tokenId }).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/google-signin`, { tokenId }).pipe(
       tap(response => {
         console.log('###[loginWithGoogle] response :: ', response);
         this.handleAuthResponse(response);
@@ -165,7 +166,28 @@ export class AuthService {
         this.notificationService.clearNotificationsCache();
         this.eventService.clearCache();
       }),
-      catchError(this.handleError)
+      catchError(error => {
+        // ✅ Extraire le message d'erreur du backend
+        const errorMessage = error.error?.error || error.error?.message || error.message || 'Une erreur est survenue';
+        console.error('Login error:', errorMessage);
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
+
+  signupWithGoogle(request: any) {
+    console.log('Google token received in AuthService:', request);
+    return this.http.post<AuthResponse>(`${this.apiUrl}/google-signup`, request).pipe(
+      tap(response => {
+        console.log('###[signupWithGoogle] response :: ', response);
+        this.handleAuthResponse(response);
+      }),
+      catchError(error => {
+        // ✅ Extraire le message d'erreur du backend
+        const errorMessage = error.error?.error || error.error?.message || error.message || 'Une erreur est survenue';
+        console.error('Signup error:', errorMessage);
+        return throwError(() => new Error(errorMessage));
+      })
     );
   }
 

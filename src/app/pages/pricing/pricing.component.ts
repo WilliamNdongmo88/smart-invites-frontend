@@ -31,7 +31,7 @@ interface PaymentProof {
 @Component({
   selector: 'app-pricing',
   standalone: true,
-  imports: [CommonModule, PaymentModalComponent],
+  imports: [CommonModule, PaymentModalComponent, RouterLink],
   templateUrl: 'pricing.component.html',
   styleUrl: 'pricing.component.scss'
 })

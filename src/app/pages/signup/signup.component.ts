@@ -35,6 +35,7 @@ export class SignupComponent implements  OnInit{
 
   errorMessage: string | null = null;
   successMessage: string | null = null;
+  hasTyped: boolean = false;
 
   constructor(
     private router: Router, 
@@ -46,7 +47,9 @@ export class SignupComponent implements  OnInit{
     }
 
   isGoogleEnabled(): boolean {
-    return this.acceptTerms;
+    const isEnabled = this.acceptTerms && !(this.name.trim().length > 0 || this.email.trim().length > 0);
+    console.log('isGoogleEnabled: ', isEnabled);
+    return isEnabled;
   }
 
   ngOnInit(): void {
@@ -172,7 +175,6 @@ export class SignupComponent implements  OnInit{
         return '';
     }
   }
-
 
   // 🚀 Soumission du formulaire
   onSubmit(form: NgForm): void {

@@ -52,7 +52,7 @@ export class InvitationEditorComponent implements OnInit {
     eventName: 'Mariage de Sophie et Pierre',
     eventDate: '2025-06-15',
     eventTime: '14:00',
-    eventLocation: 'Château de Versailles',
+    eventLocation: 'Palais de Fête, Bafoussam',
     eventCivilLocation: 'Mairie de Bangangte',
     religiousLocation: 'Cathédrale Notre-Dame',
     religiousTime: '15:30',

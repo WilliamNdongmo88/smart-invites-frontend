@@ -135,8 +135,8 @@
               {{ currentUser?.plan === 'professionnel' ? 'PRO' : 'GRATUIT' }}
             </span>
             <a (click)="goToProfile(); toggleMobileMenu(false)" class="mobile-nav-link">Mon Profil</a>
-            <a (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="mobile-nav-link">
-              {{currentUser?.plan === 'gratuit' ? 'Passer en Pro' : ''}}
+            <a *ngIf="currentUser?.plan === 'gratuit'" (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="mobile-nav-link">
+              Passer en Pro
             </a>
           </div>
           <a *ngIf="isScanning" (click)="scanQrCode(); toggleMobileMenu(false)" class="mobile-nav-link">Scanner</a>

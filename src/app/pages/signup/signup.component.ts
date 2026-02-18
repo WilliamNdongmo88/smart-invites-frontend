@@ -48,7 +48,7 @@ export class SignupComponent implements  OnInit{
 
   isGoogleEnabled(): boolean {
     const isEnabled = this.acceptTerms && !(this.name.trim().length > 0 || this.email.trim().length > 0);
-    console.log('isGoogleEnabled: ', isEnabled);
+    //console.log('isGoogleEnabled: ', isEnabled);
     return isEnabled;
   }
 

@@ -13,7 +13,6 @@ import { GuestDetailComponent } from './pages/guest-detail/guest-detail.componen
 import { EditEventComponent } from './pages/edit-event/edit-event.component';
 import { EditGuestComponent } from './pages/edit-guest/edit-guest.component';
 import { QRScannerComponent } from './pages/qr-scanner/qr-scanner.component';
-import { UserAccueilComponent } from './pages/user-accueil/user-accueil.component';
 import { PricingComponent } from './pages/pricing/pricing.component';
 import { ContactComponent } from './pages/contact/contact.component';
 import { EventReportComponent } from './pages/event-report/event-report.component';
@@ -110,10 +109,6 @@ export const routes: Routes = [
   {
     path: 'events/:eventId/qr-scanner',
     component: QRScannerComponent,
-  },
-  {
-    path: 'user-accueil',
-    component: UserAccueilComponent
   },
   {
     path: 'pricing',

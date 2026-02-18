@@ -21,7 +21,52 @@
   <app-spinner [isLoading]="isLoading"></app-spinner>
 
   <!-- Main content -->
-  <div class="container py-12">
+  <div class="container c-container py-12">
+
+    <!-- Stats Overview -->
+    <div class="grid grid-4 mt-8">
+      <div class="stat-card">
+        <div class="stat-header">
+          <p class="stat-label">Événements</p>
+          <span class="stat-icon">
+            <mat-icon style="color: #DAA520;">calendar_today</mat-icon>
+          </span>
+        </div>
+        <p class="stat-value">{{ events.length }}</p>
+        <p class="stat-subtitle">En cours</p>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <p class="stat-label">Total invités</p>
+          <span class="stat-icon">
+            <mat-icon style="color: #DAA520;">people</mat-icon>
+          </span>
+        </div>
+        <p class="stat-value">{{ getTotalGuests() }}</p>
+        <p class="stat-subtitle">Tous les événements</p>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <p class="stat-label">Confirmés</p>
+          <span class="stat-icon">
+            <mat-icon style="color: #6cdf92;">check_circle</mat-icon>
+          </span>
+        </div>
+        <p class="stat-value">{{ getTotalConfirmed() }}</p>
+        <p class="stat-subtitle">Réponses positives</p>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <p class="stat-label">En attente</p>
+          <span class="stat-icon">⏳</span>
+        </div>
+        <p class="stat-value">{{ getTotalPending() }}</p>
+        <p class="stat-subtitle">Réponses attendues</p>
+      </div>
+    </div>
 
     <!-- Events List -->
     <div class="mt-8 c-mt">
@@ -85,51 +130,6 @@
         <button class="btn btn-primary" (click)="openEventDialog()">
         + Nouvel événement
         </button>
-    </div>
-
-    <!-- Stats Overview -->
-    <div class="grid grid-2 mt-8">
-      <div class="stat-card">
-        <div class="stat-header">
-          <p class="stat-label">Événements</p>
-          <span class="stat-icon">
-            <mat-icon style="color: #DAA520;">calendar_today</mat-icon>
-          </span>
-        </div>
-        <p class="stat-value">{{ events.length }}</p>
-        <p class="stat-subtitle">En cours</p>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-header">
-          <p class="stat-label">Total invités</p>
-          <span class="stat-icon">
-            <mat-icon style="color: #DAA520;">people</mat-icon>
-          </span>
-        </div>
-        <p class="stat-value">{{ getTotalGuests() }}</p>
-        <p class="stat-subtitle">Tous les événements</p>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-header">
-          <p class="stat-label">Confirmés</p>
-          <span class="stat-icon">
-            <mat-icon style="color: #6cdf92;">check_circle</mat-icon>
-          </span>
-        </div>
-        <p class="stat-value">{{ getTotalConfirmed() }}</p>
-        <p class="stat-subtitle">Réponses positives</p>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-header">
-          <p class="stat-label">En attente</p>
-          <span class="stat-icon">⏳</span>
-        </div>
-        <p class="stat-value">{{ getTotalPending() }}</p>
-        <p class="stat-subtitle">Réponses attendues</p>
-      </div>
     </div>
   </div>
 </div>

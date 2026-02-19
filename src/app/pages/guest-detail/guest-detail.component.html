@@ -53,52 +53,8 @@
 
                 <div class="divider-gold"></div>
 
-<<<<<<< HEAD
-            <button class="btn btn-outline" style="width: 100%;" (click)="editGuest()">
-            ✏️ Modifier les options
-            </button>
-        </div>
-
-        <!-- Notes -->
-        <div class="card mt-8">
-            <h2>Notes</h2>
-
-            <div class="notes-box">
-            <p *ngIf="guest.notes">{{ guest.notes }}</p>
-            <p *ngIf="!guest.notes" class="no-notes">Aucune note</p>
-            </div>
-
-            <button class="btn btn-outline" style="width: 100%;" (click)="addNotes()">
-            📝 Ajouter une note
-            </button>
-        </div>
-        </div>
-
-        <!-- Right column - QR Code & Actions -->
-        <div class="right-column">
-        <!-- QR Code Section -->
-        <div class="card">
-            <h2>Code QR</h2>
-
-            <div *ngIf="guest.qrCodeGenerated" class="qr-code-section">
-            <div class="qr-code-container">
-                <img
-                [src]="guest.qrCodeUrl"
-                alt="QR Code"
-                class="qr-code-image"
-                />
-            </div>
-            <!-- <p class="qr-description">
-                Scannez ce code pour accéder à l'invitation
-            </p> -->
-
-            <div class="qr-actions">
-                <button class="btn btn-outline" style="width: 100%;" (click)="downloadQRCode()">
-                📥 Télécharger
-=======
                 <button class="btn btn-primary" style="width: 100%;" (click)="resendInvitation()">
                     {{ loading ? '⏳ Renvoie en cours ...' : '✉️ Renvoyer rappel invitation' }}
->>>>>>> develop
                 </button>
             </div>
 

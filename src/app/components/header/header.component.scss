@@ -159,7 +159,7 @@ $breakpoint-tablet: 1024px;
       font-weight: 600;
 
       &:hover {
-        color: darken($color-primary, 10%);
+        color: color.adjust(#D4AF37, $lightness: 10%);
       }
     }
   }
@@ -230,7 +230,7 @@ $breakpoint-tablet: 1024px;
     color: $white;
     
     &:hover {
-      background-color: lighten($primary-dark, 10%);
+      background-color: color.adjust(#1A1A1A, $lightness: 10%);
       transform: translateY(-1px);
       box-shadow: $shadow-md;
     }
@@ -310,7 +310,8 @@ $breakpoint-tablet: 1024px;
   background-color: $bg-light;
 
   &:hover {
-    background-color: darken($bg-light, 2%);
+    background-color: color.adjust(#F8F9FA, $lightness: 10%);
+    // background-color: darken($bg-light, 2%);
   }
 
   .user-avatar {
@@ -580,26 +581,6 @@ $breakpoint-tablet: 1024px;
   animation: fadeIn $transition-normal;
 }
 
-// .notifications-panel {
-//   position: fixed;
-//   top: 70px;
-//   right: 0;
-//   width: 100%;
-//   max-width: 400px;
-//   height: calc(100vh - 70px);
-//   background: $color-light;
-//   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
-//   z-index: 200;
-//   display: flex;
-//   flex-direction: column;
-//   animation: slideInRight $transition-normal;
-//   overflow: hidden;
-
-//   @media (max-width: $breakpoint-mobile) {
-//     max-width: 100%;
-//   }
-// }
-
 .notifications-panel {
   position: fixed;
   top: 85px;
@@ -665,7 +646,7 @@ $breakpoint-tablet: 1024px;
       padding: 0;
 
       &:hover {
-        background: darken($bg-light, 5%);
+        background: color.adjust(#F8F9FA, $lightness: 5%);
         color: $primary-dark;
       }
 

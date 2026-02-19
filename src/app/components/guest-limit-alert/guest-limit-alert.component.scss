@@ -1,7 +1,7 @@
 // ============================================
 // Variables CSS - Système de Design
 // ============================================
-
+@use "sass:color";
 :host {
     --color-primary: #D4AF37;
     --color-secondary: #4CAF50;
@@ -301,7 +301,7 @@
     color: var(--color-white);
 
     &:hover {
-        background-color: darken(#D4AF37, 10%);
+        background-color: color.adjust(#D4AF37, $lightness: 10%);
         transform: translateY(-2px);
         box-shadow: 0 4px 12px var(--color-primary-hover);
     }

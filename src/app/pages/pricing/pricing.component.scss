@@ -66,8 +66,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
-    margin-bottom: 4rem;
-    margin: 4px;
+    margin-bottom: 3rem;
 }
 
 .pricing-card {
@@ -160,7 +159,7 @@
 }
 
 .comparison-section {
-    margin-bottom: 4rem;
+    margin: 0 3px 2rem 3px;
 }
 
 .comparison-section h2 {
@@ -206,7 +205,7 @@ tbody tr:nth-child(even) {
 }
 
 .faq-section {
-    margin-bottom: 4rem;
+    margin: 0 3px 2rem 3px ;
 }
 
 .faq-section h2 {
@@ -244,6 +243,7 @@ tbody tr:nth-child(even) {
     background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
     border-radius: 0.75rem;
     border: 1px solid #E0E0E0;
+    margin: 0 3px 2rem 3px ;
 }
 
 .cta-section h2 {
@@ -287,7 +287,8 @@ tbody tr:nth-child(even) {
     }
 
     .pricing-grid {
-    grid-template-columns: 1fr;
+        grid-template-columns: 1fr;
+        margin: 0 3px 2rem 3px ;
     }
 
     .pricing-card.popular {
@@ -319,5 +320,9 @@ tbody tr:nth-child(even) {
         margin-top: -2rem;
         margin-bottom: 1rem;
         flex-wrap: wrap;
+    }
+
+    .pricing-page {
+        margin-bottom: -3rem;
     }
 }

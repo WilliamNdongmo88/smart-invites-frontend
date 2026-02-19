@@ -44,6 +44,10 @@
   }
 }
 
+.event-form{
+  margin: 0 3px 0 3px;
+}
+
 .step-indicator {
   display: flex;
   align-items: center;
@@ -593,5 +597,9 @@
     .form-group {
         margin-bottom: 1.5rem;
         padding: 0 5px;
+    }
+
+    .form-wrapper {
+      margin-bottom: -1.5rem;
     }
 }

@@ -42,6 +42,10 @@
   }
 }
 
+.event-form{
+  margin: 0 3px 0 3px;
+}
+
 .step-indicator {
   display: flex;
   align-items: center;
@@ -478,10 +482,14 @@
       }
 
       .add-event-header {
-        height: 190px;
+        height: 210px;
       }
 
       .form-group {
         padding: 0px 5px;
+      }
+
+      .form-wrapper {
+        margin-bottom: -1rem;
       }
 }

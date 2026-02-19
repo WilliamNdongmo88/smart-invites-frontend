@@ -27,101 +27,33 @@
 
     <!-- Main content -->
     <div class="container py-12">
-    <div class="grid grid-detail">
-        <!-- Left column - Guest Information -->
-        <div class="left-column">
-        <!-- Personal Information -->
-        <div class="card">
-            <h2>Informations personnelles</h2>
+        <div class="grid grid-detail">
+            <!-- Left column - Guest Information -->
+            <div class="left-column">
+            <!-- Personal Information -->
+            <div class="card">
+                <h2>Informations personnelles</h2>
 
-            <div class="info-section">
-            <div class="info-row">
-                <span class="label">📧 Email</span>
-                <span class="value">{{ guest.email }}</span>
-            </div>
-
-            <div class="info-row" *ngIf="guest.phone">
-                <span class="label">📱 Téléphone</span>
-                <span class="value">{{ guest.phone }}</span>
-            </div>
-
-            <div class="info-row" *ngIf="guest.invitationSentDate">
-                <span class="label">📬 Invitation envoyée</span>
-                <span class="value">{{ formatDate(guest.invitationSentDate) }}</span>
-            </div>
-            </div>
-
-            <div class="divider-gold"></div>
-
-            <button class="btn btn-primary" style="width: 100%;" (click)="resendInvitation()">
-                {{ loading ? '⏳ Renvoie en cours ...' : '✉️ Renvoyer rappel invitation' }}
-            </button>
-        </div>
-
-        <!-- Event Response -->
-        <div class="card mt-8">
-            <h2>Réponse à l'événement</h2>
-
-            <div class="status-detail">
-            <div class="status-icon" [class]="'status-' + guest.status">
-                {{ getStatusIcon(guest.status) }}
-            </div>
-            <div class="status-info">
-                <p class="status-title">{{ getStatusLabel(guest.status) }}</p>
-                <p class="status-date" *ngIf="guest.responseDate">
-                Répondu le {{ formatDate(guest.responseDate) }} à {{ guest.responseTime }}
-                </p>
-                <p class="status-date" *ngIf="!guest.responseDate">
-                En attente de réponse
-                </p>
-            </div>
-            </div>
-
-            <div class="divider-gold"></div>
-
-            <div class="action-buttons">
-            <button class="btn btn-outline" (click)="markAsPending()">
-                {{ loading ? '⏳ Changement en cours ...' : 'Marquer attente'}}
-            </button>
-            <button class="btn btn-outline" (click)="markAsConfirmed()">
-                {{ loading ? '⏳ Changement en cours ...' : '✓ Marquer confirmé'}}
-            </button>
-            <button class="btn btn-outline" (click)="markAsDeclined()">
-                {{ loading ? '⏳ Changement en cours ...' : '✕ Marquer refusé'}}
-            </button>
-            </div>
-        </div>
-
-        <!-- Dietary Restrictions & Options -->
-        <div class="card mt-8">
-            <h2>Options et restrictions</h2>
-
-            <div class="options-list">
-                <div class="option-item" *ngIf="guest.dietaryRestrictions">
-                    <span class="option-label">🍽️ Restrictions alimentaires</span>
-                    <span class="option-value">{{ guest.dietaryRestrictions }}</span>
+                <div class="info-section">
+                <div class="info-row">
+                    <span class="label">📧 Email</span>
+                    <span class="value">{{ guest.email }}</span>
                 </div>
 
-                <div class="option-item">
-                    <span class="option-label">👥 +1 autorisé</span>
-                    <span class="option-value">{{ guest.plusOne ? 'Oui' : 'Non' }}</span>
-                </div>
-            </div>
-
-            <div *ngIf="guest.plusOne" class="options-list">
-                <div class="option-item">
-                    <span class="option-label">Nom de l'accompagnant</span>
-                    <span class="option-value">{{ guest.plusOneName }}</span>
+                <div class="info-row" *ngIf="guest.phone">
+                    <span class="label">📱 Téléphone</span>
+                    <span class="value">{{ guest.phone }}</span>
                 </div>
 
-                <div class="option-item" *ngIf="guest.plusOneDietaryRestrictions">
-                    <span class="option-label">🍽️ Restrictions alimentaires</span>
-                    <span class="option-value">{{ guest.plusOneDietaryRestrictions }}</span>
+                <div class="info-row" *ngIf="guest.invitationSentDate">
+                    <span class="label">📬 Invitation envoyée</span>
+                    <span class="value">{{ formatDate(guest.invitationSentDate) }}</span>
                 </div>
-            </div>
+                </div>
 
-            <div class="divider-gold"></div>
+                <div class="divider-gold"></div>
 
+<<<<<<< HEAD
             <button class="btn btn-outline" style="width: 100%;" (click)="editGuest()">
             ✏️ Modifier les options
             </button>
@@ -163,74 +95,186 @@
             <div class="qr-actions">
                 <button class="btn btn-outline" style="width: 100%;" (click)="downloadQRCode()">
                 📥 Télécharger
+=======
+                <button class="btn btn-primary" style="width: 100%;" (click)="resendInvitation()">
+                    {{ loading ? '⏳ Renvoie en cours ...' : '✉️ Renvoyer rappel invitation' }}
+>>>>>>> develop
                 </button>
-                <button class="btn btn-outline" style="width: 100%;" (click)="sendFileQRCode()">
-                {{ loading ? '⏳ Envoie en cours ...' :'✉️ Envoyer à l\'invité' }}
+            </div>
+
+            <!-- Event Response -->
+            <div class="card mt-8">
+                <h2>Réponse à l'événement</h2>
+
+                <div class="status-detail">
+                <div class="status-icon" [class]="'status-' + guest.status">
+                    {{ getStatusIcon(guest.status) }}
+                </div>
+                <div class="status-info">
+                    <p class="status-title">{{ getStatusLabel(guest.status) }}</p>
+                    <p class="status-date" *ngIf="guest.responseDate">
+                    Répondu le {{ formatDate(guest.responseDate) }} à {{ guest.responseTime }}
+                    </p>
+                    <p class="status-date" *ngIf="!guest.responseDate">
+                    En attente de réponse
+                    </p>
+                </div>
+                </div>
+
+                <div class="divider-gold"></div>
+
+                <div class="action-buttons">
+                <button class="btn btn-outline" (click)="markAsPending()">
+                    {{ loading ? '⏳ Changement en cours ...' : 'Marquer attente'}}
+                </button>
+                <button class="btn btn-outline" (click)="markAsConfirmed()">
+                    {{ loading ? '⏳ Changement en cours ...' : '✓ Marquer confirmé'}}
+                </button>
+                <button class="btn btn-outline" (click)="markAsDeclined()">
+                    {{ loading ? '⏳ Changement en cours ...' : '✕ Marquer refusé'}}
+                </button>
+                </div>
+            </div>
+
+            <!-- Dietary Restrictions & Options -->
+            <div class="card mt-8">
+                <h2>Options et restrictions</h2>
+
+                <div class="options-list">
+                    <div class="option-item" *ngIf="guest.dietaryRestrictions">
+                        <span class="option-label">🍽️ Restrictions alimentaires</span>
+                        <span class="option-value">{{ guest.dietaryRestrictions }}</span>
+                    </div>
+
+                    <div class="option-item">
+                        <span class="option-label">👥 +1 autorisé</span>
+                        <span class="option-value">{{ guest.plusOne ? 'Oui' : 'Non' }}</span>
+                    </div>
+                </div>
+
+                <div *ngIf="guest.plusOne" class="options-list">
+                    <div class="option-item">
+                        <span class="option-label">Nom de l'accompagnant</span>
+                        <span class="option-value">{{ guest.plusOneName }}</span>
+                    </div>
+
+                    <div class="option-item" *ngIf="guest.plusOneDietaryRestrictions">
+                        <span class="option-label">🍽️ Restrictions alimentaires</span>
+                        <span class="option-value">{{ guest.plusOneDietaryRestrictions }}</span>
+                    </div>
+                </div>
+
+                <div class="divider-gold"></div>
+
+                <button class="btn btn-outline" style="width: 100%;" (click)="editGuest()">
+                ✏️ Modifier les options
+                </button>
+            </div>
+
+            <!-- Notes -->
+            <div class="card mt-8">
+                <h2>Notes</h2>
+
+                <div class="notes-box">
+                <p *ngIf="guest.notes">{{ guest.notes }}</p>
+                <p *ngIf="!guest.notes" class="no-notes">Aucune note</p>
+                </div>
+
+                <button class="btn btn-outline" style="width: 100%;" (click)="addNotes()">
+                📝 Ajouter une note
                 </button>
             </div>
             </div>
 
-            <div *ngIf="!guest.qrCodeGenerated" class="no-qr-section">
-            <div class="no-qr-icon">📱</div>
-            <p>Aucun code QR généré</p>
-            <button class="btn btn-primary" style="width: 100%;" (click)="generateQRCode()">
-                {{loading ? '⏳ Envoie en cours ...' :'✨ Envoyer une invitation'}}
-            </button>
+            <!-- Right column - QR Code & Actions -->
+            <div class="right-column">
+            <!-- QR Code Section -->
+            <div class="card">
+                <h2>Code QR</h2>
+
+                <div *ngIf="guest.qrCodeGenerated" class="qr-code-section">
+                <div class="qr-code-container">
+                    <img
+                    [src]="guest.qrCodeUrl"
+                    alt="QR Code"
+                    class="qr-code-image"
+                    />
+                </div>
+                <p class="qr-description">
+                    Scannez ce code pour accéder à l'invitation
+                </p>
+
+                <div class="qr-actions">
+                    <button class="btn btn-outline" style="width: 100%;" (click)="downloadQRCode()">
+                    📥 Télécharger
+                    </button>
+                    <button class="btn btn-outline" style="width: 100%;" (click)="sendFileQRCode()">
+                    {{ loading ? '⏳ Envoie en cours ...' :'✉️ Envoyer à l\'invité' }}
+                    </button>
+                </div>
+                </div>
+
+                <div *ngIf="!guest.qrCodeGenerated" class="no-qr-section">
+                <div class="no-qr-icon">📱</div>
+                <p>Aucun code QR généré</p>
+                <button class="btn btn-primary" style="width: 100%;" (click)="generateQRCode()">
+                    {{loading ? '⏳ Envoie en cours ...' :'✨ Envoyer une invitation'}}
+                </button>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <!-- <div class="card mt-6">
+                <h2>Actions rapides</h2>
+
+                <div class="actions-list">
+                <button class="action-btn" (click)="sendMessage()">
+                    <span class="icon">💬</span>
+                    <span class="text">Envoyer un message</span>
+                </button>
+
+                <button class="action-btn" (click)="callGuest()">
+                    <span class="icon">📞</span>
+                    <span class="text">Appeler</span>
+                </button>
+
+                <button class="action-btn" (click)="sendEmail()">
+                    <span class="icon">✉️</span>
+                    <span class="text">Envoyer un email</span>
+                </button>
+
+                <button class="action-btn" (click)="shareInvitation()">
+                    <span class="icon">🔗</span>
+                    <span class="text">Partager l'invitation</span>
+                </button>
+                </div>
+            </div> -->
+
+            <!-- Statistics -->
+            <!-- <div class="card mt-6">
+                <h2>Statistiques</h2>
+
+                <div class="stats-list">
+                <div class="stat-item">
+                    <span class="stat-label">Statut</span>
+                    <span class="stat-value" [class]="'status-' + guest.status">
+                    {{ getStatusLabel(guest.status) }}
+                    </span>
+                </div>
+
+                <div class="stat-item">
+                    <span class="stat-label">Invité depuis</span>
+                    <span class="stat-value">{{ daysAgo(guest.invitationSentDate) }} jours</span>
+                </div>
+
+                <div class="stat-item" *ngIf="guest.responseDate">
+                    <span class="stat-label">Temps de réponse</span>
+                    <span class="stat-value">{{ daysBetween(guest.invitationSentDate, guest.responseDate) }} jours</span>
+                </div>
+                </div>
+            </div> -->
             </div>
         </div>
-
-        <!-- Quick Actions -->
-        <!-- <div class="card mt-6">
-            <h2>Actions rapides</h2>
-
-            <div class="actions-list">
-            <button class="action-btn" (click)="sendMessage()">
-                <span class="icon">💬</span>
-                <span class="text">Envoyer un message</span>
-            </button>
-
-            <button class="action-btn" (click)="callGuest()">
-                <span class="icon">📞</span>
-                <span class="text">Appeler</span>
-            </button>
-
-            <button class="action-btn" (click)="sendEmail()">
-                <span class="icon">✉️</span>
-                <span class="text">Envoyer un email</span>
-            </button>
-
-            <button class="action-btn" (click)="shareInvitation()">
-                <span class="icon">🔗</span>
-                <span class="text">Partager l'invitation</span>
-            </button>
-            </div>
-        </div> -->
-
-        <!-- Statistics -->
-        <!-- <div class="card mt-6">
-            <h2>Statistiques</h2>
-
-            <div class="stats-list">
-            <div class="stat-item">
-                <span class="stat-label">Statut</span>
-                <span class="stat-value" [class]="'status-' + guest.status">
-                {{ getStatusLabel(guest.status) }}
-                </span>
-            </div>
-
-            <div class="stat-item">
-                <span class="stat-label">Invité depuis</span>
-                <span class="stat-value">{{ daysAgo(guest.invitationSentDate) }} jours</span>
-            </div>
-
-            <div class="stat-item" *ngIf="guest.responseDate">
-                <span class="stat-label">Temps de réponse</span>
-                <span class="stat-value">{{ daysBetween(guest.invitationSentDate, guest.responseDate) }} jours</span>
-            </div>
-            </div>
-        </div> -->
-        </div>
-    </div>
     </div>
 </div>
 <!-- <app-footer></app-footer> -->

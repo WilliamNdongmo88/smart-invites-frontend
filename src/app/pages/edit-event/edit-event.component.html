@@ -302,7 +302,7 @@
                   <label *ngIf="showAnniversaryNames">Nom de la mariée</label>
                   <input type="text" name="name2" [(ngModel)]="eventData.eventNameConcerned2" 
                     required
-                    #eventNameConcerned2="ngModel" />
+                    #eventNameConcerned2="ngModel" class="form-input" />
                   <div class="error" *ngIf="eventNameConcerned2.invalid && eventNameConcerned2.touched">
                       Champ obligatoire
                   </div>

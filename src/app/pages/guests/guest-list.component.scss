@@ -19,6 +19,7 @@
       text-decoration: none;
       margin-bottom: 0rem;
       transition: color 0.3s ease;
+      margin: 0 5px 0 5px;
 
       &:hover {
         color: color.adjust(#D4AF37, $lightness: -10%);
@@ -31,6 +32,7 @@
       align-items: flex-start;
       flex-wrap: wrap;
       gap: 1rem;
+      margin: 0 5px 0 5px;
     }
 
     .header-content h1 {

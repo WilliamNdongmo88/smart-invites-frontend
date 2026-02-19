@@ -18,6 +18,7 @@
       margin-bottom: 1rem;
       transition: color 0.3s ease;
       cursor: pointer;
+      margin: 0 5px 0 5px;
 
       &:hover {
         color: color.adjust(#D4AF37, $lightness: -10%);
@@ -29,6 +30,7 @@
       align-items: center;
       gap: 2rem;
       flex-wrap: wrap;
+      margin: 0 5px 0 5px;
     }
 
     .guest-avatar-large {

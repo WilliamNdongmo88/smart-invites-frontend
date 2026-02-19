@@ -16,6 +16,7 @@
   align-items: flex-start;
   flex-wrap: wrap;
   gap: 1rem;
+  margin: 0 5px 0 5px;
 }
 
 .c-mtop{
@@ -181,7 +182,8 @@
 
 .grid-4 {
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  margin-top: -1rem;
+  // margin-top: -1rem;
+  margin: -1rem 5px 0 5px;
 }
 
 /* 📌 Styles mobiles généraux (≤ 768px) */

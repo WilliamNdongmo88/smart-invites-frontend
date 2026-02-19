@@ -92,7 +92,7 @@
             </div>
           </div>
 
-          <div class="event-stats">
+          <div class="event-stats" (click)="navigateToEventDetails(event.id)">
             <div class="stat-box">
               <p class="label">Total</p>
               <p class="value">{{ event.totalGuests }}</p>

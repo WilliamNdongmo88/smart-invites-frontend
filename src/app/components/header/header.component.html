@@ -109,7 +109,7 @@
         <div class="user-avatar-large">
           {{ currentUser?.name?.charAt(0) || 'U' }}
         </div>
-        <div class="user-details">
+        <div class="user-details" (click)="goToProfile(); toggleMobileMenu(false)">
           <span class="user-name">{{ currentUser?.name }}</span>
           <div class="plan-indicator-mobile" [class.plan-pro]="currentUser?.plan === 'professionnel'">
             {{ currentUser?.plan === 'professionnel' ? 'Plan Professionnel' : 'Plan Gratuit' }}
@@ -134,7 +134,7 @@
             <span class="plan-badge">
               {{ currentUser?.plan === 'professionnel' ? 'PRO' : 'GRATUIT' }}
             </span>
-            <a (click)="goToProfile(); toggleMobileMenu(false)" class="mobile-nav-link">Mon Profil</a>
+            <!-- <a (click)="goToProfile(); toggleMobileMenu(false)" class="mobile-nav-link">Mon Profil</a> -->
             <a *ngIf="currentUser?.plan === 'gratuit'" (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="mobile-nav-link">
               Passer en Pro
             </a>

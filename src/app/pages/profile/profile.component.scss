@@ -31,6 +31,7 @@
     display: grid;
     grid-template-columns: 300px 1fr;
     gap: 2rem;
+    margin: 0 3px 0 3px;
 }
 
 .profile-sidebar {
@@ -483,6 +484,7 @@
 @media (max-width: 768px) {
     .profile-wrapper {
         grid-template-columns: 1fr;
+        margin-bottom: -1.5rem;
     }
 
     .form-grid {

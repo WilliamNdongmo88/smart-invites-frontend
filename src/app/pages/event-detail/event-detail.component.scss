@@ -615,7 +615,7 @@ $primary-gold: #d4af37;
       .info-row {
         display: flex;
         align-items: flex-start;
-        margin-bottom: 20px;
+        margin-bottom: 0px;
       }
 
       .icon-container {
@@ -702,6 +702,7 @@ $primary-gold: #d4af37;
     @media (max-width: 1024px) {
       .grid-main {
         grid-template-columns: 1fr;
+        margin: 0 5px 0 5px;
       }
 
       .header-content {
@@ -771,6 +772,7 @@ $primary-gold: #d4af37;
 
       .mt-card{
         margin-top: 20px;
+        margin-bottom: -1.5rem;
       }
 
       .guests-table {

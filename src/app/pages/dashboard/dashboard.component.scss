@@ -22,10 +22,6 @@
   margin-top: 25px;
 }
 
-.c-container {
-  margin: 0 5px 0 5px;
-}
-
 .stat-card {
   background-color: #FFFFFF;
   border: 1px solid #E0E0E0;
@@ -63,7 +59,7 @@
 }
 
 .c-mt{
-  margin-top: 0rem;
+  margin: 0 5px 0 5px;
 }
 
 .c-ml{
@@ -88,6 +84,7 @@
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
   gap: 1rem;
+  cursor: pointer;
 }
 
 .event-header h3 {
@@ -109,6 +106,7 @@
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
+  cursor: pointer;
 }
 
 .detail-item {

@@ -261,26 +261,32 @@
 
             <div class="info-card">
               <h3>⚙️ Paramètres</h3>
-              <div class="settings-group">
-                <label class="checkbox-label">
+              <div class="settings-group checkbox-group checkbox-text">
+                <label class="custom-checkbox">
                   <input
                     type="checkbox"
                     [checked]="autoCapture()"
                     (change)="toggleAutoCapture($event)"
                   />
-                  <span>Capture automatique</span>
+                  <span class="checkmark"></span>
+                  <span class="label-text">
+                    Capture automatique
+                  </span>
                 </label>
                 <small>Capture automatiquement quand un code QR est détecté</small>
               </div>
 
-              <div class="settings-group">
-                <label class="checkbox-label">
+              <div class="settings-group checkbox-group checkbox-text">
+                <label class="custom-checkbox">
                   <input
                     type="checkbox"
                     [checked]="soundEnabled()"
                     (change)="toggleSound()"
                   />
-                  <span>Son de confirmation</span>
+                  <span class="checkmark"></span>
+                  <span class="label-text">
+                    Son de confirmation
+                  </span>
                 </label>
                 <small>Joue un son quand un code est scanné</small>
               </div>

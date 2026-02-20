@@ -427,66 +427,6 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         });
     }
   }
-  // addCheckIns(){
-  //   const now = new Date().toISOString();
-  //   const checkinTime = now.split('.')[0].replace('T', ' ');
-  //   const data = {
-  //       eventId: 0,
-  //       guestId: 0,
-  //       invitationId: 0,
-  //       token: '',
-  //       scannedBy: '',
-  //       scanStatus: 'VALID',
-  //       checkinTime: checkinTime
-  //   };
-  //   for (const elt of this.datas) {
-  //       if(elt.guestId == this.guestId){
-  //           data.eventId = elt.eventId;
-  //           data.guestId = elt.guestId;
-  //           data.token = this.token;
-  //           data.invitationId = elt.invitationId;
-  //           data.scannedBy = this.userConnected.name;
-  //           this.data.eventTitle = elt.title;
-  //           this.data.guestName = elt.guestName;
-  //           this.data.hasPlusOne = elt.hasPlusOne;
-  //           this.data.plusOneName = elt.plusOneName;
-  //       }
-  //   }
-  //   console.log('data:: ', data);
-  //   this.qrcodeService.addCheckIn(data).subscribe(
-  //   (response) => {
-  //       console.log("[addCheckIn] response :: ", response);
-  //       const guest = response;
-  //       const event = response;
-  //       this.successCount.update(count => count + 1);
-
-  //       this.isValid = true;
-
-  //       // 🎉 Son + message + stop caméra (comme avant)
-  //       if (this.soundEnabled()) this.playSuccessSound();
-
-  //       this.scanResult.set({
-  //           success: true,
-  //           guestName: guest.has_plus_one ? guest.guestName+' et '+guest.plus_one_name : guest.guestName,
-  //           eventName: event.title,
-  //           tableNumber: guest.table_number,
-  //           message: 'Code QR validé avec succès !'
-  //       });
-  //     this.manageCheckInParameter();
-  //   },
-  //   (error) => {
-  //       console.error('❌ [getGuestById] Erreur :', error.message);
-  //       this.isValid = false;
-  //       if (this.soundEnabled()) this.playErrorSound();
-  //       this.errorCount.update(count => count + 1);
-  //       this.manageCheckInParameter();
-  //       if(error.message.includes('409 Conflict'))console.warn(error.error.error);
-  //       this.scanResult.set({
-  //           success: false,
-  //           message: error.error.error ? error.error.error : 'Code QR invalide ou non reconnu',
-  //       });
-  //   });
-  // }
 
   getListScannedGuest(){
     const guestIds = this.datas.filter(g => g.guestId != null).map(g => g.guestId);
@@ -631,7 +571,9 @@ export class QRScannerComponent implements OnInit, OnDestroy {
 
   toggleSound() {
     console.log('Mise à jour du signal');
-    this.soundEnabled.set(false);
+
+    this.soundEnabled.set(!this.soundEnabled());
+
     this.updateCheckInParam();
   }
 

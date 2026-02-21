@@ -1006,6 +1006,13 @@ $breakpoint-tablet: 1024px;
 // ============================================================================
 
 @media (max-width: $breakpoint-tablet) {
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-left: 0rem;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+  }
   .header-wrapper {
     gap: 1rem;
   }

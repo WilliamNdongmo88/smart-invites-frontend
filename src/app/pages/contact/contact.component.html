@@ -83,15 +83,18 @@
             ></textarea>
             </div>
 
-            <div class="form-group">
-            <label class="checkbox-label">
-                <input
-                type="checkbox"
-                name="newsletter"
-                [(ngModel)]="formData.newsletter"
-                />
-                <span>Je souhaite recevoir les actualités de Smart Invite</span>
-            </label>
+            <div class="form-group checkbox-group checkbox-text">
+                <label class="custom-checkbox">
+                    <input
+                    type="checkbox"
+                    name="newsletter"
+                    [(ngModel)]="formData.newsletter"
+                    />
+                    <span class="checkmark"></span>
+                    <span class="label-text">
+                        Je souhaite recevoir les actualités de Smart Invite
+                    </span>
+                </label>
             </div>
 
             <button type="submit" class="btn btn-primary" style="width: 100%;" [disabled]="!contactForm.valid">

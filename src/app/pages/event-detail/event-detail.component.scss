@@ -53,10 +53,11 @@ $primary-gold: #d4af37;
       display: grid;
       grid-template-columns: 1fr 350px;
       gap: 2rem;
+      margin: 0 5px 0 5px;
     }
 
     .c-mgtop{
-      margin: -1rem 5px 0 5px;
+      margin-top: -1rem;
     }
 
     .right-column{
@@ -716,7 +717,7 @@ $primary-gold: #d4af37;
   }
 
   .event-header {
-    height: 220px;
+    height: 100%;
     width: 100%;
   }
 

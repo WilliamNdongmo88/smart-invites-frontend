@@ -70,5 +70,9 @@ export class ContactComponent implements OnInit {
       }
     );
   }
+
+  retour() {
+    window.history.back();
+  }
 }
 

@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .contact-page {
     min-height: 100vh;
     background-color: #FFFFFF;
@@ -278,6 +280,19 @@
     color: #666666;
     font-size: 0.875rem;
     line-height: 1.6;
+}
+
+.back-link {
+    cursor: pointer;
+    display: inline-block;
+    color: #D4AF37;
+    text-decoration: none;
+    margin-bottom: 0rem;
+    transition: color 0.3s ease;
+
+    &:hover {
+    color: color.adjust(#D4AF37, $lightness: -10%);
+    }
 }
 
 @media (max-width: 768px) {

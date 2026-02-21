@@ -7,14 +7,14 @@
         <div class="container">
             <a routerLink="/evenements" class="back-link">← Retour au tableau de bord</a>
             <div class="header-content">
-            <div>
-                <h1>{{ event.title }}</h1>
-                <p>Gestion des invitations et des invités</p>
-            </div>
-            <div class="header-actions">
-                <button class="btn btn-outline" (click)="editEvent()">✏️ Éditer</button>
-                <button class="btn btn-outline btn-danger" (click)="openDeleteModal('delete')">🗑️ Supprimer</button>
-            </div>
+                <div>
+                    <h1>{{ event.title }}</h1>
+                    <p>Gestion des invitations et des invités</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" (click)="editEvent()">✏️ Éditer</button>
+                    <button class="btn btn-outline btn-danger" (click)="openDeleteModal('delete')">🗑️ Supprimer</button>
+                </div>
             </div>
         </div>
     </div>

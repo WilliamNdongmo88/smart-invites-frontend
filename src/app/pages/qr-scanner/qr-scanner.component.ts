@@ -812,7 +812,8 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   }
 
   backToEvent(){
-    this.router.navigate(['/events', this.eventId]);
+    // this.router.navigate(['/events', this.eventId]);
+    window.history.back();
   }
 }
 

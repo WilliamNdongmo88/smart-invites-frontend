@@ -111,7 +111,7 @@ export class DashboardComponent {
   }
 
   getResponseRate(event: Event): number {
-    const responded = event.confirmedGuests + event.declinedGuests;
+    const responded = Number(event.confirmedGuests) + Number(event.declinedGuests);
     return Math.round((responded / Number(event.totalGuests)) * 100);
   }
 

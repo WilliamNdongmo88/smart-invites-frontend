@@ -91,16 +91,16 @@ export class GuestDetailComponent implements OnInit{
             return;
           }
 
-          const eventDate = new Date(res.eventDate);
+          const responseDate = new Date(res.response_date);
 
-          if (isNaN(eventDate.getTime())) {
-            console.error('Format de date invalide:', res.eventDate);
+          if (isNaN(responseDate.getTime())) {
+            console.error('Format de date invalide:', res.response_date);
             return;
           }
 
-          const date = eventDate.toISOString().split('T')[0];
+          const date = responseDate.toISOString().split('T')[0];
 
-          const time = eventDate.toLocaleTimeString('fr-FR', {
+          const time = responseDate.toLocaleTimeString('fr-FR', {
             hour: '2-digit',
             minute: '2-digit',
             timeZone: 'UTC'

@@ -62,7 +62,7 @@ export class ContactComponent {
             newsletter: false,
           };
           this.submitError.set(false);
-        }, 3000);
+        }, 3000000);
       }
     );
   }

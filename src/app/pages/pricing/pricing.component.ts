@@ -130,6 +130,7 @@ export class PricingComponent implements OnInit{
       this.currentUser = user;
       console.log("---this.currentUser :: ", this.currentUser)
     });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   /** Toggle facturation */

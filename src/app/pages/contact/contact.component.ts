@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: 'contact.component.html',
   styleUrl: 'contact.component.scss'
 })
-export class ContactComponent {
+export class ContactComponent implements OnInit {
   submitSuccess = signal(false);
   submitError = signal(false);
   formData = {
@@ -26,6 +26,10 @@ export class ContactComponent {
   loading: boolean = false;
 
   constructor(private authservice: AuthService){}
+
+  ngOnInit() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   onSubmit() {
     console.log('Form submitted:', this.formData);

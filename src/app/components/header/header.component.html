@@ -141,7 +141,7 @@
               Passer en Pro
             </a>
           </div>
-          <a (click)="scrollTo('accueil'); toggleMobileMenu(false)" class="mobile-nav-link">Accueil</a>
+          <a (click)="navigateToHome(); toggleMobileMenu(false)" class="mobile-nav-link">Accueil</a>
           <a routerLink="/contact" (click)="toggleMobileMenu(false)" class="mobile-nav-link">Contact</a>
           <a *ngIf="isScanning" (click)="scanQrCode(); toggleMobileMenu(false)" class="mobile-nav-link">Scanner</a>
           <a *ngIf="currentUser?.role === 'admin'" (click)="goToPageAdmin(); toggleMobileMenu(false)" class="mobile-nav-link admin-link">Administration</a>

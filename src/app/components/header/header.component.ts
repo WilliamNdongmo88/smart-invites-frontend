@@ -192,6 +192,7 @@ export class HeaderComponent implements OnInit {
   }
 
   scrollTo(sectionId: string) {
+    console.log('Scroll vers la section :', sectionId);
     const element = document.getElementById(sectionId);
 
     if (element) {

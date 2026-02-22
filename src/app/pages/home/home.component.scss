@@ -7,10 +7,6 @@
       background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, transparent 100%);
     }
 
-    .c-container {
-      margin: -2.5rem 5px 0 5px;
-    }
-
     .c-grid {
       margin: -3.5rem 5px 0 5px;      
     }
@@ -167,6 +163,11 @@
       margin-top: 1rem;
       font-size: 0.875rem;
     }
+
+      .grid-2,
+      .grid-3 {
+        margin: 0 5px 0 5px;
+      }
 
     @media (max-width: 768px) {
       .hero {

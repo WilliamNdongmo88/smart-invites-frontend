@@ -201,7 +201,7 @@
                         id="email"
                         name="email"
                         [(ngModel)]="email"
-                        placeholder="votre@email.com"
+                        placeholder="exemple@gmail.com"
                         required
                         class="form-input"
                       />
@@ -213,7 +213,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary submit-btn" [disabled]="!emailForm.valid">
-                      {{ loading ? '⏳ Envoi en cours...' : 'Envoyer le lien de réinitialisation' }}
+                      {{ loading ? '⏳ Envoi en cours...' : 'Soumettre' }}
                     </button>
 
                     <div class="back-to-login">

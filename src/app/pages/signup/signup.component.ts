@@ -235,19 +235,7 @@ export class SignupComponent implements  OnInit{
           isActive: true
         }
         this.loading = true;
-        this.authService.sendResetEmail(data).subscribe({
-          next: (response) => {
-            console.log('Email envoyé avec succès', response);
-            this.currentStep.set('verification');
-            this.errorMessage = '';
-            this.loading = false;
-          },
-          error: (error) => {
-            console.error('❌ Erreur lors de l’envoi de l’e-mail :', error);
-            this.errorMessage = error.error.error;
-            this.loading = false;
-          }
-        });
+        this.sendResetEmailService(data);
       } else {
         this.errorMessage = 'Adresse e-mail invalide.';
       }
@@ -256,6 +244,21 @@ export class SignupComponent implements  OnInit{
     }
   }
 
+  sendResetEmailService(data: any) {
+    this.authService.sendResetEmail(data).subscribe({
+      next: (response) => {
+        console.log('Email envoyé avec succès', response);
+        this.currentStep.set('verification');
+        this.errorMessage = '';
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors de l’envoi de l’e-mail :', error);
+        this.errorMessage = error.error.error;
+        this.loading = false;
+      }
+    });
+  }
   submitVerificationCode() {
     if (this.verificationCode && this.verificationCode.length === 6) {
       const data = {
@@ -293,8 +296,13 @@ export class SignupComponent implements  OnInit{
   }
 
   resendCode() {
-    this.submitEmail();
-    console.log('✉️ Code de vérification renvoyé !');
+    console.log('Resend code email: ', this.email);
+    const data = {
+      email: this.isActiveAccount ? this.email : this.email_confirmed,
+      isActive: true
+    }
+    console.log('Resend code data: ', data);
+    this.sendResetEmailService(data);
   }
 
   redirectToLogin() {

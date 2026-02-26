@@ -73,7 +73,7 @@
 
   .form-header {
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
   }
 
   .logo {
@@ -440,7 +440,7 @@
 
   .back-to-login {
     text-align: center;
-    margin-top: -10px;
+    margin-top: 10px;
   }
 
   .link-back {
@@ -590,5 +590,14 @@
 
     .step-info {
       margin-top: 18px;
+    }
+    .form-header {
+      margin-bottom: 3rem;
+    }
+
+    .resend-code {
+      margin-bottom: 0.8rem;
+      gap: 0px;
+      margin-left: 0px;
     }
   }

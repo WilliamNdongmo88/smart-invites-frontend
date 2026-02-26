@@ -413,6 +413,7 @@
     margin-bottom: 1.5rem;
     gap: 10px;
     margin-left: 30px;
+    margin-top: 3px;
   }
 
   .resend-text {
@@ -597,7 +598,11 @@
 
     .resend-code {
       margin-bottom: 0.8rem;
-      gap: 0px;
+      gap: 5px;
       margin-left: 0px;
+    }
+
+    .link-resend {
+      margin-top: 0px;
     }
   }

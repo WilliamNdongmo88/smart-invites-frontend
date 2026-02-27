@@ -1,3 +1,9 @@
+    .c-container {
+      max-width: 999px;
+      margin: 2rem auto;
+      padding: 0 15px;
+    }
+
     .invitation {
       min-height: 100vh;
       background: linear-gradient(to bottom, rgba(212, 175, 55, 0.05), #FFFFFF);
@@ -364,7 +370,8 @@
 
       .invitation-card {
         max-width: 325px;
-        //max-height: 1611px;
+        margin: 0 5px 0 5px;
+        overflow: hidden;
       }
 
       .invitation-image img {

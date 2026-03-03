@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FeedbackService } from '../../services/feedback.service';
 import { AuthService } from '../../services/auth.service';
 import { Maintenance, MaintenanceService } from '../../services/maintenance.service';
@@ -117,7 +117,7 @@ export class ManagerDashboardComponent implements OnInit {
   ];
 
   constructor(
-    private eventService: EventService,
+    private router: Router,
     private authService: AuthService,
     private paymentService: PaymentService,
     private breakpointObserver: BreakpointObserver,
@@ -227,13 +227,8 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
 
-  exportData(): void {
-    console.log(`Export des données de type : ${this.exportType}`);
-    alert(`Le téléchargement des données "${this.exportType}" va commencer.`);
-    // Logique pour appeler votre service d'export
-    // this.dataExportService.export(this.exportType).subscribe(blob => {
-    //   // Logique pour déclencher le téléchargement du fichier (blob)
-    // });
+  navigateToEventList(): void {
+    this.router.navigate(['/event-scan-list'])
   }
 
   changeUserPlan(user: User, bool: boolean) {

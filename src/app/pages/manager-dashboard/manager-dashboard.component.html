@@ -324,18 +324,10 @@
 
         <!-- Export de Données -->
         <div class="section-card">
-            <h2>Export de Données</h2>
+            <h3>Événement de vos utilisateurs</h3>
             <div class="export-actions">
-                <div class="form-group">
-                    <label>Type de données à exporter</label>
-                    <select [(ngModel)]="exportType" class="form-select">
-                        <option value="users">Utilisateurs</option>
-                        <option value="events">Événements</option>
-                        <option value="logs">Logs d'activité</option>
-                    </select>
-                </div>
-                <button class="btn btn-dark" (click)="exportData()">
-                    <i class="fas fa-download"></i> Télécharger les Données
+                <button class="btn btn-dark" (click)="navigateToEventList()">
+                    <i class="fas fa-download"></i> Scanner
                 </button>
             </div>
         </div>

@@ -44,6 +44,7 @@ export class EventScanListComponent {
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
+      console.log("this.currentUser:", this.currentUser);
       this.organizerId = user?.id 
     });
     this.triggerBAction();
@@ -55,33 +56,59 @@ export class EventScanListComponent {
 
   getAllEvent(){
     if (this.organizerId) {
-      this.eventService.getEvents(this.organizerId).subscribe(
-        (response) => {
-          // console.log("Response :: ", response.events);
-          response.events.map(elt => {
-            const data = {
-              id: elt.event_id,
-              title: elt.title,
-              date: elt.event_date.split('T')[0],     //"2025-12-05T13:30:00.000Z"
-              location: elt.event_location,
-              totalGuests: elt.max_guests,
-              confirmedGuests: elt.confirmed_count,
-              pendingGuests: elt.pending_count,
-              declinedGuests: elt.declined_count     
-            }
-            this.events.push(data);
-            return data;
-          });
-          // console.log("this.events :: ", this.events);
-          // this.loading = false;
-        },
-        (error) => {
-          // this.loading = false;
-          console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
-          console.log("Message :: ", error.message);
-          this.errorMessage = error.message || 'Erreur de connexion';
-        }
-      );
+      if(this.currentUser?.role!='manager'){
+        this.eventService.getEvents(this.organizerId).subscribe(
+          (response) => {
+            // console.log("Response :: ", response.events);
+            response.events.map(elt => {
+              const data = {
+                id: elt.event_id,
+                title: elt.title,
+                date: elt.event_date.split('T')[0],     //"2025-12-05T13:30:00.000Z"
+                location: elt.event_location,
+                totalGuests: elt.max_guests,
+                confirmedGuests: elt.confirmed_count,
+                pendingGuests: elt.pending_count,
+                declinedGuests: elt.declined_count     
+              }
+              this.events.push(data);
+              return data;
+            });
+            // console.log("this.events :: ", this.events);
+          },
+          (error) => {
+            console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
+            console.log("Message :: ", error.message);
+            this.errorMessage = error.message || 'Erreur de connexion';
+          }
+        );
+      }else{
+        this.authService.getAllUsersLinkedToManager(this.organizerId).subscribe(
+          (response) => {
+            console.log("Response :: ", response.events);
+            response.events.map((elt:any) => {
+              const data = {
+                id: elt.event_id,
+                title: elt.title,
+                date: elt.event_date.split('T')[0],     //"2025-12-05T13:30:00.000Z"
+                location: elt.event_location,
+                totalGuests: elt.max_guests,
+                confirmedGuests: elt.confirmed_count,
+                pendingGuests: elt.pending_count,
+                declinedGuests: elt.declined_count     
+              }
+              this.events.push(data);
+              return data;
+            });
+            // console.log("this.events :: ", this.events);
+          },
+          (error) => {
+            console.error('❌ Erreur de recupération :', error.message.split(':')[4]);
+            console.log("Message :: ", error.message);
+            this.errorMessage = error.message || 'Erreur de connexion';
+          }
+        );
+      }
     }
   }
 

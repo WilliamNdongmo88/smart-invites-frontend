@@ -24,18 +24,32 @@
         <!-- Authenticated Links -->
         <ng-container *ngIf="isAuthenticated">
           <a *ngIf="currentUser?.role === 'admin'" (click)="goToPageAdmin()" class="nav-link admin-link">Administration</a>
-          <a (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="nav-link">
+          <a *ngIf="currentUser?.role === 'manager'" (click)="goToPageManager()" class="nav-link admin-link">Manager</a>
+          <!-- <a (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="nav-link">
             {{currentUser?.plan === 'gratuit' ? 'Passer en Pro' : ''}}
-          </a>
+          </a> -->
           <a routerLink="/" class="nav-link">Accueil</a>
           <a routerLink="/contact" (click)="toggleMobileMenu(false)" class="nav-link">Contact</a>
           <a *ngIf="isScanning" (click)="scanQrCode()" class="nav-link">Scanner</a>
         </ng-container>
 
         <!-- Plan Indicator (Visible when logged in) -->
-        <div class="plan-indicator" *ngIf="isAuthenticated" [class.plan-pro]="currentUser?.plan === 'professionnel'">
+        <div *ngIf="isAuthenticated && currentUser?.plan === 'professionnel'" class="plan-indicator" (click)="navigateToPricing()"
+          [class.plan-pro]="currentUser?.plan === 'gratuit'">
           <span class="plan-badge">
-            {{ currentUser?.plan === 'professionnel' ? 'PRO' : 'GRATUIT' }}
+            GRATUIT
+          </span>
+        </div>
+        <div *ngIf="isAuthenticated && currentUser?.plan === 'professionnel'" class="plan-indicator" (click)="navigateToPricing()"
+          [class.plan-pro]="currentUser?.plan === 'professionnel'">
+          <span class="plan-badge">
+            PRO
+          </span>
+        </div>
+        <div *ngIf="isAuthenticated && currentUser?.plan === 'Entreprise'" class="plan-indicator" (click)="navigateToPricing()"
+          [class.plan-pro]="currentUser?.plan === 'Entreprise'">
+          <span class="plan-badge">
+            BUSINESS
           </span>
         </div>
 
@@ -113,9 +127,24 @@
         </div>
         <div class="user-details" (click)="goToProfile(); toggleMobileMenu(false)">
           <span class="user-name">{{ currentUser?.name }}</span>
-          <div class="plan-indicator-mobile" [class.plan-pro]="currentUser?.plan === 'professionnel'">
-            {{ currentUser?.plan === 'professionnel' ? 'Plan Professionnel' : 'Plan Gratuit' }}
-          </div>
+                  <div *ngIf="isAuthenticated && currentUser?.plan === 'professionnel'" class="plan-indicator" (click)="navigateToPricing()"
+          [class.plan-pro]="currentUser?.plan === 'gratuit'">
+          <span class="plan-badge">
+            GRATUIT
+          </span>
+        </div>
+        <div *ngIf="isAuthenticated && currentUser?.plan === 'professionnel'" class="plan-indicator" (click)="navigateToPricing()"
+          [class.plan-pro]="currentUser?.plan === 'professionnel'">
+          <span class="plan-badge">
+            PRO
+          </span>
+        </div>
+        <div *ngIf="isAuthenticated && currentUser?.plan === 'Entreprise'" class="plan-indicator" (click)="navigateToPricing()"
+          [class.plan-pro]="currentUser?.plan === 'Entreprise'">
+          <span class="plan-badge">
+            BUSINESS
+          </span>
+        </div>
         </div>
       </div>
 
@@ -133,9 +162,9 @@
 
         <ng-container *ngIf="isAuthenticated">
           <div class="plan-indicator indicator" *ngIf="isAuthenticated" [class.plan-pro]="currentUser?.plan === 'professionnel'">
-            <span class="plan-badge">
+            <!-- <span class="plan-badge">
               {{ currentUser?.plan === 'professionnel' ? 'PRO' : 'GRATUIT' }}
-            </span>
+            </span> -->
             <!-- <a (click)="goToProfile(); toggleMobileMenu(false)" class="mobile-nav-link">Mon Profil</a> -->
             <a *ngIf="currentUser?.plan === 'gratuit'" (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="mobile-nav-link">
               Passer en Pro
@@ -145,6 +174,7 @@
           <a routerLink="/contact" (click)="toggleMobileMenu(false)" class="mobile-nav-link">Contact</a>
           <a *ngIf="isScanning" (click)="scanQrCode(); toggleMobileMenu(false)" class="mobile-nav-link">Scanner</a>
           <a *ngIf="currentUser?.role === 'admin'" (click)="goToPageAdmin(); toggleMobileMenu(false)" class="mobile-nav-link admin-link">Administration</a>
+          <a *ngIf="currentUser?.role === 'manager'" (click)="goToPageManager(); toggleMobileMenu(false)" class="mobile-nav-link admin-link">Manager</a>
           <div class="mobile-actions">
             <button class="btn btn-logout-mobile w-100" (click)="logout(); toggleMobileMenu(false)">Déconnexion</button>
           </div>

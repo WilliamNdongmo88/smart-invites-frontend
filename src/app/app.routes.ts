@@ -21,6 +21,7 @@ import { EventScanListComponent } from './pages/event-scan-list/event-scan-list'
 import { InvitationEditorComponent } from './pages/invitation-editor/invitation-editor.component';
 import { FeedbackComponent } from './components/feedback/feedback.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+import { ManagerDashboardComponent } from './pages/manager-dashboard/manager-dashboard.component';
 import { MaintenanceComponent } from './pages/maintenance/maintenance.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
@@ -92,6 +93,11 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminDashboardComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'manager',
+    component: ManagerDashboardComponent,
     canActivate: [AuthGuard]
   },
   {

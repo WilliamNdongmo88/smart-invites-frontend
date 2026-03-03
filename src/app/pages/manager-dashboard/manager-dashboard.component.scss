@@ -1,11 +1,11 @@
 @use "sass:color";
 
-.admin-dashboard {
+.manager-dashboard {
     min-height: 100vh;
     background-color: #FFFFFF;
 }
 
-.admin-header {
+.manager-header {
     background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
     border-bottom: 1px solid #E0E0E0;
     padding: 1rem 1rem;
@@ -24,15 +24,38 @@
     }
 }
 
-.admin-header h1 {
+.manager-header h1 {
     margin-bottom: 0.25rem;
 }
 
-.admin-header p {
+.manager-header p {
     color: #666666;
 }
 
-.admin-tabs {
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  background: #D4AF37;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-primary:hover {
+  background: #B89A2C;
+  transform: translateY(-1px);
+}
+
+.manager-tabs {
     display: flex;
     gap: 0.5rem;
     margin-bottom: 2rem;
@@ -81,14 +104,14 @@
     background-color: #FFFFFF;
     border: 1px solid #E0E0E0;
     border-radius: 0.75rem;
-    padding: 1rem;
+    padding: 2rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     margin-bottom: 2rem;
 }
 
 .section-card h2,
 .section-card h3 {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0rem;
     position: relative;
 }
 
@@ -335,7 +358,7 @@
     color: #D4AF37;
     }
 
-    &.Entreprise {
+    &.entreprise {
     background-color: rgba(76, 175, 80, 0.1);
     color: #4CAF50;
     }
@@ -441,7 +464,7 @@
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     margin-bottom: 2rem;
 }
@@ -593,20 +616,20 @@
 }
 
 /* Mise en page globale */
-.admin-layout {
+.manager-layout {
   display: flex;
   min-height: 100vh;
   background-color: #f8f9fa;
 }
 
-.admin-sidebar {
-  width: 195px;
+.manager-sidebar {
+  width: 170px;
   background-color: #ffffff;
   border-right: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
 
-  position: fixed;
+  position: fixed;   /* ⭐ clé */
   top: 90px;
   left: 0;
   height: 78vh;
@@ -654,10 +677,10 @@
   }
 }
 
-.admin-main {
+.manager-main {
   flex: 1;
-  padding: 1rem;
-  margin-left: 195px;   /* ⭐ IMPORTANT */
+  padding: 2rem;
+  margin-left: 170px;   /* ⭐ IMPORTANT */
   overflow-y: auto;
   min-height: 100vh;
 }
@@ -820,11 +843,63 @@
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
-@media (max-width: 1030px) {
-  .admin-sidebar {
-    top: 112px;
-    height: 75vh;}
+
+/* Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Box */
+.modal-container {
+  background: white;
+  width: 420px;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.2);
+  animation: modalAppear 0.25s ease;
+}
+
+@keyframes modalAppear {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
   }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
 // scss détails
 .user-modal {
@@ -865,8 +940,8 @@
 
 @media (max-width: 1024px) {
     .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    justify-content: center;
+      grid-template-columns: repeat(2, 1fr);
+      justify-content: center;
     }
 
     .filters {
@@ -877,12 +952,15 @@
     flex-direction: column;
     }
     
-    .admin-sidebar {
+    .manager-sidebar {
         display: none; /* À adapter selon votre logique de menu mobile */
     }
-
-    .admin-main {
-      padding: 0px 19px 0 19px;;
-      margin-left: 0px;
+    .manager-main {
+      padding: 0 4px 0 4px;
+      margin-left: 0px; 
     }
+
+    .section-card {
+      padding: 1rem;
+  }
 }

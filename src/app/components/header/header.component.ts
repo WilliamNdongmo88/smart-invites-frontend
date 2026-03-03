@@ -162,6 +162,15 @@ export class HeaderComponent implements OnInit {
     this.mobileMenuOpen.set(false);
   }
 
+  goToPageManager() {
+    if(this.currentUser?.role !== 'manager'){
+      return;
+    }
+    this.router.navigate(['/manager']);
+    this.isScanning = false;
+    this.mobileMenuOpen.set(false);
+  }
+
   goToProfile() {
     this.router.navigate(['/profile']);
     this.mobileMenuOpen.set(false);

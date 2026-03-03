@@ -310,50 +310,98 @@
 
         </div>
         </div>
+    </div>
 
-        <!-- User Events Detail -->
-        <div *ngIf="selectedUser" class="section-card detail-card">
-        <h3>Événements de {{ selectedUser.name }}</h3>
-        <button class="btn-close" (click)="selectedUser = null">✕ Fermer</button>
+    <!-- USER DETAILS MODAL -->
+    <div *ngIf="selectedUser && showDetail" class="modal-overlay" (click)="selectedUser = null">
+    
+        <div class="modal-content user-modal" (click)="$event.stopPropagation()">
+            
+            <button class="modal-close" (click)="selectedUser = null">✕</button>
 
-        <div class="list-container">
-            <table class="data-table">
-            <thead>
-                <tr>
-                <th>Titre</th>
-                <th>Type</th>
-                <th>Invités</th>
-                <th>Étape</th>
-                <th>Date/Heure</th>
-                <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let event of getPaginatedData(selectedUserEvents)" class="event-row">
-                <td>{{ event.title }}</td>
-                <td>{{ event.type }}</td>
-                <td>
-                    <span class="guest-count">{{ event.guestCount }}</span>
-                    <span class="guest-status">
-                    ✓ {{ event.confirmedGuests }} | ⏳ {{ event.pendingGuests }} | ✕ {{ event.declinedGuests }}
-                    </span>
-                </td>
-                <td>
-                    <span class="stage-badge" [class]="event.stage">{{ event.stage }}</span>
-                </td>
-                <td>{{ event.date }} {{ event.time }}</td>
-                <td>
-                    <button class="btn-small btn-view" (click)="viewEventGuests(event)">
-                    👥 Invités
-                    </button>
-                    <button class="btn-small btn-danger" (click)="deleteEvent(event)">
-                    🗑️ Supprimer
-                    </button>
-                </td>
-                </tr>
-            </tbody>
-            </table>
+            <h3>Détails de {{ selectedUser.name }}</h3>
+
+            <div class="user-details">
+
+            <div class="detail-row">
+                <span class="label">Nom :</span>
+                <span class="value">{{ selectedUser.name }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">Email :</span>
+                <span class="value">{{ selectedUser.email }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">Événements créés :</span>
+                <span class="value highlight">
+                {{ selectedUser.eventsCreated || 0 }}
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="label">Total invités :</span>
+                <span class="value highlight">
+                {{ selectedUser.totalGuests || 0 }}
+                </span>
+            </div>
+
+            </div>
+
+            <div class="modal-actions">
+            <button class="btn btn-dark" (click)="selectedUser = null">
+                Fermer
+            </button>
+            </div>
+
         </div>
+    </div>
+
+    <!-- User Events Detail -->
+    <div *ngIf="activeTab === 'events'" >
+        <div *ngIf="selectedUser" class="section-card detail-card">
+            <h3>Événements de {{ selectedUser.name }}</h3>
+            <button class="btn-close" (click)="selectedUser = null">✕ Fermer</button>
+
+            <div class="list-container">
+                <table class="data-table">
+                <thead>
+                    <tr>
+                    <th>Titre</th>
+                    <th>Type</th>
+                    <th>Invités</th>
+                    <th>Étape</th>
+                    <th>Date/Heure</th>
+                    <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let event of getPaginatedData(selectedUserEvents)" class="event-row">
+                    <td>{{ event.title }}</td>
+                    <td>{{ event.type }}</td>
+                    <td>
+                        <span class="guest-count">{{ event.guestCount }}</span>
+                        <span class="guest-status">
+                        ✓ {{ event.confirmedGuests }} | ⏳ {{ event.pendingGuests }} | ✕ {{ event.declinedGuests }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="stage-badge" [class]="event.stage">{{ event.stage }}</span>
+                    </td>
+                    <td>{{ event.date }} {{ event.time }}</td>
+                    <td>
+                        <button class="btn-small btn-view" (click)="viewEventGuests(event)">
+                        👥 Invités
+                        </button>
+                        <!-- <button class="btn-small btn-danger" (click)="deleteEvent(event)">
+                        🗑️ Supprimer
+                        </button> -->
+                    </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

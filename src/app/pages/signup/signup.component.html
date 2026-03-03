@@ -52,6 +52,26 @@
                 <p class="form-hint">Nous ne partagerons jamais votre email</p>
               </div>
 
+              <!-- Type de compte -->
+              <div class="form-group">
+                <label for="accountType">Type de compte</label>
+
+                <select
+                  id="accountType"
+                  name="accountType"
+                  [(ngModel)]="accountType"
+                  required
+                  class="form-input"
+                >
+                  <option value="" disabled selected>
+                    -- Sélectionner un type de compte --
+                  </option>
+
+                  <option value="personal">Compte Personnel</option>
+                  <option value="business">Compte Entreprise</option>
+                </select>
+              </div>
+
               <!-- Password -->
               <div class="form-group">
                 <label for="password">Mot de passe</label>
@@ -157,23 +177,30 @@
             </form>
 
             <!-- Divider -->
-            <div class="divider">
+            <!-- <div class="divider">
               <span>ou</span>
-            </div>
+            </div> -->
           </div>
           <div [hidden]="showActiveAccount">
             <!-- Social signup -->
-            <div class="social-signup">
+            <!-- J'ai annulé cette partie parce que: -->
+            <!-- Le type de compte est necessaire pour la création d'un compte mais je n'ai pas pu trouvé une logique pour rendre cela obligatoire -->
+            <!-- Le message d'erreur n'apparaît pas lorsque l'utilisateur existe déjà -->
+            <!-- <div class="social-signup">
               <div class="google-wrapper">
                 <div id="googleSignUpDiv"></div>
 
-                <!-- Overlay gris si non accepté -->
                 <div
                   class="disabled-overlay"
                   *ngIf="!isGoogleEnabled()">
                 </div>
               </div>
-            </div>
+            </div> -->
+
+            <!-- Message d'erreur -->
+            <!-- <div *ngIf="errorMessage" class="alert alert-error">
+              {{ errorMessage }}
+            </div> -->
 
             <!-- Login link -->
             <div class="login-link">

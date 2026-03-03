@@ -54,7 +54,7 @@ export class PricingComponent implements OnInit{
       description: 'Parfait pour commencer',
       features: [
         '1 événement',
-        'Jusqu\'à 50 invités',
+        '50 invités',
         'Codes QR',
         'Gestion basique des invités',
         'Support par email',
@@ -68,6 +68,21 @@ export class PricingComponent implements OnInit{
       description: 'Pour les événements réguliers',
       popular: true,
       features: [
+        '2 Événements',
+        'Jusqu\'à 500 invités',
+        'Intégrations personnalisées',
+        'Support dédié 24/7',
+        'Formation personnalisée',
+        'Sauvegardes quotidiennes',
+      ],
+    },
+    {
+      name: 'Entreprise',
+      price: 30000,
+      monthlyPrice: 30.000,
+      period: '/mois',
+      description: 'Pour les grandes organisations',
+      features: [
         'Événements illimités',
         'Invités illimités',
         'API personnalisée',
@@ -78,39 +93,6 @@ export class PricingComponent implements OnInit{
         'Rapports personnalisés',
       ],
     },
-    // {
-    //   name: 'Professionnel',
-    //   price: 29,
-    //   period: '/mois',
-    //   description: 'Pour les événements réguliers',
-    //   popular: true,
-    //   features: [
-    //     'Événements illimités',
-    //     'Jusqu\'à 500 invités',
-    //     'Import CSV/Excel',
-    //     'Restrictions alimentaires',
-    //     'Rapports avancés',
-    //     'Support prioritaire',
-    //     'Personnalisation',
-    //     'Intégrations',
-    //   ],
-    // },
-    // {
-    //   name: 'Entreprise',
-    //   price: 99,
-    //   period: '/mois',
-    //   description: 'Pour les grandes organisations',
-    //   features: [
-    //     'Événements illimités',
-    //     'Invités illimités',
-    //     'API personnalisée',
-    //     'Intégrations personnalisées',
-    //     'Support dédié 24/7',
-    //     'Formation personnalisée',
-    //     'Sauvegardes quotidiennes',
-    //     'Rapports personnalisés',
-    //   ],
-    // },
   ];
 
   constructor(
@@ -156,6 +138,15 @@ export class PricingComponent implements OnInit{
           ...plan,
           price: yearlyPrice,
           period: '/an'
+        };
+      }
+
+      if (this.billingCycle === 'monthly' && plan.price > 10000 && plan.price > 30000 ) {
+        const yearlyPrice = Math.round((plan.price / (12 * 0.8)) * 100) / 100;
+        return {
+          ...plan,
+          price: yearlyPrice,
+          period: '/mois'
         };
       }
 

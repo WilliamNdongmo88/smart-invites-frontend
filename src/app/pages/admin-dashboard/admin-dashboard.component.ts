@@ -23,25 +23,27 @@ interface Visitor {
 }
 
 interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
   eventsCreated: number;
-  plan: 'gratuit' | 'professionnel' | 'entreprise';
+  plan: 'gratuit' | 'professionnel' | 'Entreprise';
   lastLogin: string;
   createdAt: string;
   isBlocked: boolean;
   totalGuests: number;
+  userPaymentPlanName?: string
   userPaymentProof?: string
   expirationDate?: string
 }
 
 interface Event {
-  id: string;
+  id: number;
+  organizerId: number;
   title: string;
   type: string;
   guestCount: number;
-  stage: 'draft' | 'published' | 'completed' | 'cancelled';
+  stage: string;
   date: string;
   time: string;
   confirmedGuests: number;
@@ -50,7 +52,8 @@ interface Event {
 }
 
 interface Guest {
-  id: string;
+  id: number;
+  eventId: number;
   name: string;
   email: string;
   status: 'confirmed' | 'pending' | 'declined';
@@ -135,69 +138,11 @@ export class AdminDashboardComponent implements OnInit {
     },
   ];
 
-  users: User[] = [
-    {
-      id: '1',
-      name: 'Sophie Martin',
-      email: 'sophie@example.com',
-      eventsCreated: 3,
-      plan: 'professionnel',
-      lastLogin: '2025-01-15',
-      createdAt: '2024-12-01',
-      isBlocked: false,
-      totalGuests: 150,
-    },
-    {
-      id: '2',
-      name: 'Pierre Dupont',
-      email: 'pierre@example.com',
-      eventsCreated: 1,
-      plan: 'gratuit',
-      lastLogin: '2025-01-10',
-      createdAt: '2025-01-01',
-      isBlocked: false,
-      totalGuests: 30,
-    },
-  ];
+  users: User[] = [];
 
-  events: Event[] = [
-    {
-      id: '1',
-      title: 'Mariage de Sophie et Pierre',
-      type: 'Mariage',
-      guestCount: 150,
-      stage: 'published',
-      date: '2025-06-15',
-      time: '14:00',
-      confirmedGuests: 120,
-      pendingGuests: 20,
-      declinedGuests: 10,
-    },
-  ];
+  events: Event[] = [];
 
-  guests: Guest[] = [
-    {
-      id: '1',
-      name: 'Jean Dupont',
-      email: 'jean@example.com',
-      status: 'confirmed',
-      qrCodeGenerated: true,
-      qrCodeUrl: 'https://via.placeholder.com/200',
-      dietaryRestrictions: 'Végétarien',
-      plusOne: true,
-      selected: false,
-    },
-    {
-      id: '2',
-      name: 'Marie Martin',
-      email: 'marie@example.com',
-      status: 'pending',
-      qrCodeGenerated: false,
-      dietaryRestrictions: '',
-      plusOne: false,
-      selected: false,
-    },
-  ];
+  guests: Guest[] = [];
 
   // Filters
   feedbackSearch = '';
@@ -208,6 +153,7 @@ export class AdminDashboardComponent implements OnInit {
   guestStatusFilter = '';
   isSubscriber = false;
   loading = false;
+  showDetail = false;
   isMobile!: Observable<boolean>;
   userId: number = 0;
 
@@ -308,8 +254,8 @@ export class AdminDashboardComponent implements OnInit {
 
   getAllUsers(dataEmails: any) {
     this.feedbackService.getAllUsers(dataEmails).subscribe({
-      next: (datas: any[]) => {
-        //console.log('[allUsers 1]:', datas);
+      next: (datas: any) => {
+        console.log('[allUsers 1]:', datas);
 
         // 1️⃣ Extraire les emails abonnés
         const subscriberEmails = new Set(datas);
@@ -330,11 +276,12 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   getUsers(){
+    console.log('----[getUsers]-----');
     this.authService.getAllUsers().subscribe({
-      next: (datas: any[]) => {
-        //console.log('[getUsers]:', datas);
+      next: (res: any) => {
+        console.log('[getUsers]:', res);
         const response = []
-        for (const data of datas) {
+        for (const data of res.users) {
           let expirationDate = '';
           if(data.userPaymentProofCreatedAt) expirationDate = this.addOneMonthAndFormat(data.userPaymentProofCreatedAt)
           const res = {
@@ -347,16 +294,62 @@ export class AdminDashboardComponent implements OnInit {
             createdAt: data.created_at,
             isBlocked: data.isBlocked,
             totalGuests: data.totalGuests,
+            userPaymentPlanName: data.userPaymentPlanName,
             userPaymentProof: data.userPaymentProof,
             expirationDate: expirationDate
           }
           response.push(res);
         }
         this.users = response;
+        this.getAllEvent(res.events);
+        this.getAllGuests(res.guests);
         console.log('[getUsers]:', this.users);
       },
       error: err => console.error(err)
     });
+  }
+
+  getAllEvent(events: any){
+    console.log("getAllEvent Response :: ", events);
+    events.map((elt:any) => {
+      const h = elt.banquet_time.split(':')[0];
+      const m = elt.banquet_time.split(':')[1].split(':')[0];
+      const data = {
+        id: elt.event_id,
+        organizerId: elt.organizerId,
+        title: elt.title,
+        type: elt.type,
+        guestCount: elt.max_guests,
+        stage: elt.status =='active' ? 'published': 'draft',
+        date: elt.event_date.split('T')[0],
+        time: h+':'+m,
+        confirmedGuests: elt.confirmed_count,
+        pendingGuests: elt.pending_count,
+        declinedGuests: elt.declined_count,
+      }
+      this.events.push(data);
+    });
+    // console.log("this.events :: ", this.events);
+  }
+
+  getAllGuests(guests: any){
+    console.log("getAllGuests Response :: ", guests);
+    guests.map((elt:any) => {
+      const data = {
+        id: elt.id,
+        eventId: elt.event_id,
+        name: elt.full_name,
+        email: elt.email,
+        status: elt.rsvp_status,
+        qrCodeGenerated: elt.qr_code_url ? true : false,
+        qrCodeUrl: elt.qr_code_url,
+        dietaryRestrictions: elt.dietary_restrictions,
+        plusOne: elt.has_plus_one,
+        selected: false,
+      }
+      this.guests.push(data);
+    });
+    // console.log("this.guests :: ", this.guests);
   }
 
   addOneMonthAndFormat(dateString: string): string {
@@ -482,14 +475,14 @@ export class AdminDashboardComponent implements OnInit {
     let cancelation = false;
 
     if(bool) confirmation = confirm(
-      "Vous êtes sur le point d'activer le plan Professionnel de cet utilisateur. Continuer ?"
+      `Vous êtes sur le point d'activer le plan ${user.userPaymentPlanName} de cet utilisateur. Continuer ?`
     );
     if(!bool) cancelation = confirm(
-      "Vous êtes sur le point d'annuler le plan Professionnel de cet utilisateur. Continuer ?"
+      `Vous êtes sur le point d'annuler le plan ${user.userPaymentPlanName} de cet utilisateur. Continuer ?`
     );
 
     if (confirmation && bool) {
-      const data = { plan: 'professionnel'};
+      const data = { plan: user.userPaymentPlanName};
       this.paymentService.changeUserPlan(Number(user.id), data).subscribe({
         next: (data) => {
           console.log('[changeUserPlan]:', data);
@@ -552,13 +545,18 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   viewUserEvents(user: User) {
+    this.showDetail = false;
+    console.log("events: ", this.events);
     this.selectedUser = user;
-    this.selectedUserEvents = this.events.filter(e => e.id === user.id); // À adapter selon votre structure
-    this.activeTab = 'users';
+    this.selectedUserEvents = this.events.filter(e => e.organizerId === user.id);
+    console.log("selectedUserEvents: ", this.selectedUserEvents);
+    this.activeTab = 'events';
   }
 
-  viewUserDetails(user: User){
-    console.log("User: ", user);
+  viewUserDetails(user: User) {
+    this.selectedUser = user;
+    this.showDetail = true;
+    console.log("User: ", this.selectedUser);
   }
 
   toggleBlockUser(user: User) {
@@ -576,7 +574,7 @@ export class AdminDashboardComponent implements OnInit {
   // EVENT METHODS
   viewEventGuests(event: Event) {
     this.selectedEvent = event;
-    this.selectedEventGuests = this.guests;
+    this.selectedEventGuests = this.guests.filter(g => g.eventId === event.id);
     this.activeTab = 'guests';
   }
 

@@ -10,7 +10,7 @@ import { FooterDetailComponent } from "./components/footer/footer.component";
   standalone: true,
   imports: [CommonModule, RouterOutlet, HeaderComponent, FloatingFeedbackBtnComponent, FooterDetailComponent],
   template: `
-    <app-header></app-header>
+    <app-header *ngIf="showHeader"></app-header>
     <main>
       <router-outlet></router-outlet>
       <app-floating-feedback-btn></app-floating-feedback-btn>
@@ -23,11 +23,12 @@ import { FooterDetailComponent } from "./components/footer/footer.component";
 })
 export class AppComponent {
   title = 'Smart Invite - Wedding Management Platform';
+  showHeader = true;
   showFooter = true;
 
   // Liste des routes où le footer doit être masqué
   private hiddenFooterRoutes = [
-    '/'
+    '/',
   ];
 
   constructor(private router: Router) {
@@ -36,9 +37,13 @@ export class AppComponent {
       if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects;
         //console.log('[AuthGuard] URL changée :', url);
+        if(url.startsWith("/manager")){
+          this.showHeader = !this.hiddenFooterRoutes.includes(url);
+          // console.log('Header visible:', this.showHeader);
+        }
         if(url.startsWith("/")){
           this.showFooter = !this.hiddenFooterRoutes.includes(url);
-          console.log('Footer visible:', this.showFooter);
+          // console.log('Footer visible:', this.showFooter);
         }
       }
     });

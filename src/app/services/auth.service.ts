@@ -23,6 +23,7 @@ export interface RegisterRequest {
   email: string;
   password: string;
   name: string;
+  accountType: string;
   acceptTerms?: boolean;
 }
 
@@ -329,6 +330,22 @@ export class AuthService {
   getAllUsers(): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.get<any>(`${this.apiUrl}/users`, { headers });
+  }
+
+  addUserLinkedToManager(data: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/add-user-linked-to-manager`, data, { headers });
+  }
+
+  getAllUsersLinkedToManager(id: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(`${this.apiUrl}/users-linked-to-manager/${id}`, { headers });
+  }
+
+  updateUserStatus(data: any): Observable<any> {
+    console.log('data: ', data);
+    const headers = this.getAuthHeaders();
+    return this.http.put<any>(`${this.apiUrl}/status`, data, { headers });
   }
 
   updateProfile(userId: number, data: any): Observable<Event> {

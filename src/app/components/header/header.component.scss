@@ -170,14 +170,6 @@ $breakpoint-tablet: 1024px;
 // ============================================================================
 
 .plan-indicator {
-  // display: flex;
-  // align-items: center;
-  // gap: 0.5rem;
-  // padding: 0.5rem 1rem;
-  // background-color: rgba($color-primary, 0.1);
-  // border-radius: 20px;
-  // border: 1px solid rgba($color-primary, 0.3);
-  // transition: all $transition-normal;
 
   .plan-badge {
     padding: 0.25rem 0.75rem;
@@ -189,6 +181,7 @@ $breakpoint-tablet: 1024px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border: 1px solid rgba(0,0,0,0.05);
+    cursor: pointer;
   }
 
   &.plan-pro .plan-badge {

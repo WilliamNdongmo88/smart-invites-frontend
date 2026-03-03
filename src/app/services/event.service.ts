@@ -86,26 +86,26 @@ export class EventService {
     });
   }
 
-  // getEvents(organizerId: number): Observable<{ events: Event[] }> {
-  //   return this.http.get<{ events: Event[] }>(`${this.apiUrl}/event/organizer/${organizerId}`);
-  // }
   getEvents(organizerId: number): Observable<{ events: Event[] }> {
-    if (this.cache.has(organizerId)) {
-      console.log('CACHE HIT for organizerId:', organizerId);
-      return this.cache.get(organizerId)!;
-    }
-
-    console.log('API CALL for organizerId:', organizerId);
-
-    const request$ = this.http
-      .get<{ events: Event[] }>(`${this.apiUrl}/event/organizer/${organizerId}`)
-      .pipe(
-        shareReplay(1)
-      );
-
-    this.cache.set(organizerId, request$);
-    return request$;
+    return this.http.get<{ events: Event[] }>(`${this.apiUrl}/event/organizer/${organizerId}`);
   }
+  // getEvents(organizerId: number): Observable<{ events: Event[] }> {
+  //   if (this.cache.has(organizerId)) {
+  //     console.log('CACHE HIT for organizerId:', organizerId);
+  //     return this.cache.get(organizerId)!;
+  //   }
+
+  //   console.log('API CALL for organizerId:', organizerId);
+
+  //   const request$ = this.http
+  //     .get<{ events: Event[] }>(`${this.apiUrl}/event/organizer/${organizerId}`)
+  //     .pipe(
+  //       shareReplay(1)
+  //     );
+
+  //   this.cache.set(organizerId, request$);
+  //   return request$;
+  // }
 
   // getEventById(eventId: number): Observable<Event[]> {
   //   console.log("eventId :: ",eventId);

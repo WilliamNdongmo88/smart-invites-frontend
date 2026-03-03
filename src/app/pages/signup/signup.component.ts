@@ -21,6 +21,7 @@ export class SignupComponent implements  OnInit{
   newPassword = '';
   name = '';
   email = '';
+  accountType: string = '';
   email_confirmed = '';
   password = '';
   confirmPassword = '';
@@ -89,7 +90,8 @@ export class SignupComponent implements  OnInit{
     const googleIdToken = response.credential;
     const request = { 
       tokenId: googleIdToken,
-      acceptTerms: this.acceptTerms
+      acceptTerms: this.acceptTerms,
+      accountType: this.accountType
     };
     console.log('Google request: ', request);
     this.authService.signupWithGoogle(request).subscribe({
@@ -102,7 +104,7 @@ export class SignupComponent implements  OnInit{
       error: (err) => {
         this.loading = false;
         console.error('❌ Erreur d’inscription :', err.message);
-        this.errorMessage = err.message || 'Une erreur est survenue lors de l’inscription.';
+        this.errorMessage = err.message;
         localStorage.clear();
       },
       complete: () => {
@@ -199,6 +201,7 @@ export class SignupComponent implements  OnInit{
     const request: RegisterRequest = {
       name: this.name,
       email: this.email,
+      accountType: this.accountType,
       password: this.password,
       acceptTerms: this.acceptTerms
     };
@@ -287,13 +290,13 @@ export class SignupComponent implements  OnInit{
     }
   }
 
-  signupWithGoogle() {
-    alert('🔵 Inscription avec Google...');
-  }
+  // signupWithGoogle() {
+  //   alert('🔵 Inscription avec Google...');
+  // }
 
-  signupWithFacebook() {
-    alert('📘 Inscription avec Facebook...');
-  }
+  // signupWithFacebook() {
+  //   alert('📘 Inscription avec Facebook...');
+  // }
 
   resendCode() {
     console.log('Resend code email: ', this.email);

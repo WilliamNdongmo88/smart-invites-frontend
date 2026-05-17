@@ -12,8 +12,8 @@
         <div class="invitation-card card">
           <!-- Image -->
           <div class="invitation-image">
-            <img 
-              [src]="url" 
+            <img
+              [src]="url"
               alt="QR Code généré"
               class="qr-image"
             />
@@ -54,12 +54,11 @@
                   </div>
                 </div>
                 <div class="detail-item">
-                  <mat-icon style="color: #DAA520;">location_on</mat-icon>
+                  <mat-icon style="color: #DAA520;">info</mat-icon>
                   <div class="c-mt">
-                    <p *ngIf="!showWeddingCivilLocation" class="detail-label">Lieu</p>
-                    <p *ngIf="showWeddingCivilLocation" class="detail-label">Lieu du Banquet</p>
-                    <p class="detail-value">{{ data.eventLocation}}</p>
-                    <span class="time-icon">🕒</span> {{  data.banquetTime }}
+                    <p class="detail-value">La suite du planning vous</p>
+                    <p class="detail-value">sera transmise par Whatsapp</p>
+                    <p class="detail-value">ou via e-mail</p>
                   </div>
                 </div>
               </div>
@@ -144,7 +143,7 @@
                   </div>
 
                   <!-- TELEPHONE -->
-                  <label>Téléphone</label>
+                  <label>Whatsapp</label>
                   <input
                     type="text"
                     placeholder="+237655002318"
@@ -229,7 +228,7 @@
             <div class="success-icon">✓</div>
             <h1>Merci !</h1>
             <p>Votre réponse a été enregistrée avec succès.</p>
-            
+
             <div class="success-response">
               <p class="label">Votre réponse</p>
               <p class="value">

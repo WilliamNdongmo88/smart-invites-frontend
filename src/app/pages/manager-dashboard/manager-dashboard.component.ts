@@ -71,6 +71,7 @@ export class ManagerDashboardComponent implements OnInit {
   activeTab = 'users';
 
   showAddUserModal = false;
+  showErrorAddUserModal = false;
 
   newUser = {
     name: '',
@@ -121,7 +122,7 @@ export class ManagerDashboardComponent implements OnInit {
     private authService: AuthService,
     private paymentService: PaymentService,
     private breakpointObserver: BreakpointObserver,
-    private maintenanceService: MaintenanceService 
+    private maintenanceService: MaintenanceService
   ) {}
 
   ngOnInit() {
@@ -396,19 +397,24 @@ export class ManagerDashboardComponent implements OnInit {
       managerId: this.userManager?.id,
       acceptTerms: true
     };
-    
+
     this.loading = true;
     this.authService.addUserLinkedToManager(data).subscribe({
       next: (datas: any[]) => {
-        console.log('[getAllUsers ]:', datas);
+        //console.log('[getAllUsers ]:', datas);
+        this.getUsers(this.userManager?.id);
         this.closeAddUserModal();
         this.loading = false;
       },
       error: (err) => {
         this.loading = false;
         console.error('Error: ', err);
+        console.error('Error Status: ', err.status);
+
         if (err.status === 400) {
-          this.errorMessage = err.error.message || 'Une erreur est survenue lors de l\'ajout de l\'utilisateur.';
+          this.errorMessage = err.error.error || 'Une erreur est survenue lors de l\'ajout de l\'utilisateur.';
+          this.showErrorAddUserModal = true;
+          this.showAddUserModal = false;
         }
       }
     });
@@ -416,7 +422,9 @@ export class ManagerDashboardComponent implements OnInit {
   }
 
   closeAddUserModal() {
+    //console.log('Fermeture du modal d\'ajout d\'utilisateur');
     this.showAddUserModal = false;
+    this.showErrorAddUserModal = false;
     this.newUser = { name: '', email: '' };
   }
 

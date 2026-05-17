@@ -5,6 +5,7 @@ import { catchError, map, shareReplay, startWith, switchMap, tap } from 'rxjs/op
 import { environment } from '../../environment/environment';
 import { NotificationService } from './notification.service';
 import { EventService } from './event.service';
+import { Router } from '@angular/router';
 export interface User {
   id: number;
   email: string;
@@ -62,7 +63,8 @@ export class AuthService {
   private refresh$ = new Subject<void>();
 
   constructor(
-    private http: HttpClient, 
+    private router: Router,
+    private http: HttpClient,
     private notificationService: NotificationService,
     private eventService: EventService
   ) {
@@ -229,7 +231,7 @@ export class AuthService {
     this.currentUserSubject.next(null);
     this.user=null // Pour forcer valid a false
     this.isAuthenticatedSubject.next(false);// notifie le composant (Header)
-    console.log("---Déconnection---");
+    this.router.navigate(['/']);
   }
 
   getCurrentUser(): User | null {

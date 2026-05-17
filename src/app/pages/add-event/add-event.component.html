@@ -236,7 +236,7 @@
                   </div>
                 </div>
               </div>
-              
+
               <div class="form-row conditional-fields">
                 <!-- *ngIf="showWeddingCivilLocation" -->
                 <div class="form-group">
@@ -289,10 +289,10 @@
                   <label *ngIf="showWeddingNames">Prénom du futur marié</label>
                   <label *ngIf="showEngagementNames">Prénom du fiancé</label>
                   <label *ngIf="showAnniversaryNames">Nom du marié</label>
-                  <input 
-                    type="text" 
-                    name="name1" 
-                    [(ngModel)]="eventData.eventNameConcerned1" 
+                  <input
+                    type="text"
+                    name="name1"
+                    [(ngModel)]="eventData.eventNameConcerned1"
                     required
                     #eventNameConcerned1="ngModel"
                     class="form-input" />
@@ -317,7 +317,7 @@
                 <label>Nom de la personne concernée</label>
                 <input type="text" name="name1" [(ngModel)]="eventData.eventNameConcerned1" class="form-input"
                   required
-                  #eventNameConcerned1="ngModel" 
+                  #eventNameConcerned1="ngModel"
                 />
                 <div class="error" *ngIf="eventNameConcerned1.invalid && eventNameConcerned1.touched">
                     Champ obligatoire
@@ -452,7 +452,7 @@
                       </div>
 
                       <!-- Cérémonie religieuse (optionnelle) -->
-                      <div class="form-group">
+                      <div *ngIf="invitationData.showReligiousCeremony" class="form-group">
                         <label class="checkbox-label">
                           <input
                             type="checkbox"
@@ -697,7 +697,7 @@
                         </div>
                       </div>
                     </div>
-                    
+
                     <!-- Actions -->
                     <div class="form-actions">
                         <!-- Input caché pour l'import -->
@@ -708,7 +708,7 @@
                           accept="application/pdf"
                           style="display: none"
                         />
-                        
+
                         <!-- Bouton d'importation -->
                         <button type="button" class="btn btn-primary c_j_txt" (click)="fileInput.click()">
                           📥 Importer un model PDF
@@ -765,7 +765,7 @@
                           <p>
                             <strong>MARIAGE CIVIL LE {{ formatDate(invitationData.eventDate) }} A {{ invitationData.eventTime }}</strong><br />
                             {{ invitationData.eventCivilLocation }}<br />
-                            {{ invitationData.sousMainMessage }} 
+                            {{ invitationData.sousMainMessage }}
                           </p>
 
                           <p *ngIf="invitationData.showReligiousCeremony">

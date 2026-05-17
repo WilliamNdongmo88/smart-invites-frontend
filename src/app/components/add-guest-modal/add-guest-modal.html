@@ -44,7 +44,7 @@
                 id="phone"
                 name="phone"
                 [(ngModel)]="newGuest.phone"
-                placeholder="+237 6 58 34 56 78"
+                placeholder="+237 6 55 34 56 78"
                 class="form-input"
             />
             </div>
@@ -77,3 +77,11 @@
         </form>
     </div>
 </div>
+
+<!-- Modal de confirmation -->
+<app-confirm-delete-modal
+    [visible]="showAlerteModal"
+    [action]="'confirm-alert'"
+    (confirmAlert)="confirmAlert()"
+    (cancel)="closeModal()">
+</app-confirm-delete-modal>

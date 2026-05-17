@@ -94,7 +94,7 @@ export class AdminDashboardComponent implements OnInit {
 
   // Data
   feedbacks: Feedback[] = [];
-  
+
   // Maintenance Data
   maintenance: Maintenance = {
     maintenance_progress: 0,
@@ -179,7 +179,7 @@ export class AdminDashboardComponent implements OnInit {
     private authService: AuthService,
     private paymentService: PaymentService,
     private breakpointObserver: BreakpointObserver,
-    private maintenanceService: MaintenanceService 
+    private maintenanceService: MaintenanceService
   ) {}
 
   ngOnInit() {

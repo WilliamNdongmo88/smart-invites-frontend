@@ -288,7 +288,7 @@
                   <label *ngIf="showWeddingNames">Prénom du futur marié</label>
                   <label *ngIf="showEngagementNames">Prénom du fiancé</label>
                   <label *ngIf="showAnniversaryNames">Nom du marié</label>
-                  <input type="text" name="name1" [(ngModel)]="eventData.eventNameConcerned1" 
+                  <input type="text" name="name1" [(ngModel)]="eventData.eventNameConcerned1"
                     required
                     #eventNameConcerned1="ngModel"
                     class="form-input" />
@@ -300,7 +300,7 @@
                   <label *ngIf="showWeddingNames">Prénom de la future mariée</label>
                   <label *ngIf="showEngagementNames">Prénom de la fiancée</label>
                   <label *ngIf="showAnniversaryNames">Nom de la mariée</label>
-                  <input type="text" name="name2" [(ngModel)]="eventData.eventNameConcerned2" 
+                  <input type="text" name="name2" [(ngModel)]="eventData.eventNameConcerned2"
                     required
                     #eventNameConcerned2="ngModel" class="form-input" />
                   <div class="error" *ngIf="eventNameConcerned2.invalid && eventNameConcerned2.touched">
@@ -311,9 +311,9 @@
 
               <div *ngIf="showBirthdayNames || showAnother" class="form-group">
                 <label>Nom de la personne concernée</label>
-                <input type="text" name="name1" [(ngModel)]="eventData.eventNameConcerned1" 
+                <input type="text" name="name1" [(ngModel)]="eventData.eventNameConcerned1"
                   required
-                  #eventNameConcerned1="ngModel" 
+                  #eventNameConcerned1="ngModel"
                 />
                 <div class="error" *ngIf="eventNameConcerned1.invalid && eventNameConcerned1.touched">
                     Champ obligatoire
@@ -371,7 +371,7 @@
                 <!-- Form Section -->
                 <div *ngIf="!invitationData.hasInvitationModelCard" class="editor-form">
                   <div class="form-card">
-                    
+
                     <!-- Section 1: Détails de l'événement -->
                     <div class="form-section">
                       <!-- <h3>📅 Détails de l'événement</h3> -->
@@ -442,7 +442,7 @@
                       </div>
 
                       <!-- Cérémonie religieuse (optionnelle) -->
-                       <div class="form-group checkbox-group checkbox-text">
+                       <div *ngIf="eventData.showWeddingReligiousLocation" class="form-group checkbox-group checkbox-text">
                         <label class="custom-checkbox">
                           <input
                             type="checkbox"
@@ -708,7 +708,7 @@
                           accept="application/pdf"
                           style="display: none"
                         />
-                        
+
                         <!-- Bouton d'importation -->
                         <button type="button" class="btn btn-primary c_j_txt" (click)="fileInput.click()">
                           📥 Modifier le model PDF
@@ -780,7 +780,7 @@
                         ></iframe>
                       </div>
                     </div>
-                  
+
                     <div *ngIf="!invitationData.hasInvitationModelCard" class="preview-container">
                       <!-- Top band -->
                       <div class="preview-top-band" [style.background-color]="invitationData.topBandColor"></div>
@@ -811,7 +811,7 @@
                           <p>
                             <strong>MARIAGE CIVIL LE {{ formatDate(eventData.date) }} A {{ eventData.time }}</strong><br />
                             {{ eventData.civilLocation }}<br />
-                            {{ invitationData.sousMainMessage }} 
+                            {{ invitationData.sousMainMessage }}
                           </p>
 
                           <p *ngIf="eventData.showWeddingReligiousLocation">

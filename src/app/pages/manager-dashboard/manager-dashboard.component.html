@@ -5,8 +5,8 @@
       <h3>Manager Panel</h3>
     </div>
     <nav class="sidebar-nav">
-      <button 
-        *ngFor="let tab of tabs" 
+      <button
+        *ngFor="let tab of tabs"
         [class.active]="activeTab === tab.id"
         (click)="activeTab = tab.id; currentPage = 1"
         class="nav-item"
@@ -130,9 +130,9 @@
 
         <!-- USER DETAILS MODAL -->
         <div *ngIf="selectedUser && showDetail" class="modal-overlay" (click)="selectedUser = null">
-        
+
             <div class="modal-content user-modal" (click)="$event.stopPropagation()">
-                
+
                 <button class="modal-close" (click)="selectedUser = null">✕</button>
 
                 <h3>Détails de {{ selectedUser.name }}</h3>
@@ -221,7 +221,7 @@
             </div>
         </div>
     </div>
-    
+
 
     <!-- TAB 4: EVENT GUESTS -->
     <div *ngIf="activeTab === 'guests'" class="tab-content">
@@ -313,7 +313,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- TAB: MAINTENANCE -->
     <div *ngIf="activeTab === 'maintenance'" class="tab-content">
 
@@ -381,6 +381,33 @@
 
         <button type="submit" class="btn-primary" [disabled]="userForm.invalid">
           {{ loading ? 'Ajout en cours...' : '✅ Ajouter' }}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<!-- ERROR USER MODAL -->
+<div class="modal-overlay" *ngIf="showErrorAddUserModal">
+
+  <div class="modal-container">
+
+    <form (ngSubmit)="addUser()" #userForm="ngForm">
+
+      <div class="modal-header">
+        <h3>⚠️ Alert...</h3>
+        <button class="btn-close" (click)="closeAddUserModal()">✕</button>
+      </div>
+
+      <p>{{ errorMessage }}</p>
+
+
+      <!-- Actions -->
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeAddUserModal()">
+          Fermer
         </button>
       </div>
 

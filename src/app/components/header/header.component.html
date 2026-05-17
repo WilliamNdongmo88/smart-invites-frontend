@@ -1,7 +1,7 @@
 <header class="header" *ngIf="isShowHeader">
   <div class="container">
     <div class="header-wrapper">
-      
+
       <!-- Logo Section -->
       <a routerLink="/" class="logo">
         <div class="logo-icon-wrapper">
@@ -12,7 +12,7 @@
 
       <!-- Desktop Navigation -->
       <nav class="nav hide-mobile" *ngIf="!(isMobile | async)">
-        
+
         <!-- Public Links -->
         <ng-container *ngIf="!isAuthenticated">
           <a (click)="navigateToHome()" class="nav-link">Fonctionnalités</a>
@@ -25,9 +25,9 @@
         <ng-container *ngIf="isAuthenticated">
           <a *ngIf="currentUser?.role === 'admin'" (click)="goToPageAdmin()" class="nav-link admin-link">Administration</a>
           <a *ngIf="currentUser?.role === 'manager'" (click)="goToPageManager()" class="nav-link admin-link">Manager</a>
-          <!-- <a (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="nav-link">
+          <a (click)="navigateToPricing()" (click)="toggleMobileMenu(false)" class="nav-link">
             {{currentUser?.plan === 'gratuit' ? 'Passer en Pro' : ''}}
-          </a> -->
+          </a>
           <a routerLink="/" class="nav-link">Accueil</a>
           <a routerLink="/contact" (click)="toggleMobileMenu(false)" class="nav-link">Contact</a>
           <a *ngIf="isScanning" (click)="scanQrCode()" class="nav-link">Scanner</a>
@@ -46,8 +46,8 @@
             PRO
           </span>
         </div>
-        <div *ngIf="isAuthenticated && currentUser?.plan === 'Entreprise'" class="plan-indicator" (click)="navigateToPricing()"
-          [class.plan-pro]="currentUser?.plan === 'Entreprise'">
+        <div *ngIf="isAuthenticated && currentUser?.plan === 'entreprise'" class="plan-indicator" (click)="navigateToPricing()"
+          [class.plan-pro]="currentUser?.plan === 'entreprise'">
           <span class="plan-badge">
             BUSINESS
           </span>
@@ -97,7 +97,7 @@
             </span>
           </div>
         </div>
-        
+
         <button class="mobile-menu-btn" (click)="toggleMobileMenu()" [class.active]="mobileMenuOpen()">
           <div class="hamburger">
             <span></span>
@@ -112,7 +112,7 @@
 
   <!-- Mobile Navigation Overlay -->
   <div class="mobile-nav-overlay" *ngIf="mobileMenuOpen() && (isMobile | async)" (click)="toggleMobileMenu(false)"></div>
-  
+
   <nav class="mobile-nav" [class.open]="mobileMenuOpen() && (isMobile | async)">
     <div class="mobile-nav-header">
       <span class="mobile-nav-title">Menu</span>
@@ -202,18 +202,18 @@
         class="notification-item"
         [class.unread]="!notification.is_read"
         (click)="!isSwiping && markAsRead(notification)">
-        
+
       <div class="notification-icon-circle" [attr.data-type]="notification.type">
         {{ getNotificationIcon(notification.type) }}
       </div>
-      
+
       <div class="notification-body">
         <div class="notification-top">
           <p class="notification-title">{{ notification.title }}</p>
           <span class="notification-time">{{ formatDate(notification.date) }}</span>
         </div>
         <p class="notification-message">{{ notification.message }}</p>
-        
+
         <div class="notification-actions">
           <button class="action-btn check" (click)="markAsRead(notification); $event.stopPropagation()" *ngIf="!notification.is_read" title="Marquer comme lu">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>

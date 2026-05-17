@@ -97,7 +97,7 @@ export class ProfileComponent implements OnInit {
   };
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private authService: AuthService,
     private communicationService: CommunicationService
   ) {}
@@ -252,7 +252,7 @@ export class ProfileComponent implements OnInit {
       (response) => {
         console.log("[saveProfile] Response :: ", response);
         this.loading = false;
-        localStorage.removeItem('accessToken');
+        this.authService.logout();
       },
       (error) => {
         this.loading = false;
@@ -264,7 +264,7 @@ export class ProfileComponent implements OnInit {
     );
   }
 
-  confirmDelete() { 
+  confirmDelete() {
     if(this.modalAction=='delete'){
       this.deleteAccount();
     }

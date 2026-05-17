@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
-import { User } from '../../services/auth.service';
+import { AuthService, User } from '../../services/auth.service';
 import { GuestService } from '../../services/guest.service';
 import { CommunicationService } from '../../services/share.service';
 import { QrCodeService } from '../../services/qr-code.service';
@@ -65,7 +65,7 @@ type FilterStatus = 'all' | 'confirmed' | 'pending' | 'declined' | 'present';
   ]
 })
 export class GuestListComponent implements OnInit{
-  viewMode: 'grid' | 'table' = 'grid'; 
+  viewMode: 'grid' | 'table' = 'grid';
   searchTerm = '';
   selectedGuest = signal<Guest | null>(null);
   showAddGuestModal = signal(false);
@@ -117,10 +117,12 @@ export class GuestListComponent implements OnInit{
   };
 
   guests: Guest[] = [];
+  pollingInterval: any;
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private router: Router,
+    private authService: AuthService,
     private guestService: GuestService,
     private qrCodeService: QrCodeService,
     private communicationService: CommunicationService
@@ -157,6 +159,27 @@ export class GuestListComponent implements OnInit{
       }
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Polling toutes les 15 secondes pour les mises à jour
+    // this.pollingInterval = setInterval(() => {
+    //   console.log("⏱️ Polling pour les mises à jour...");
+    //   this.loadCurrentUserData();
+    // }, 25000);
+  }
+
+  ngOnDestroy() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
+  }
+
+  loadCurrentUserData() {
+    this.authService.getMe().subscribe({
+      next: (data) => {
+        console.log("🔄 Données utilisateur mises à jour :", data)
+        this.currentUser = data;
+      }
+    });
   }
 
   getGuestsByEvent(){
@@ -173,7 +196,7 @@ export class GuestListComponent implements OnInit{
                 name: res.full_name,
                 email: res.email,
                 table_number: res.table_number,
-                phone: res.phone_number,  
+                phone: res.phone_number,
                 status: uper.toLowerCase() as 'confirmed' | 'pending' | 'declined' | 'present',
                 dietaryRestrictions: res.dietary_restrictions,
                 plusOne: res.has_plus_one ? true : false,
@@ -463,7 +486,7 @@ export class GuestListComponent implements OnInit{
 
   deleteSeveralGuests(guestIdList: number[]) {
     this.loadingDelete = true;
-    
+
     this.guestService.deleteSeveralGuests(guestIdList, Number(this.eventId)).subscribe(
       (response) => {
         console.log("response :: ", response);
@@ -492,7 +515,7 @@ export class GuestListComponent implements OnInit{
             guest.qrCodeUrl = res.qrUrl;
           }
         }
-        
+
         this.filterGuests();
         this.loading = false;
       },
@@ -503,7 +526,7 @@ export class GuestListComponent implements OnInit{
           this.triggerError();
           this.errorMessage = "Ces invités ont déjà réçu une invitation !";
           console.log("Message :: ", this.errorMessage);
-        }  
+        }
       }
     );
   }
@@ -716,7 +739,7 @@ export class GuestListComponent implements OnInit{
     if (this.selectedGuestId !== null) {
       this.deleteGuest(Number(this.selectedGuestId))
     }
-    
+
     if(this.modalAction=='delete'){
       this.deleteSeveralGuests(this.guestIdList);
     }
@@ -761,7 +784,7 @@ export class GuestListComponent implements OnInit{
     this.saveViewModeToStorage();
   }
 
-  
+
   //Sauvegarde le mode d'affichage dans le localStorage
   private saveViewModeToStorage(): void {
     try {
@@ -784,7 +807,7 @@ export class GuestListComponent implements OnInit{
     }
   }
 
-  // Logique pagination 
+  // Logique pagination
   get totalPages() {
     return Math.ceil(this.filteredGuests.length / this.itemsPerPage);
   }

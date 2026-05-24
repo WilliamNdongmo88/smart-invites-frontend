@@ -91,6 +91,7 @@
                         <th>Téléphone</th>
                         <th>Status-RSVP</th>
                         <th>+1</th>
+                        <th>Mode de notification</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -100,6 +101,7 @@
                     <td>{{ guest.phone || '-' }}</td>
                     <td>{{ guest.rsvpstatus || '-' }}</td>
                     <td>{{ guest.plusone }}</td>
+                    <td>{{ guest.notificationmode || '-' }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -107,23 +109,23 @@
 
         <!-- Pagination Controls -->
         <div class="pagination">
-            <button 
-                (click)="prevPage()" 
+            <button
+                (click)="prevPage()"
                 [disabled]="currentPage === 1"
                 class="page-btn">
                 ◀
             </button>
 
-            <button 
-                *ngFor="let page of totalPagesArray()" 
+            <button
+                *ngFor="let page of totalPagesArray()"
                 (click)="goToPage(page)"
                 [class.active]="page === currentPage"
                 class="page-btn">
                 {{ page }}
             </button>
 
-            <button 
-                (click)="nextPage()" 
+            <button
+                (click)="nextPage()"
                 [disabled]="currentPage === totalPages"
                 class="page-btn">
                 ▶

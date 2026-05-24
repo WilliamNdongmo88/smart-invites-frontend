@@ -15,6 +15,7 @@ interface Guest {
   table_number: string;
   email: string;
   phone?: string;
+  notificationMode: 'whatsapp' | 'email';
   status: 'confirmed' | 'pending' | 'declined';
   dietaryRestrictions?: string;
   plusOne: boolean;
@@ -47,6 +48,11 @@ export class EditGuestComponent implements OnInit {
   warningMessage: string = "";
   showDeleteModal = false;
   showErrorModal = false;
+  notificationMeans = {
+    whatsapp: true,
+    email: false
+  };
+  notificationMode: 'whatsapp' | 'email' = 'whatsapp';
 
   originalGuestData: Guest = {
     id: 1,
@@ -54,6 +60,7 @@ export class EditGuestComponent implements OnInit {
     table_number: 'Table 5',
     email: 'will@email.com',
     phone: '+33 6 12 34 56 78',
+    notificationMode: 'whatsapp',
     status: 'confirmed',
     dietaryRestrictions: 'Végétarien',
     plusOne: true,
@@ -106,6 +113,7 @@ export class EditGuestComponent implements OnInit {
             table_number: response.table_number,
             email: response.email,
             phone: response.phone_number,
+            notificationMode: response.notification_mode || 'whatsapp',
             status: response.rsvp_status as 'confirmed' | 'pending' | 'declined' || 'pending',
             dietaryRestrictions: response.dietary_restrictions,
             plusOne: response.guest_has_plus_one_autorise_by_admin,
@@ -117,7 +125,7 @@ export class EditGuestComponent implements OnInit {
             notes: response.notes,
             invitationSentDate: response.invitationSentDate ? response.invitationSentDate.split('T')[0] : null,
             qrCodeGenerated: response.qrCodeUrl ? true : false,
-            qrCodeUrl: response.qrCodeUrl,
+            qrCodeUrl: response.qrCodeUrl
         };
         this.guestData = JSON.parse(JSON.stringify(this.originalGuestData));
         if (!this.guestData.plusOneInfo) {
@@ -142,6 +150,7 @@ export class EditGuestComponent implements OnInit {
         tableNumber: this.guestData.table_number,
         email: this.guestData.email,
         phoneNumber: this.guestData.phone,
+        notificationMode: this.guestData.notificationMode,
         rsvpStatus: this.guestData.status,
         dietaryRestrictions: this.guestData.dietaryRestrictions,
         guesthasPlusOneAutoriseByAdmin: this.guestData.plusOne,
@@ -150,7 +159,7 @@ export class EditGuestComponent implements OnInit {
         notes: this.guestData.notes,
         fromEditePage: true
     }
-    console.log('data :: ', data);
+    console.log('###data :: ', data);
     this.isLoading = true;
     this.guestService.updateGuest(this.guestId, data).subscribe({
         next: (response: any) => {
@@ -163,6 +172,15 @@ export class EditGuestComponent implements OnInit {
           console.error('Erreur :', err);
         }
       });
+  }
+
+  toggleNotificationMode(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    this.guestData.notificationMode = checked
+      ? 'whatsapp'
+      : 'email';
+    console.log('Notification mode updated:', this.guestData.notificationMode);
   }
 
   getStatusLabel(status: string): string {
@@ -236,7 +254,7 @@ export class EditGuestComponent implements OnInit {
     this.modalAction = modalAction;
 
     if(modalAction=='delete'){
-      this.warningMessage = `Êtes-vous sûr de vouloir supprimer ${this.guestData.name} ? 
+      this.warningMessage = `Êtes-vous sûr de vouloir supprimer ${this.guestData.name} ?
       Cette action est irréversible.`;
       this.showDeleteModal = true;
     }

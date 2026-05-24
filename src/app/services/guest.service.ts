@@ -72,7 +72,7 @@ export class GuestService {
     private cache = new Map<number, Observable<{ guests: Guests[] }>>();
     private refresh$ = new Subject<number>();
 
-    constructor(private http: HttpClient) { 
+    constructor(private http: HttpClient) {
       if (this.isProd) {
         this.apiUrl = environment.apiUrlProd;
       } else {
@@ -94,6 +94,7 @@ export class GuestService {
   //   return this.http.post<any>(`${this.apiUrl}/guest/add-guest`, guests, { headers })
   // }
   addGuest(guests: any): Observable<any> {
+    console.log("###guests :: ",guests);
     const headers = this.getAuthHeaders();
     return this.http.post<any>(`${this.apiUrl}/guest/add-guest`, guests, { headers })
       .pipe(

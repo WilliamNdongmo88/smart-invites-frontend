@@ -105,6 +105,7 @@
                     [(ngModel)]="dietaryRestrictions"
                     placeholder="Ex: Végétarien, Sans gluten, Allergies..."
                     rows="3"
+                    [disabled]="loading"
                   ></textarea>
                 </div>
 
@@ -120,43 +121,73 @@
                     #nameCtrl="ngModel"
                     required
                     (ngModelChange)="checkField()"
+                    [disabled]="loading"
                   />
                   <div class="error" *ngIf="nameCtrl.invalid && nameCtrl.touched">
                     Le nom est obligatoire.
                   </div>
 
+                  <!-- Notification Means -->
+                  <div class="form-group checkbox-group checkbox-text">
+                    <p class="notification-title">
+                      Notifiez-moi des détails de l'événement via :
+                    </p>
+                    <label class="custom-switch">
+                      <input
+                        type="checkbox"
+                        [(ngModel)]="notificationMeans.whatsapp"
+                        name="notificationMeans"
+                        (change)="toggleNotificationMeans()"
+                      />
+                      <span class="checkmark"></span>
+                      <div class="label-text">
+                        <span class="on">WhatsApp</span>
+                        <span class="off">Email</span>
+                      </div>
+                    </label>
+                  </div>
+
                   <!-- EMAIL -->
-                  <label>Email *</label>
-                  <input
-                    type="email"
-                    placeholder="Adresse email"
-                    [(ngModel)]="email"
-                    name="email"
-                    #emailCtrl="ngModel"
-                    required
-                    email
-                    (ngModelChange)="checkField()"
-                  />
-                  <div class="error" *ngIf="emailCtrl.invalid && emailCtrl.touched">
-                    <span *ngIf="emailCtrl.errors?.['required']">L’email est obligatoire.</span>
-                    <span *ngIf="emailCtrl.errors?.['email']">Format email invalide.</span>
+                  <div>
+                    <label>Email *</label>
+                    <input
+                      type="email"
+                      placeholder="Adresse email"
+                      [(ngModel)]="email"
+                      name="email"
+                      #emailCtrl="ngModel"
+                      required
+                      email
+                      (ngModelChange)="checkField()"
+                      [disabled]="loading"
+                    />
+                    <div class="error" *ngIf="emailCtrl.invalid && emailCtrl.touched">
+                      <span *ngIf="emailCtrl.errors?.['required']">L’email est obligatoire.</span>
+                      <span *ngIf="emailCtrl.errors?.['email']">Format email invalide.</span>
+                    </div>
                   </div>
 
                   <!-- TELEPHONE -->
-                  <label>Whatsapp</label>
-                  <input
-                    type="text"
-                    placeholder="+237655002318"
-                    [(ngModel)]="phone"
-                    name="phone"
-                    #phoneCtrl="ngModel"
-                    pattern="^(\+?\d{6,15})$"
-                    (ngModelChange)="checkField()"
-                  />
-                  <div class="error" *ngIf="phoneCtrl.invalid && phoneCtrl.touched">
-                    Le numéro doit comporter 6 à 15 chiffres (optionnellement précédé de +).
-                  </div>
-
+                   <div>
+                      <label>Whatsapp *</label>
+                      <input
+                        type="text"
+                        placeholder="+237655002318"
+                        [(ngModel)]="phone"
+                        name="phone"
+                        #phoneCtrl="ngModel"
+                        pattern="^\+?[1-9][0-9]{7,14}$"
+                        (ngModelChange)="checkField()"
+                        required
+                        [disabled]="loading"
+                      />
+                      <div *ngIf="errorPhoneMessage" class="error">
+                        {{ errorPhoneMessage }}
+                      </div>
+                      <div class="error" *ngIf="phoneCtrl.invalid && phoneCtrl.touched">
+                        <span *ngIf="phoneCtrl.errors?.['required']">Le numéro whatsapp est obligatoire.</span>
+                      </div>
+                   </div>
                 </div>
 
                 <label *ngIf="data.eventHasPlusOne && data.guestHasPlusOneAutoriseByAdmin" class="checkbox-label">
@@ -172,6 +203,7 @@
                   type="text"
                   [(ngModel)]="plusOneName"
                   (ngModelChange)="checkField()"
+                  [disabled]="loading"
                 />
                 <label *ngIf="data.footRestriction" class="label-mt">Restrictions alimentaires (optionnel)</label>
                 <textarea
@@ -179,6 +211,7 @@
                   [(ngModel)]="plusOneNameDietRestr"
                   placeholder="Ex: Végétarien, Sans gluten, Allergies..."
                   rows="3"
+                  [disabled]="loading"
                 ></textarea>
               </div>
 

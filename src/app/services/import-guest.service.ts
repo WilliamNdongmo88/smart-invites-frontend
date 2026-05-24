@@ -7,6 +7,7 @@ export interface ImportedGuest {
     phone?: string;
     rsvpStatus?: string;
     plusOne?: boolean;
+    notificationMode?: 'whatsapp' | 'email';
 }
 
 @Injectable({
@@ -101,6 +102,7 @@ export class ImportGuestService {
       eventId: 0,
       nom: '',
       email: '',
+      notificationMode: 'whatsapp'
     };
 
     const headerMap: { [key: string]: string } = {};
@@ -116,6 +118,7 @@ export class ImportGuestService {
     const phoneKeys = ['phone', 'telephone', 'tel', 'mobile', 'téléphone'];
     const rsvpStatusKeys = ['statusRsvp', 'rsvpStatus', 'rsvp-status', 'Status-RSVP'];
     const plusOneKeys = ['plus one', 'plusone', '+1', 'guest', 'accompagnant'];
+    const notificationModeKeys = ['notification mode', 'notificationmode', 'notification-mode', 'notification-mode'];
 
     // Find and assign values
     for (const key of nameKeys) {
@@ -153,6 +156,15 @@ export class ImportGuestService {
         break;
       }
     }
+
+    for (const key of notificationModeKeys) {
+      if (headerMap[key]) {
+        const value = headerMap[key].toLowerCase();
+        guest.notificationMode = value === 'whatsapp' || value === 'email' ? value : 'email';
+        break;
+      }
+    }
+
     // console.log("### [guest]::", guest)
     // return guest.name && guest.email ? guest : null;
     return headerMap as any;
@@ -211,7 +223,17 @@ export class ImportGuestService {
       }
     }
 
-    return guest.nom && guest.email ? guest : null;
+    // Try to find notification mode
+    const notificationModeKeys = ['Notification Mode', 'NotificationMode', 'notification-mode', 'Notification-Mode'];
+    for (const key of notificationModeKeys) {
+      if (row[key]) {
+        const value = String(row[key]).toLowerCase();
+        guest.notificationMode = value === 'whatsapp' || value === 'email' ? value : 'email';
+        break;
+      }
+    }
+
+    return guest.nom && guest.email && guest.phone ? guest : null;
   }
 
   validateGuests(guests: ImportedGuest[]): { valid: ImportedGuest[]; errors: string[] } {
@@ -238,12 +260,12 @@ export class ImportGuestService {
 
   generateCSVTemplate(): string {
     return `
-      nom,email,phone,rsvpStatus,plusone
-      Ndongmo Thierry,fotso-n@gmail.com,+237697432310,pending,1
-      Djoumessi Michka,djoumessi-m@gmail.com,+237670113245,pending,1
-      Kevin Ngassa,kevin.ngassa@gmail.com,+237675443902,pending,0
-      Samantha Fotso,samantha.fotso@gmail.com,+237691001234,pending,0
-      Brenda Noubissi,brenda.noubissi@gmail.com,+237670005678,pending,1
+      nom,email,phone,rsvpStatus,plusone,notificationMode
+      Ndongmo Thierry,fotso-n@gmail.com,+237697432310,pending,1,whatsapp
+      Djoumessi Michka,djoumessi-m@gmail.com,+237670113245,pending,1,whatsapp
+      Kevin Ngassa,kevin.ngassa@gmail.com,+237675443902,pending,0,email
+      Samantha Fotso,samantha.fotso@gmail.com,+237691001234,pending,0,email
+      Brenda Noubissi,brenda.noubissi@gmail.com,+237670005678,pending,1,whatsapp
     `;}
 
   downloadCSVTemplate() {

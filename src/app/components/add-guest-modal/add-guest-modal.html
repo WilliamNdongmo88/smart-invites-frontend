@@ -22,6 +22,26 @@
             />
             </div>
 
+            <!-- Notification Means -->
+            <div class="form-group checkbox-group checkbox-text">
+              <p class="notification-title">
+                Notifiez l'invité des détails de l'événement via :
+              </p>
+              <label class="custom-switch">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="notificationMeans.whatsapp"
+                  name="notificationMeans"
+                  (change)="toggleNotificationMeans()"
+                />
+                <span class="checkmark"></span>
+                <div class="label-text">
+                  <span class="on">WhatsApp</span>
+                  <span class="off">Email</span>
+                </div>
+              </label>
+            </div>
+
             <!-- Email -->
             <div class="form-group">
             <label for="email">Adresse email *</label>
@@ -38,13 +58,13 @@
 
             <!-- Phone -->
             <div class="form-group">
-            <label for="phone">Téléphone (optionnel)</label>
+            <label for="phone">Whatsapp *</label>
             <input
                 type="tel"
                 id="phone"
                 name="phone"
                 [(ngModel)]="newGuest.phone"
-                placeholder="+237 6 55 34 56 78"
+                placeholder="+237655345678"
                 class="form-input"
             />
             </div>

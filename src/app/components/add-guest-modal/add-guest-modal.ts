@@ -10,6 +10,7 @@ interface NewGuest {
   phone?: string;
   dietaryRestrictions?: string;
   plusOne: boolean;
+  notificationMode: 'whatsapp' | 'email';
 }
 
 @Component({
@@ -28,7 +29,13 @@ export class AddGuestModalComponent implements OnInit {
     email: '',
     phone: '',
     plusOne: false,
+    notificationMode: 'whatsapp'
   };
+  notificationMeans = {
+    whatsapp: true,
+    email: false
+  };
+  notificationMode: 'whatsapp' | 'email' = 'whatsapp';
 
   showAlerteModal = false;
   warningMessage: string = "";
@@ -70,15 +77,22 @@ export class AddGuestModalComponent implements OnInit {
       //console.log("---User plan :: ", this.currentUser?.plan)
       if(this.currentUser?.plan == "gratuit"){
         this.showAlerteModal = true;
-      }else if(this.currentUser?.plan == "professionnel"){
+      }else if(this.currentUser?.plan == "professionnel" || this.currentUser?.plan == "entreprise"){
+        console.log("New Guest: ", this.newGuest);
         this.guestAdded.emit(this.newGuest);
         this.resetForm();
       }
     }
   }
 
+  toggleNotificationMeans() {
+    this.notificationMeans.email = !this.notificationMeans.whatsapp;
+    this.newGuest.notificationMode = this.notificationMeans.whatsapp ? 'whatsapp' : 'email';
+  }
+
   confirmAlert() {
     this.showAlerteModal = false;
+    console.log("New Guest: ", this.newGuest);
     this.guestAdded.emit(this.newGuest);
     this.resetForm();
   }
@@ -94,6 +108,7 @@ export class AddGuestModalComponent implements OnInit {
       phone: '',
       dietaryRestrictions: '',
       plusOne: false,
+      notificationMode: 'whatsapp'
     };
   }
 }

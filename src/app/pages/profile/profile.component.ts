@@ -11,6 +11,7 @@ interface UserProfile {
   fullName: string;
   email: string;
   phone?: string;
+  notificationMode: 'whatsapp' | 'email';
   avatar?: string;
   bio?: string;
   createdAt: string;
@@ -56,6 +57,12 @@ export class ProfileComponent implements OnInit {
   originalUserProfile!: UserProfile;
   userId!: number;
 
+  notificationMeans = {
+    whatsapp: true,
+    email: false
+  };
+  notificationMode: 'whatsapp' | 'email' = 'whatsapp';
+
   passwordData: PasswordData  = {
     currentPassword: '',
     newPassword: '',
@@ -72,9 +79,10 @@ export class ProfileComponent implements OnInit {
 
   userProfile: UserProfile = {
     id: 'user_123456',
-    fullName: 'Jean Dupont',
-    email: 'jean.dupont@example.com',
-    phone: '+33 6 12 34 56 78',
+    fullName: 'William Ndongmo',
+    email: 'williamndongmo899@gmail.com',
+    phone: '+237 655002318',
+    notificationMode: 'email',
     avatar: 'https://via.placeholder.com/120',
     bio: 'Passionné par l\'organisation d\'événements',
     createdAt: '2023-01-15',
@@ -117,6 +125,7 @@ export class ProfileComponent implements OnInit {
           fullName: response.name,
           email: response.email,
           phone: response.phone,
+          notificationMode: response.notification_mode,
           avatar: response.avatar_url,
           bio: response.bio || 'Passionné par l\'organisation d\'événements',
           createdAt: response.created_at,
@@ -144,6 +153,7 @@ export class ProfileComponent implements OnInit {
       name: this.userProfile.fullName,
       email: this.userProfile.email,
       phone: this.userProfile.phone,
+      notificationMode: this.userProfile.notificationMode,
       bio: this.userProfile.bio,
       email_notifications: this.notificationPrefs.emailNotifications,
       attendance_notifications: this.notificationPrefs.attendanceNotifications,
@@ -153,6 +163,7 @@ export class ProfileComponent implements OnInit {
     };
 
     this.loading = true;
+    console.log("# Data: ", data);
     this.authService.updateProfile(userId, data).subscribe(
       (response) => {
         console.log("[saveProfile] Response :: ", response);
@@ -166,6 +177,15 @@ export class ProfileComponent implements OnInit {
         this.errorMessage = error.error.error || 'Erreur de connexion';
       }
     );
+  }
+
+  toggleNotificationMode(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    this.userProfile.notificationMode = checked
+      ? 'whatsapp'
+      : 'email';
+    console.log('Notification mode updated:', this.userProfile.notificationMode);
   }
 
   // Reset formulaire

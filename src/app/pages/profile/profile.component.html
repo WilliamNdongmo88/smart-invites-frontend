@@ -67,58 +67,70 @@
 
                             <!-- Nom complet -->
                             <div class="form-group full-width">
-                            <label>Nom complet *</label>
-                            <input
-                                type="text"
-                                name="fullName"
-                                [(ngModel)]="userProfile.fullName"
-                                required
-                                minlength="3"
-                                class="form-input"
-                            />
-                            <small class="error"
-                                *ngIf="profileForm.submitted && profileForm.controls['fullName']?.invalid">
-                                Nom requis (min. 3 caractères)
-                            </small>
-                            </div>
+                              <label>Nom complet *</label>
+                              <input
+                                  type="text"
+                                  name="fullName"
+                                  [(ngModel)]="userProfile.fullName"
+                                  required
+                                  minlength="3"
+                                  class="form-input"
+                              />
+                              <small class="error"
+                                  *ngIf="profileForm.submitted && profileForm.controls['fullName']?.invalid">
+                                  Nom requis (min. 3 caractères)
+                              </small>
 
-                            <!-- <div class="form-group">
-                            <label>Prénom *</label>
-                            <input type="text" [(ngModel)]="userProfile.firstName" class="form-input" />
-                            </div>
+                              <!-- Notification Means -->
+                              <div class="form-group checkbox-group checkbox-text">
+                                <p class="notification-title">
+                                  Notifiez moi des détails de l'événement via :
+                                </p>
 
-                            <div class="form-group">
-                            <label>Nom *</label>
-                            <input type="text" [(ngModel)]="userProfile.lastName" class="form-input" />
-                            </div> -->
+                                <label class="custom-switch">
+                                  <input
+                                    type="checkbox"
+                                    [checked]="userProfile.notificationMode === 'whatsapp'"
+                                    (change)="toggleNotificationMode($event)"
+                                  />
+
+                                  <span class="checkmark"></span>
+
+                                  <div class="label-text">
+                                    <span class="on">WhatsApp</span>
+                                    <span class="off">Email</span>
+                                  </div>
+                                </label>
+                              </div>
+                            </div>
 
                             <!-- Email -->
                             <div class="form-group">
-                            <label>Email *</label>
-                            <input
-                                type="email"
-                                name="email"
-                                [(ngModel)]="userProfile.email"
-                                required
-                                email
-                                class="form-input"
-                            />
-                            <small class="error"
-                                *ngIf="profileForm.submitted && profileForm.controls['email']?.invalid">
-                                Email invalide
-                            </small>
+                              <label>Email *</label>
+                              <input
+                                  type="email"
+                                  name="email"
+                                  [(ngModel)]="userProfile.email"
+                                  required
+                                  email
+                                  class="form-input"
+                              />
+                              <small class="error"
+                                  *ngIf="profileForm.submitted && profileForm.controls['email']?.invalid">
+                                  Email invalide
+                              </small>
                             </div>
 
                             <!-- Téléphone -->
                             <div class="form-group">
-                            <label>Téléphone</label>
-                            <input
-                                type="tel"
-                                name="phone"
-                                [(ngModel)]="userProfile.phone"
-                                pattern="^[0-9+ ]*$"
-                                class="form-input"
-                            />
+                              <label>Whatsapp</label>
+                              <input
+                                  type="tel"
+                                  name="phone"
+                                  [(ngModel)]="userProfile.phone"
+                                  pattern="^[0-9+ ]*$"
+                                  class="form-input"
+                              />
                             </div>
 
                             <!-- <div class="form-group">
@@ -283,7 +295,7 @@
                     <button
                         type="submit"
                         class="btn btn-primary btn-mt"
-                        
+
                     >
                         {{ loading ? '⏳ Modification...' : '🔒 Changer le mot de passe' }}
                     </button>

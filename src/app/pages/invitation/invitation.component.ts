@@ -40,7 +40,13 @@ export class InvitationComponent implements OnInit{
   submitted = signal(false);
   concernedEvent: string = "";
   errorMessage: string | null = null;
+  errorPhoneMessage: string | null = null;
   additionalInfo: string = '';
+  notificationMethod: 'whatsapp' | 'email' = 'whatsapp';
+  notificationMeans = {
+    whatsapp: true,
+    email: false
+  };
 
   data: Event = {
     guestId: 0,
@@ -77,7 +83,7 @@ export class InvitationComponent implements OnInit{
       this.getUser(this.token.split(':')[1]);
       if(result.includes('a11a') || result.includes('a22a')){
         this.isFromGeneratedLink = true;
-        this.eventId = Number(result.split(':')[0]);
+        this. eventId= Number(result.split(':')[0]);
         this.getEventById();
       }else{
         this.guestId = Number(result.split(':')[0]);
@@ -111,6 +117,7 @@ export class InvitationComponent implements OnInit{
   submitResponse() {
     console.log("this.response():: ", this.response())
     const payload = {
+      //notificationMode: this.notificationMethod,// Je commente parce que j'ai oublié si la condition if(!this.isFromGeneratedLink) se déclenche souvent.
       rsvpToken: this.token,
       rsvpStatus: this.response(),
       dietaryRestrictions: this.dietaryRestrictions || null,
@@ -131,23 +138,26 @@ export class InvitationComponent implements OnInit{
         },
         error: (err) => {
           this.loading = false;
-          this.errorMessage = err.error.error || 'Erreur lors de la soumission de votre réponse.';
+          this.errorMessage = err.error.error || err.error.message || 'Erreur lors de la soumission de votre réponse.';
           console.error('[updateGuest] Erreur :', err.error.error);
         }
       });
     }else{
+      const numero = this.phone;
+      const numeroSansPlus = numero.replace('+', '');
       const data = {
         eventId: this.eventId,
         fullName: this.name,
         email: this.email,
-        phoneNumber: this.phone,
+        phoneNumber: numeroSansPlus,
         rsvpStatus: this.response(),
         guestHasPlusOneAutoriseByAdmin: this.linkType == 'a11a' ? false : true,
         dietaryRestrictions: this.dietaryRestrictions || null,
         hasPlusOne: this.plusOne,
         plusOneName: this.plusOne ? this.plusOneName : null,
         plusOneNameDietRestr: this.plusOne ? this.plusOneNameDietRestr : null,
-        token: this.token.split(':')[1]
+        token: this.token.split(':')[1],
+        notificationMode: this.notificationMethod
       };
       console.log('Data envoyé au backend :', data);
       if(this.validateForm()){
@@ -159,7 +169,7 @@ export class InvitationComponent implements OnInit{
           },
           error: (err) => {
             this.loading = false;
-            this.errorMessage = err.error.error || 'Erreur lors de la soumission de votre réponse.';
+            this.errorMessage = err.error.error || err.error.message || 'Erreur lors de la soumission de votre réponse.';
             console.error('[addGuest] Erreur :', err.error.error);
             console.log('[addGuest] Err :', err);
           }
@@ -173,7 +183,7 @@ export class InvitationComponent implements OnInit{
   }
 
   validateForm(): boolean {
-    if (!this.name || !this.email) return false;
+    if (!this.name || !this.email || !this.phone) return false;
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^(\+?\d{6,15})$/;
@@ -194,7 +204,7 @@ export class InvitationComponent implements OnInit{
           }else{
             this.url = response.imageUrl;
           }
-          
+
         },
         error: (err) => {
           console.error('Erreur lors du chargement du QR code :', err);
@@ -295,7 +305,7 @@ export class InvitationComponent implements OnInit{
           }else{
             this.showWeddingCivilLocation = false;
           }
-          
+
           this.data = {
             guestId: 0,
             guestName: '',
@@ -335,21 +345,65 @@ export class InvitationComponent implements OnInit{
   }
 
   checkField() {
-    console.log("isValidating :", this.isValidating);
+    console.log('isValidating :', this.isValidating);
+
+    const plusOneName = this.plusOneName?.trim() || '';
+    const name = this.name?.trim() || '';
+    const email = this.email?.trim() || '';
+    const phone = this.phone?.trim() || '';
+
+    // Reset
     this.errorMessage = '';
-    this.loading = false; 
-    if (this.plusOneName.trim().length > 0) {
-      this.isValidating = false; 
-      this.errorMessage = '';
-    } else if (this.name.trim().length > 0 || this.email.trim().length > 0){
-      this.isValidating = false;
-      this.loading = false; 
-      this.errorMessage = "";
-    }else{
+    this.errorPhoneMessage = '';
+    this.loading = false;
+
+    // Vérifie si au moins un champ est rempli
+    const hasValue =
+      plusOneName.length > 0 ||
+      name.length > 0 ||
+      email.length > 0 ||
+      phone.length > 0;
+
+    // Aucun champ rempli
+    if (!hasValue) {
       this.isValidating = true;
-      this.loading = true; 
-      this.errorMessage = "";
+      this.loading = true;
+      return;
     }
+
+    // Validation du téléphone si renseigné
+    if (phone.length > 0) {
+
+      // Retire le "+"
+      const digitsOnly = phone.replace(/^\+/, '');
+
+      // Vérifie que ce sont bien des chiffres
+      const isOnlyDigits = /^\d+$/.test(digitsOnly);
+
+      if (!isOnlyDigits) {
+        this.isValidating = true;
+        this.errorPhoneMessage =
+          'Le numéro ne doit contenir que des chiffres.';
+        return;
+      }
+
+      // Vérifie la longueur
+      if (digitsOnly.length < 8 || digitsOnly.length > 15) {
+        this.isValidating = true;
+        this.errorPhoneMessage =
+          'Le numéro doit comporter entre 8 et 15 chiffres.';
+        return;
+      }
+    }
+
+    // Tout est OK
+    this.isValidating = false;
+    this.loading = false;
+  }
+
+  toggleNotificationMeans() {
+    this.notificationMethod = this.notificationMethod === 'whatsapp' ? 'email' : 'whatsapp';
+    this.notificationMeans.email = !this.notificationMeans.whatsapp;
   }
 
   formatDate(dateString: string): string {

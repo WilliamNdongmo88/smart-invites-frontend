@@ -562,7 +562,8 @@ export class GuestListComponent implements OnInit{
         email: newGuest.email,
         phoneNumber: newGuest.phone,
         rsvpStatus: "pending",
-        guesthasPlusOneAutoriseByAdmin: newGuest.plusOne
+        guesthasPlusOneAutoriseByAdmin: newGuest.plusOne,
+        notificationMode: newGuest.notificationMode
       }];
     console.log("datas :: ", datas);
       this.isLoading = true;
@@ -578,7 +579,7 @@ export class GuestListComponent implements OnInit{
         this.isLoading = false;
 
         console.error('❌ Erreur HTTP :', error.error.error);
-
+        this.errorMessage = error.error.error || 'Erreur de connexion';
         if (error.status === 409) {
           this.triggerError();
           this.errorMessage = "Vous essayez d'enregistrer un invité qui existe déjà.";

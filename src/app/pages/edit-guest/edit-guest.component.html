@@ -88,6 +88,28 @@
                 />
               </div>
 
+            <!-- Notification Means -->
+            <div class="form-group checkbox-group checkbox-text">
+              <p class="notification-title">
+                Notifiez l'invité des détails de l'événement via :
+              </p>
+
+              <label class="custom-switch">
+                <input
+                  type="checkbox"
+                  [checked]="guestData.notificationMode === 'whatsapp'"
+                  (change)="toggleNotificationMode($event)"
+                />
+
+                <span class="checkmark"></span>
+
+                <div class="label-text">
+                  <span class="on">WhatsApp</span>
+                  <span class="off">Email</span>
+                </div>
+              </label>
+            </div>
+
               <div class="form-group">
                 <label for="email">Adresse email *</label>
                 <input
@@ -102,13 +124,14 @@
               </div>
 
               <div class="form-group">
-                <label for="phone">Téléphone</label>
+                <label for="phone">Whatsapp *</label>
                 <input
                   type="tel"
                   id="phone"
                   name="phone"
                   [(ngModel)]="guestData.phone"
                   placeholder="+33 6 12 34 56 78"
+                  required
                   class="form-input"
                 />
               </div>

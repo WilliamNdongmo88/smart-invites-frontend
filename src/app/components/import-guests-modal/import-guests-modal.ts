@@ -43,7 +43,7 @@ export class ImportGuestsModalComponent implements OnChanges {
     private importService: ImportGuestService,
     private guestService: GuestService,
     private communicationService: CommunicationService
-    
+
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -139,6 +139,7 @@ export class ImportGuestsModalComponent implements OnChanges {
     this.isModalLoading = true;
     const datas = [];
     for (const key in this.importedGuests) {
+      console.log("key :: ", key);
       const elt = this.importedGuests[key];
       console.log("eventId :: ", this.eventId);
       const data = {
@@ -148,10 +149,11 @@ export class ImportGuestsModalComponent implements OnChanges {
         phoneNumber: elt.phone,
         rsvpStatus: elt.rsvpstatus,
         guesthasPlusOneAutoriseByAdmin: elt.plusone == 1 ? true : false,
+        notificationMode: elt.notificationmode,
       }
       datas.push(data);
     }
-    //console.log("datas to import :: ", datas);
+    console.log("datas to import :: ", datas);
     this.guestService.addGuest(datas).subscribe(
       (response) => {
         console.log("Response :: ", response.guests);
@@ -176,16 +178,16 @@ export class ImportGuestsModalComponent implements OnChanges {
             }
           }
           this.communicationService.triggerSenderAction(data);
-        } 
+        }
         if(error.status === 409){
           this.triggerError();
           this.errorMessage = "Vous essayez d'enregistrer un ou plusieurs invités déjà présents.";
           console.log("Message :: ", this.errorMessage);
         }else if(error.status === 500){
           this.triggerError();
-          this.errorMessage = error.error.message || "Erreur serveur lors de l'importation des invités.";
+          this.errorMessage = error.error.message || error.error.error || "Erreur serveur lors de l'importation des invités.";
           console.log("Message :: ", this.errorMessage);
-        } 
+        }
       }
     );
   }
@@ -200,7 +202,7 @@ export class ImportGuestsModalComponent implements OnChanges {
   downloadTemplate() {
     this.importService.downloadCSVTemplate();
   }
-  
+
   closeModal() {
     this.closed.emit();
   }
@@ -218,7 +220,7 @@ export class ImportGuestsModalComponent implements OnChanges {
     return validTypes.includes(file.type) || file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
   }
 
-  // Logique pagination 
+  // Logique pagination
   get totalPages() {
     return Math.ceil(this.importedGuests.length / this.itemsPerPage);
   }

@@ -584,16 +584,15 @@ export class GuestListComponent implements OnInit{
           this.triggerError();
           this.errorMessage = "Vous essayez d'enregistrer un invité qui existe déjà.";
           return;
-        }
-        if (error.error.error === "PAYMENT_REQUIRED") {
+        }else if (error.error.error === "PAYMENT_REQUIRED") {
           // Afficher l'alerte
           this.showAddGuestModal.set(false);
           this.alertConfigs = this.alertConfigs;
           this.showGuestLimitAlert = true;
           return;
+        }else{
+          this.triggerError(error.error.error);
         }
-
-        this.errorMessage = "Une erreur est survenue, veuillez réessayer.";
       }
     );
   }
@@ -702,8 +701,9 @@ export class GuestListComponent implements OnInit{
   }
 
   // Logique error-modal
-  triggerError() {
-    this.errorMessage = "Impossible de charger les invités. Veuillez réessayer.";
+  triggerError(errorMessage?: string) {
+    console.log("TriggerError with message :: ", errorMessage);
+    this.errorMessage = errorMessage || "Impossible de charger les invités. Veuillez réessayer.";
     this.showErrorModal = true;
   }
 

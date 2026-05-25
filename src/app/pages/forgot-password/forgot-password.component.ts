@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, Router } from '@angular/router';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 type ForgotPasswordStep = 'email' | 'verification' | 'reset' | 'success';
@@ -26,10 +26,32 @@ export class ForgotPasswordComponent {
   passwordStrength = signal<'weak' | 'medium' | 'strong'>('weak');
 
   constructor(
-    private router: Router, 
-    private authService: AuthService) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    private router: Router,
+    private route: ActivatedRoute,
+    private authService: AuthService
+  ) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+    ngOnInit(): void {
+    // Lecture des query params
+    this.route.queryParams.subscribe(params => {
+
+      const code = params['code'];
+      const email = params['email'];
+
+      console.log('code:', code);
+      console.log('email:', email);
+
+      // Vérifier si le lien contient bien code + email
+      if( (code && email)){
+        this.currentStep.set('verification');
+        this.verificationCode = code;
+        this.email = email;
+      }
+
+    });
+  }
 
   submitEmail() {
     if (this.email && this.email.trim() !== '') {
@@ -80,7 +102,7 @@ export class ForgotPasswordComponent {
           error: (error) => {
             this.loading = false;
             console.error('❌ Erreur lors de la vérification du code :', error);
-            this.errorMessage = 'Echec de la vérification. Réessayez plus tard.';
+            this.errorMessage = error.error?.error || error.error.message || 'Echec de la vérification. Réessayez plus tard.';
           }
         });
     }else{
@@ -181,7 +203,26 @@ export class ForgotPasswordComponent {
   }
 
   resendCode() {
-    alert('✉️ Code de vérification renvoyé !');
+    const data = {
+      email:this.email,
+      isActive: false
+    };
+
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.authService.sendResetEmail(data).subscribe({
+      next: (response) => {
+        console.log('✅ Code renvoyé avec succès', response);
+        this.loading = false;
+        // Optionnel : Afficher un message de succès
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors du renvoi du code :', error);
+        this.errorMessage = error.error?.error || 'Erreur lors du renvoi du code.';
+        this.loading = false;
+      }
+    });
   }
 
   redirectToLogin() {

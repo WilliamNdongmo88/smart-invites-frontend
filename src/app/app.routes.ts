@@ -25,6 +25,7 @@ import { ManagerDashboardComponent } from './pages/manager-dashboard/manager-das
 import { MaintenanceComponent } from './pages/maintenance/maintenance.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
+import { VerificationCodeComponent } from './pages/verification-code/verification-code.component';
 
 export const routes: Routes = [
   {
@@ -34,10 +35,14 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
-  },  
+  },
   {
     path: 'signup',
     component: SignupComponent,
+  },
+   {
+    path: 'activate-account',
+    component: VerificationCodeComponent,
   },
   {
     path: 'forgot-password',

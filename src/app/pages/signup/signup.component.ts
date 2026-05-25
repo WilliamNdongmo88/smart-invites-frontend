@@ -39,7 +39,7 @@ export class SignupComponent implements  OnInit{
   hasTyped: boolean = false;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private authService: AuthService,
     private cd: ChangeDetectorRef,
     private communicationService: CommunicationService
@@ -88,7 +88,7 @@ export class SignupComponent implements  OnInit{
     this.cd.detectChanges(); //Force Angular à mettre à jour l’UI
 
     const googleIdToken = response.credential;
-    const request = { 
+    const request = {
       tokenId: googleIdToken,
       acceptTerms: this.acceptTerms,
       accountType: this.accountType

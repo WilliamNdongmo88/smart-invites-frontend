@@ -38,7 +38,9 @@ export class AddGuestModalComponent implements OnInit {
   notificationMode: 'whatsapp' | 'email' = 'whatsapp';
 
   showAlerteModal = false;
+  showErrorModal = false;
   warningMessage: string = "";
+  errorMessage = '';
 
   currentUser: User | null = null;
   pollingInterval: any;

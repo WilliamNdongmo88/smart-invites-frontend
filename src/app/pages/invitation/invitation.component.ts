@@ -183,13 +183,37 @@ export class InvitationComponent implements OnInit{
   }
 
   validateForm(): boolean {
-    if (!this.name || !this.email || !this.phone) return false;
+    const name = this.name?.trim() || '';
+    const email = this.email?.trim() || '';
+    const phone = this.phone?.trim() || '';
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^(\+?\d{6,15})$/;
+    // EMAIL MODE
+    if (this.notificationMethod === 'email') {
 
-    if (!emailRegex.test(this.email)) return false;
-    if (this.phone && !phoneRegex.test(this.phone)) return false;
+      if (!name || !email) {
+        return false;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailRegex.test(email)) {
+        return false;
+      }
+    }
+
+    // WHATSAPP MODE
+    if (this.notificationMethod === 'whatsapp') {
+
+      if (!name || !phone) {
+        return false;
+      }
+
+      const phoneRegex = /^(\+?\d{6,15})$/;
+
+      if (!phoneRegex.test(phone)) {
+        return false;
+      }
+    }
 
     return true;
   }
@@ -358,11 +382,14 @@ export class InvitationComponent implements OnInit{
     this.loading = false;
 
     // Vérifie si au moins un champ est rempli
-    const hasValue =
-      plusOneName.length > 0 ||
-      name.length > 0 ||
-      email.length > 0 ||
-      phone.length > 0;
+    let hasValue
+    if(this.notificationMethod == 'email'){
+      hasValue = plusOneName.length > 0 || name.length > 0 || email.length > 0;
+    }
+    if(this.notificationMethod == 'whatsapp'){
+      hasValue = plusOneName.length > 0 || name.length > 0 || phone.length > 0;
+    }
+    console.log("hasValue:", hasValue)
 
     // Aucun champ rempli
     if (!hasValue) {
@@ -404,6 +431,7 @@ export class InvitationComponent implements OnInit{
   toggleNotificationMeans() {
     this.notificationMethod = this.notificationMethod === 'whatsapp' ? 'email' : 'whatsapp';
     this.notificationMeans.email = !this.notificationMeans.whatsapp;
+
   }
 
   formatDate(dateString: string): string {

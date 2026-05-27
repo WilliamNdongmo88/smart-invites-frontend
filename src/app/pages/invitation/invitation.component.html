@@ -148,7 +148,7 @@
                   </div>
 
                   <!-- EMAIL -->
-                  <div>
+                  <div *ngIf="notificationMethod=='email'">
                     <label>Email *</label>
                     <input
                       type="email"
@@ -168,7 +168,7 @@
                   </div>
 
                   <!-- TELEPHONE -->
-                   <div>
+                   <div *ngIf="notificationMethod=='whatsapp'">
                       <label>Whatsapp *</label>
                       <input
                         type="text"

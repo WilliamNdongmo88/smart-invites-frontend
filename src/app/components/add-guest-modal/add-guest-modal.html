@@ -43,7 +43,7 @@
             </div>
 
             <!-- Email -->
-            <div class="form-group">
+            <div *ngIf="notificationMode=='email'" class="form-group">
             <label for="email">Adresse email *</label>
             <input
                 type="email"
@@ -57,7 +57,7 @@
             </div>
 
             <!-- Phone -->
-            <div class="form-group">
+            <div *ngIf="notificationMode=='whatsapp'" class="form-group">
             <label for="phone">Whatsapp *</label>
             <input
                 type="tel"

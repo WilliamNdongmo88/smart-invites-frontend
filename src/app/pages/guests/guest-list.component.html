@@ -1,5 +1,5 @@
 <div class="guest-list">
-    
+
     <!-- Indicateur de chargement -->
     <app-spinner [isLoading]="isLoading"></app-spinner>
 
@@ -58,7 +58,7 @@
                 <div class="view-controls">
                     <span class="view-label texte-desktop">Affichage :</span>
                     <div class="view-buttons">
-                        <button 
+                        <button
                             class="view-btn"
                             [class.active]="viewMode === 'grid'"
                             (click)="setViewMode('grid')"
@@ -66,7 +66,7 @@
                             <span class="view-icon">⊞</span>
                             Grille
                         </button>
-                        <button 
+                        <button
                             class="view-btn"
                             [class.active]="viewMode === 'table'"
                             (click)="setViewMode('table')"
@@ -111,14 +111,14 @@
                 <!-- Card Body -->
                 <div class="card-body click" (click)="goToGuestDetail(guest.id)">
                     <h3>{{ guest.name }}</h3>
-                    <p class="guest-email">{{ guest.email }}</p>
+                    <p class="guest-email">{{ guest.email || guest.phone }}</p>
 
                     <div class="guest-info">
                     <div class="info-item" *ngIf="guest.table_number">
                         <span class="label">🪑 Table: </span>
                         <span class="value">{{ guest.table_number }}</span>
                     </div>
-                    
+
 
                     <div class="info-item" *ngIf="guest.dietaryRestrictions">
                         <span class="label">🍽️</span>
@@ -175,14 +175,14 @@
             <table>
                 <thead>
                     <tr>
-                        <th><input 
+                        <th><input
                             type="checkbox"
                             [checked]="isAllSelected"
                             (change)="toggleSelectAll($event)"
                             class="modern-checkbox"
                         /></th>
                         <th>Nom</th>
-                        <th>Email</th>
+                        <th>Email / Phone</th>
                         <th>Statut</th>
                         <th>Restrictions</th>
                         <th>+1</th>
@@ -191,7 +191,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let guest of paginatedGuests()" [ngClass]="'status-' + guest.status">
-                        <td>  
+                        <td>
                            <input
                             type="checkbox"
                             [checked]="guestIdList.includes(guest.id)"
@@ -200,7 +200,7 @@
                             />
                         </td>
                         <td>{{ guest.name }}</td>
-                        <td class="email">{{ guest.email }}</td>
+                        <td class="email">{{ guest.email || guest.phone }}</td>
                         <td>
                         <span class="status-badge" [class]="'status-' + guest.status">
                             {{ getStatusIcon(guest.status) }} {{ getStatusLabel(guest.status) }}
@@ -222,23 +222,23 @@
 
         <!-- Pagination Controls -->
         <div *ngIf="guests.length > 0" class="pagination">
-            <button 
-                (click)="prevPage()" 
+            <button
+                (click)="prevPage()"
                 [disabled]="currentPage === 1"
                 class="page-btn">
                 ◀
             </button>
 
-            <button 
-                *ngFor="let page of totalPagesArray()" 
+            <button
+                *ngFor="let page of totalPagesArray()"
                 (click)="goToPage(page)"
                 [class.active]="page === currentPage"
                 class="page-btn">
                 {{ page }}
             </button>
 
-            <button 
-                (click)="nextPage()" 
+            <button
+                (click)="nextPage()"
                 [disabled]="currentPage === totalPages"
                 class="page-btn">
                 ▶
@@ -324,8 +324,8 @@
                 <!-- Actions -->
                 <div class="modal-actions">
                     <button class="btn btn-outline" (click)="closeGuestDetails()">Fermer</button>
-                    <button class="btn btn-primary" 
-                    (click)="deleteInvitationFromModal(guest)" 
+                    <button class="btn btn-primary"
+                    (click)="deleteInvitationFromModal(guest)"
                     [disabled]="guest.qrCodeGenerated && !loadingDelete ? false : true">
                     {{loadingDelete ? '⏳ Suppression...' : '🗑️ Supprimer'}}</button>
                 </div>

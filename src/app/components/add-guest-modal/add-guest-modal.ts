@@ -75,7 +75,16 @@ export class AddGuestModalComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.newGuest.name && this.newGuest.email) {
+    if (this.notificationMode === 'email' && this.newGuest.name && this.newGuest.email) {
+      //console.log("---User plan :: ", this.currentUser?.plan)
+      if(this.currentUser?.plan == "gratuit"){
+        this.showAlerteModal = true;
+      }else if(this.currentUser?.plan == "professionnel" || this.currentUser?.plan == "entreprise"){
+        console.log("New Guest: ", this.newGuest);
+        this.guestAdded.emit(this.newGuest);
+        this.resetForm();
+      }
+    }else if (this.notificationMode === 'whatsapp' && this.newGuest.name && this.newGuest.phone) {
       //console.log("---User plan :: ", this.currentUser?.plan)
       if(this.currentUser?.plan == "gratuit"){
         this.showAlerteModal = true;
@@ -90,6 +99,7 @@ export class AddGuestModalComponent implements OnInit {
   toggleNotificationMeans() {
     this.notificationMeans.email = !this.notificationMeans.whatsapp;
     this.newGuest.notificationMode = this.notificationMeans.whatsapp ? 'whatsapp' : 'email';
+    this.notificationMode = this.newGuest.notificationMode;
   }
 
   confirmAlert() {

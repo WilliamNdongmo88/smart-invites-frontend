@@ -21,16 +21,16 @@ export class ImportGuestService {
 
     const guests: ImportedGuest[] = [];
     const headers = this.parseCSVLine(lines[0]);
-    // console.log("headers::", headers)
     for (let i = 1; i < lines.length; i++) {
       const values = this.parseCSVLine(lines[i]);
-    //   console.log("### values::", values)
+      //console.log("### values::", values);
       const guest = this.mapRowToGuest(headers, values);
-      if (guest && guest.nom && guest.email) {
+      console.log("[#1#] guest::", guest);
+      if (guest && guest.nom && (guest.email || guest.phone)) {
         guests.push(guest);
       }
     }
-
+    console.log("[#2#] guests::", guests)
     return guests;
   }
 
@@ -107,9 +107,9 @@ export class ImportGuestService {
 
     const headerMap: { [key: string]: string } = {};
     headers.forEach((header, index) => {
-        // console.log("### header.toLowerCase().trim()::", header.toLowerCase().trim())
-        // console.log("### values[index]::", values[index])
-      headerMap[header.toLowerCase().trim()] = values[index] || '';
+    // console.log("### header.toLowerCase().trim()::", header.toLowerCase().trim());
+    // console.log("### values[index]::", values[index]);
+    headerMap[header.toLowerCase().trim()] = values[index] || '';
     });
     // console.log("### [headerMap]::", headerMap)
     // Map common header variations
@@ -160,12 +160,12 @@ export class ImportGuestService {
     for (const key of notificationModeKeys) {
       if (headerMap[key]) {
         const value = headerMap[key].toLowerCase();
-        guest.notificationMode = value === 'whatsapp' || value === 'email' ? value : 'email';
+        guest.notificationMode = value === 'whatsapp' || value === 'email' ? value : 'whatsapp';
         break;
       }
     }
 
-    // console.log("### [guest]::", guest)
+    //console.log("### [guest]::", guest)
     // return guest.name && guest.email ? guest : null;
     return headerMap as any;
   }
@@ -242,17 +242,33 @@ export class ImportGuestService {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     guests.forEach((guest, index) => {
-      const rowNumber = index + 2; // +2 because of header and 0-indexing
+      const rowNumber = index + 2;
+      const hasEmail = guest.email && guest.email.trim() !== '';
+      const hasWhatsapp = guest.phone && guest.phone.trim() !== '';
 
+      // Nom obligatoire
       if (!guest.nom || guest.nom.trim() === '') {
         errors.push(`Ligne ${rowNumber}: Le nom est requis`);
-      } else if (!guest.email || guest.email.trim() === '') {
-        errors.push(`Ligne ${rowNumber}: L'email est requis`);
-      } else if (!emailRegex.test(guest.email)) {
-        errors.push(`Ligne ${rowNumber}: L'email "${guest.email}" est invalide`);
-      } else {
-        valid.push(guest);
+        return;
       }
+
+      // Email OU WhatsApp obligatoire
+      if (!hasEmail && !hasWhatsapp) {
+        errors.push(
+          `Ligne ${rowNumber}: L'email ou le numéro WhatsApp est requis`
+        );
+        return;
+      }
+
+      // Validation email seulement s'il existe
+      if (hasEmail && !emailRegex.test(guest.email)) {
+        errors.push(
+          `Ligne ${rowNumber}: L'email "${guest.email}" est invalide`
+        );
+        return;
+      }
+
+      valid.push(guest);
     });
 
     return { valid, errors };

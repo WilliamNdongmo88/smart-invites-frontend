@@ -97,7 +97,9 @@ export class ImportGuestsModalComponent implements OnChanges {
 
       if (file.name.endsWith('.csv')) {
         const text = await file.text();
+        console.log("[text]:", text);
         guests = this.importService.parseCSV(text);
+        console.log("[guests]:", guests)
       } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
         guests = await this.importService.parseExcel(file);
       }

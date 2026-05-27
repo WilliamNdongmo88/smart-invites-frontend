@@ -97,7 +97,7 @@
                 <tbody>
                 <tr *ngFor="let guest of paginatedGuests()">
                     <td>{{ guest.nom }}</td>
-                    <td>{{ guest.email }}</td>
+                    <td>{{ guest.email || '-' }}</td>
                     <td>{{ guest.phone || '-' }}</td>
                     <td>{{ guest.rsvpstatus || '-' }}</td>
                     <td>{{ guest.plusone }}</td>

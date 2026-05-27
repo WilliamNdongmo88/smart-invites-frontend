@@ -37,7 +37,7 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   font-size: 3rem;
   line-height: 1.2;
-  
+
   @media (max-width: 768px) {
     font-size: 2rem;
   }
@@ -46,7 +46,7 @@ h1 {
 h2 {
   font-size: 2.5rem;
   line-height: 1.2;
-  
+
   @media (max-width: 768px) {
     font-size: 1.75rem;
     margin-left: 5px;
@@ -55,7 +55,7 @@ h2 {
 
 h3 {
   font-size: 1.75rem;
-  
+
   @media (max-width: 768px) {
     font-size: 1.5rem;
   }
@@ -70,7 +70,7 @@ a {
   color: $primary-gold;
   text-decoration: none;
   transition: color 0.3s ease;
-  
+
   &:hover {
     color: color.adjust($primary-gold, $lightness: -10%);
   }
@@ -88,7 +88,7 @@ button {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 0.5rem;
-  
+
   @media (min-width: 640px) {
     padding: 0 0.5rem;
   }
@@ -96,7 +96,7 @@ button {
   @media (min-width: 768px) {
     padding: 0 1rem;
   }
-  
+
   @media (min-width: 1024px) {
     padding: 0 0rem;
   }
@@ -117,34 +117,34 @@ button {
   border-radius: 0.5rem;
   font-weight: 500;
   transition: all 0.3s ease;
-  display: inline-flex;
+  display: inline;//inline-flex;
   align-items: center;
   gap: 0.5rem;
-  
+
   &.btn-primary {
     background-color: $primary-gold;
     color: $dark-bg;
-    
+
     &:hover {
       background-color: color.adjust($light-gray, $lightness: -10%);
       box-shadow: 0 4px 12px rgba($primary-gold, 0.3);
     }
   }
-  
+
   &.btn-outline {
     background-color: transparent;
     color: $primary-gold;
     border: 2px solid $primary-gold;
-    
+
     &:hover {
       background-color: rgba($primary-gold, 0.1);
     }
   }
-  
+
   &.btn-secondary {
     background-color: $light-gray;
     color: $text-dark;
-    
+
     &:hover {
       background-color: color.adjust($light-gray, $lightness: -10%);
     }
@@ -159,7 +159,7 @@ button {
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  
+
   &:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
   }
@@ -195,18 +195,18 @@ button {
 .grid {
   display: grid;
   gap: 2rem;
-  
+
   &.grid-2 {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    
+
     @media (min-width: 768px) {
       grid-template-columns: repeat(2, 1fr);
     }
   }
-  
+
   &.grid-3 {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    
+
     @media (min-width: 768px) {
       grid-template-columns: repeat(3, 1fr);
     }
@@ -216,29 +216,29 @@ button {
 // Flexbox utilities
 .flex {
   display: flex;
-  
+
   &.flex-center {
     justify-content: center;
     align-items: center;
   }
-  
+
   &.flex-between {
     justify-content: space-between;
     align-items: center;
   }
-  
+
   &.flex-col {
     flex-direction: column;
   }
-  
+
   &.gap-2 {
     gap: 0.5rem;
   }
-  
+
   &.gap-4 {
     gap: 1rem;
   }
-  
+
   &.gap-6 {
     gap: 1.5rem;
   }
@@ -270,7 +270,7 @@ button {
 ::-webkit-scrollbar-thumb {
   background: $primary-gold;
   border-radius: 4px;
-  
+
   &:hover {
     background: color.adjust($primary-gold, $lightness: -10%);
   }

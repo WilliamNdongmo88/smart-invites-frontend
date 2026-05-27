@@ -160,8 +160,8 @@ export class PricingComponent implements OnInit{
 
   /** Action bouton Commencer */
   startPlan(plan: PricingPlan): void {
-    console.log('Plan choisi :', plan.name, this.billingCycle);
-    console.log('isAuthenticated: ', this.isAuthenticated);
+    // console.log('Plan choisi :', plan.name, this.billingCycle);
+    // console.log('isAuthenticated: ', this.isAuthenticated);
 
     // 1️⃣ Plan gratuit
     if (plan.name === 'Gratuit') {
@@ -210,7 +210,7 @@ export class PricingComponent implements OnInit{
   }
 
   onPaymentSubmitted(proof: PaymentProof): void {
-    console.log('Preuve de paiement reçue:', proof);
+    //console.log('Preuve de paiement reçue:', proof);
     const formData = new FormData();
     const blob = this.base64ToBlob(proof.base64);
     formData.append('file', blob, proof.fileName);
@@ -219,8 +219,8 @@ export class PricingComponent implements OnInit{
       selectedPlan: this.selectedPlan
     }
     formData.append('userData', JSON.stringify(userData));
-    console.log('FILE Firebase URL :', formData.get('file'));
-    console.log('USERDATA :', formData.get('userData'));
+    // console.log('FILE Firebase URL :', formData.get('file'));
+    // console.log('USERDATA :', formData.get('userData'));
     // Envoyer au backend
     this.paymentService.submitPayment(formData).subscribe(
       (response) => {

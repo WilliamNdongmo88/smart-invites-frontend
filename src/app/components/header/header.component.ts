@@ -2,11 +2,12 @@ import { Component, ElementRef, HostListener, OnInit, signal } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../services/auth.service';
-import { map, Observable, Subscription } from 'rxjs';
+import { map, Observable, Subscription, take } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommunicationService } from '../../services/share.service';
 import { NotificationService } from '../../services/notification.service';
 import { AlertConfig, ConditionalAlertComponent } from "../conditional-alert/conditional-alert.component";
+import { HeaderTourService } from '../../../tours/services/header-tour.service';
 
 interface Notification {
   id: number;
@@ -22,7 +23,7 @@ interface Notification {
   imports: [CommonModule, RouterLink, ConditionalAlertComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
-  })
+})
 export class HeaderComponent implements OnInit {
   showNotifications = signal(false);
   isAuthenticated = false;
@@ -58,7 +59,8 @@ export class HeaderComponent implements OnInit {
               private authService: AuthService,
               private breakpointObserver: BreakpointObserver,
               private notificationService: NotificationService,
-              private communicationService: CommunicationService
+              private communicationService: CommunicationService,
+              private headerTourService: HeaderTourService
             ) {}
 
   mobileMenuOpen = signal(false);
@@ -90,8 +92,6 @@ export class HeaderComponent implements OnInit {
       this.loadNotifications();
     });
     this.communicationService.triggerAction$.subscribe((action) => {
-      //console.log('Action reçue:', action);
-
       if (action) {
         this.isAuthenticated = action;
       }
@@ -100,6 +100,34 @@ export class HeaderComponent implements OnInit {
       }
       if (action === 'hide-scanner') {
         this.isScanning = false;
+      }
+    });
+    this.communicationService.request$.subscribe(data => {
+      if (!data) {
+        this.isMobile
+          .pipe(take(1))
+          .subscribe(isMobile => {
+            if (isMobile) {
+              this.toggleMobileMenu(true);
+            }
+            this.headerTourService.initTour();
+            setTimeout(() => {
+              this.headerTourService.start();
+              const tour = this.headerTourService.getTour();
+              tour.once('complete', () => {
+                if (isMobile) {
+                  this.toggleMobileMenu(false);
+                }
+                this.communicationService.sendResponse(true);
+              });
+              tour.once('cancel', () => {
+                if (isMobile) {
+                  this.toggleMobileMenu(false);
+                }
+                this.communicationService.sendResponse(true);
+              });
+            }, isMobile ? 800 : 500);
+          });
       }
     });
     this.loadNotifications();

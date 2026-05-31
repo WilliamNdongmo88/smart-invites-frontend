@@ -7,6 +7,20 @@ export class CommunicationService {
   private messageSource = new BehaviorSubject<any>("");
   message$ = this.messageSource.asObservable();
 
+  private requestSource = new Subject<any>();
+  request$ = this.requestSource.asObservable();
+
+  private responseSource = new Subject<boolean>();
+  response$ = this.responseSource.asObservable();
+
+  sendRequest(data: any) {
+    this.requestSource.next(data);
+  }
+
+  sendResponse(result: boolean) {
+    this.responseSource.next(result);
+  }
+
   sendMessage(variable: any) {
     localStorage.setItem('variable', variable);
     this.messageSource.next(variable);

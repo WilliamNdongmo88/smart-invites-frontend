@@ -169,14 +169,25 @@ export class GuestListComponent implements OnInit{
   }
 
   ngAfterViewInit() {
-    const alreadySeen = localStorage.getItem('guest-list-tour');
-    if (!alreadySeen) {
-      this.guestManagementTour.initTour();
-      setTimeout(() => {
-        this.guestManagementTour.start();
-      }, 500);
-      localStorage.setItem('guest-list-tour', 'true');
-    }
+    const alreadySeenheader = localStorage.getItem('header-tour');
+      this.communicationService.sendRequest(alreadySeenheader);
+
+      this.communicationService.response$.subscribe(result => {
+          console.log('Réponse reçue :', result);
+
+          if(result){
+            console.log('Traitement valide');
+            const alreadySeen = localStorage.getItem('guest-list-tour');
+            if (!alreadySeen) {
+              this.guestManagementTour.initTour();
+              setTimeout(() => {
+                this.guestManagementTour.start();
+              }, 500);
+              localStorage.setItem('guest-list-tour', 'true');
+              localStorage.setItem('header-tour', 'true');
+            }
+          }
+      });
   }
 
   ngOnDestroy() {

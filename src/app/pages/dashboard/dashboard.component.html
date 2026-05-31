@@ -8,9 +8,9 @@
           <p>Bienvenue ! Gérez vos événements et invitations.</p>
         </div>
         <!-- affichage desktop -->
-        <button *ngIf="!(isMobile | async)" (click)="openEventDialog()" class="btn btn-primary c-mtop">+ Nouvel événement</button>
+        <button id="btn-create" *ngIf="!(isMobile | async)" (click)="openEventDialog()" class="btn btn-primary c-mtop">+ Nouvel événement</button>
         <!-- affichage mobile -->
-        <button *ngIf="(isMobile | async) && events.length != 0" (click)="openEventDialog()" class="btn btn-primary c-mtop">
+        <button id="btn-create" *ngIf="(isMobile | async) && events.length != 0" (click)="openEventDialog()" class="btn btn-primary c-mtop">
           <span class="icon-add">+ Ajouter</span>
         </button>
       </div>
@@ -24,7 +24,7 @@
   <div class="container c-container py-12">
 
     <!-- Stats Overview -->
-    <div class="grid grid-4 mt-8">
+    <div id="stats-section" class="grid grid-4 mt-8">
       <div class="stat-card">
         <div class="stat-header">
           <p class="stat-label">Événements</p>
@@ -72,13 +72,13 @@
     <div class="mt-8 c-mt">
       <!-- <h2 *ngIf="events.length > 0" class="c-ml">Vos événements</h2> -->
 
-      <div class="events-list">
+      <div id="events-list" class="events-list">
         <div *ngFor="let event of events" class="event-card card">
           <div class="event-header" (click)="navigateToEventDetails(event.id)">
             <div>
               <h3>{{ event.title }}</h3>
               <div class="detail-item c-mb">
-                <mat-icon style="color: #DAA520;">calendar_today</mat-icon> 
+                <mat-icon style="color: #DAA520;">calendar_today</mat-icon>
                 <p class="event-meta">{{ formatDate(event.date) }}</p>
               </div>
               <div class="detail-item">
@@ -127,7 +127,7 @@
     <!-- Empty State -->
     <div *ngIf="events.length === 0" class="empty-state">
         <h3>Aucun événement trouvé</h3>
-        <button class="btn btn-primary" (click)="openEventDialog()">
+        <button id="btn-create" class="btn btn-primary" (click)="openEventDialog()">
         + Nouvel événement
         </button>
     </div>

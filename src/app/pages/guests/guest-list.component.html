@@ -7,22 +7,22 @@
     <app-conditional-alert [config]="alertConfig"></app-conditional-alert>
 
     <!-- Header eventId, eventTitle-->
-    <div class="guest-list-header" [class]="guest_list_header_extended">
-        <div class="container">
+    <div [class]="guest_list_header_extended">
+        <div id="guest-management-header" class="container">
             <a (click)="navigateToEventPage()" class="back-link">← Retour a l'événement</a>
-            <div class="header-content">
+            <div id="guest-management-header" class="header-content">
             <div>
                 <h1>Gestion des invités</h1>
                 <p>{{ eventTitle }} - {{ totalGuests }} invités</p>
             </div>
             <div class="header-actions">
-                <button class="btn btn-outline" (click)="openAddGuestModal()">
+                <button id="add-guest-btn" class="btn btn-outline" (click)="openAddGuestModal()">
                 ➕  Nouveau
                 </button>
-                <button class="btn btn-outline" (click)="openImportModal()">
+                <button id="import-guests-btn" class="btn btn-outline" (click)="openImportModal()">
                 📥 Importer
                 </button>
-                <button class="btn btn-primary" (click)="openDeleteModal(guestIdList, 'resend')">
+                <button id="send-reminder-btn" class="btn btn-primary" (click)="openDeleteModal(guestIdList, 'resend')">
                     {{ loading ? '⏳ Renvoie...' : '✉️ Envoyer rappel' }}
                 </button>
             </div>
@@ -33,7 +33,7 @@
     <!-- Main content -->
     <div class="container py-15">
         <!-- Search and Filter -->
-        <div *ngIf="guests.length > 0" class="search-filter-section">
+        <div id="search-filter-section" *ngIf="guests.length > 0" class="search-filter-section">
             <div class="search-box">
                 <input
                     type="text"
@@ -57,7 +57,7 @@
                 </button>
                 <div class="view-controls">
                     <span class="view-label texte-desktop">Affichage :</span>
-                    <div class="view-buttons">
+                    <div id="guests-container" class="view-buttons">
                         <button
                             class="view-btn"
                             [class.active]="viewMode === 'grid'"
@@ -77,6 +77,7 @@
                     </div>
                 </div>
                 <button
+                    id="bulk-send-btn"
                     [disabled]="guestIdList.length === 0 || canSend"
                     (click)="openDeleteModal(guestIdList, 'send')"
                     class="filter-btn send"
@@ -84,6 +85,7 @@
                     {{ loading ? '⏳ Envoie...' : 'Envoyer ' + guestIdList.length + ' invitation(s)' }}
                 </button>
                 <button
+                    id="bulk-delete-btn"
                     [disabled]="guestIdList.length === 0 || canDelete"
                     (click)="openDeleteModal(guestIdList, 'delete')"
                     class="filter-btn delete"
@@ -257,7 +259,7 @@
         </div>
 
         <!-- Stats Footer -->
-        <div class="stats-footer">
+        <div id="guest-stats-footer" class="stats-footer">
             <div class="stat">
                 <span class="label">Total</span>
                 <span class="value">{{ totalGuests }}</span>
@@ -333,8 +335,8 @@
         </div>
     </div>
 </div>
+
 <div>
-<!-- <app-footer></app-footer> -->
 
     <div *ngIf="showGuestLimitAlert" @slideDown>
         <app-guest-limit-alert

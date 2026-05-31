@@ -18,6 +18,7 @@ import { AlertConfig, ConditionalAlertComponent } from "../../components/conditi
 import { AddLinkModalComponent } from "../../components/add-invitation-link-modal/add-link-modal";
 import { environment } from '../../../environment/environment';
 import { MatIcon } from "@angular/material/icon";
+import { EventDetailTourService } from '../../../tours/services/event-details-tour';
 
 interface Guest {
   id: string;
@@ -151,7 +152,8 @@ export class EventDetailComponent implements OnInit{
     private guestService: GuestService,
     private qrcodeService: QrCodeService,
     private breakpointObserver: BreakpointObserver,
-    private communicationService: CommunicationService
+    private communicationService: CommunicationService,
+    private eventDetailTourService: EventDetailTourService
   ) {
         if (this.isProd) {
           this.apiUrl = environment.apiUrlProd;
@@ -172,6 +174,20 @@ export class EventDetailComponent implements OnInit{
     this.getLinks();
     //this.getQrCodeImageUrl();
     this.setFilterStatus('confirmed');
+  }
+
+  ngAfterViewInit(): void {
+    const alreadySeen = localStorage.getItem('event-detail-tour');
+    if (!alreadySeen) {
+      this.eventDetailTourService.initTour();
+      setTimeout(() => {
+        this.eventDetailTourService.start();
+      }, 500);
+      localStorage.setItem(
+        'event-detail-tour',
+        'true'
+      );
+    }
   }
 
   getOneEvent() {
@@ -433,7 +449,7 @@ export class EventDetailComponent implements OnInit{
         next: (response: any) => {
           console.log('###response :: ', response);
           const url = response.qrCodeUrl ?? response.imageUrl;
-          resolve(url); 
+          resolve(url);
         },
         error: (err) => {
           console.error('Erreur lors du chargement du QR code :', err);
@@ -442,76 +458,6 @@ export class EventDetailComponent implements OnInit{
       });
     });
   }
-
-  // shareEventLink(event: Event, link: any) {
-  //   console.log("this.event:: ", this.event);
-  //   console.log("link:: ", link);
-
-  //   let text = '';
-  //   switch (this.event.type) {
-  //     case 'wedding':
-  //       text = "Vous êtes invité au"
-  //       break;
-  //     case 'engagement':
-  //       text = "Vous êtes invité aux"
-  //       break
-  //     case 'anniversary':
-  //       text = "Vous êtes invité à l'"
-  //       break
-  //     case 'birthday':
-  //       text = "Vous êtes invité à l'"
-  //       break
-  //   }
-
-  //   const message =
-  //     `${text}: ${event.title}\n` +
-  //     `📅 Date : ${this.formatDate(event.date)}\n` +
-  //     `⏰ Heure : ${event.time}\n\n` +
-  //     `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
-  //     `${link.value}`;
-
-  //   if (navigator.share) {
-  //     navigator.share({
-  //       title: event.title,
-  //       text: message,
-  //     });
-  //   }
-  // }
-// async shareEventLink(event: Event, link: any) {// Echec, partage sans texte
-//   const message =
-//     `Vous êtes invité au : ${event.title}\n` +
-//     `📅 Date : ${this.formatDate(event.date)}\n` +
-//     `⏰ Heure : ${event.time}\n\n` +
-//     `Veuillez cliquer sur le lien ci-dessous pour confirmer votre présence :\n` +
-//     `${link.value}`;
-
-//   if (!navigator.share || !navigator.canShare) {
-//     alert("Votre appareil ne supporte pas le partage natif.");
-//     return;
-//   }
-
-//   try {
-//     // Récupération de l'image via ton backend proxy
-//     const imageUrl = await this.getQrCodeImageUrl();
-//     const proxyUrl = `${this.apiUrl}/file?url=${encodeURIComponent(imageUrl)}`;
-
-//     const response = await fetch(proxyUrl);
-//     if (!response.ok) throw new Error(`Erreur proxy : ${response.status}`);
-
-//     const blob = await response.blob();
-//     const file = new File([blob], "invitation.jpg", { type: blob.type });
-
-//     // 👉 1 seul share obligatoire
-//     await navigator.share({
-//       files: [file],
-//       text: message
-//     });
-
-//     console.log("🎉 Invitation partagée avec succès !");
-//   } catch (err) {
-//     console.error("Erreur lors du partage : ", err);
-//   }
-// }
 
   editEvent() {
     //alert('✏️ Édition de l\'événement...');
@@ -563,7 +509,7 @@ export class EventDetailComponent implements OnInit{
         rsvpStatus: "PENDING",
         hasPlusOne: newGuest.plusOne
       }];
-        
+
       this.isLoading = true;
       this.guestService.addGuest(datas).subscribe(
       (response) => {
@@ -614,7 +560,7 @@ export class EventDetailComponent implements OnInit{
             this.triggerError();
             this.errorMessage = "Erreur lors de la génération du lien";
             console.log("Message :: ", this.errorMessage);
-          }  
+          }
         }
       );
     }else if(newLink.mode=='edit'){
@@ -651,7 +597,7 @@ export class EventDetailComponent implements OnInit{
         for (const link of linksArray) {
           const data = {
             id: link.id,
-            label: `🔗 Partagé le lien ${link.type} (utilisé ${link.used_count}/${link.limit_count})`, 
+            label: `🔗 Partagé le lien ${link.type} (utilisé ${link.used_count}/${link.limit_count})`,
             value:`${link.link}`,
           };
           this.links.push(data);
@@ -665,7 +611,7 @@ export class EventDetailComponent implements OnInit{
           this.triggerError();
           this.errorMessage = "Erreur lors de la génération du lien";
           console.log("Message :: ", this.errorMessage);
-        }  
+        }
       }
     );
   }
@@ -758,7 +704,7 @@ export class EventDetailComponent implements OnInit{
         }
       }
       this.selectedMode = mode;
-      
+
       this.showAddLinkModal.set(true);
     }else{
       this.selectedMode = mode;
@@ -796,7 +742,7 @@ export class EventDetailComponent implements OnInit{
     this.showDeleteModal = false;
   }
 
-  // Logique pagination 
+  // Logique pagination
   get totalPages() {
     return Math.ceil(this.filteredGuests.length / this.itemsPerPage);
   }

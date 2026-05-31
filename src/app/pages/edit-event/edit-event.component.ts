@@ -68,8 +68,8 @@ export class SafePipe implements PipeTransform {
 }@Component({
   selector: 'app-edit-event',
   standalone: true,
-  imports: [CommonModule, FormsModule, 
-    SpinnerComponent, ErrorModalComponent, 
+  imports: [CommonModule, FormsModule,
+    SpinnerComponent, ErrorModalComponent,
     ConfirmDeleteModalComponent, SafePipe],
   templateUrl: 'edit-event.component.html',
   styleUrl: 'edit-event.component.scss'
@@ -148,7 +148,7 @@ export class EditEventComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe((params) => {
       this.eventId = Number(params['eventId']);
-      console.log('Édition de l\'événement avec ID :', this.eventId);
+      //console.log('Édition de l\'événement avec ID :', this.eventId);
       // Charger l'événement depuis le backend
       this.loadEvent();
       this.loadEventInvitationNote();
@@ -158,7 +158,7 @@ export class EditEventComponent implements OnInit {
   loadEvent() {
     this.eventService.getEventById(this.eventId).subscribe(
     (response) => {
-        console.log("#Response :: ", response);
+        //console.log("#Response :: ", response);
         const res = response[0];
 
         if (!res?.event_date) {
@@ -186,7 +186,7 @@ export class EditEventComponent implements OnInit {
         }else{
           this.showWeddingCivilLocation = false;
         }
-        const banquetTime1 = res.banquet_time.split(":")[0] 
+        const banquetTime1 = res.banquet_time.split(":")[0]
         const banquetTime2 = res.banquet_time.split(":")[1].split(':')[0];
         const banquetTime = banquetTime1+':'+banquetTime2;
         this.originalEventData = {
@@ -214,12 +214,12 @@ export class EditEventComponent implements OnInit {
             updatedAt: res.updatedAt,
         };
         this.eventData = { ...this.originalEventData };
-        console.log("#this.eventData :: ", this.eventData);
+        //console.log("#this.eventData :: ", this.eventData);
     },
     (error) => {
         // this.loading = false;
         console.error('❌ Erreur de recupération :', error);
-        console.log("Message :: ", error.message);
+        //console.log("Message :: ", error.message);
         this.errorMessage = error.message || 'Erreur de connexion';
     }
     );
@@ -228,7 +228,7 @@ export class EditEventComponent implements OnInit {
   loadEventInvitationNote() {
     this.eventService.getEventInvitNote(this.eventId).subscribe(
     (response) => {
-        console.log("#Response :: ", response);
+        //console.log("#Response :: ", response);
         this.invitationData = {
           title: response.title ?? this.invitationData.title,
           mainMessage: response.main_message ?? this.invitationData.mainMessage,
@@ -250,15 +250,15 @@ export class EditEventComponent implements OnInit {
         };
         this.hasInvitationModelCard = response.has_invitation_model_card;
         this.isDefaultPdfUrl = response.pdf_url ? true : false;
-        console.log("# response.pdf_url :: ", response.pdf_url);
-        // console.log("# this.isDefaultPdfUrl :: ", this.isDefaultPdfUrl);
-        // console.log("#this.invitationData :: ", this.invitationData);
-        // console.log("#this.hasInvitationModelCard :: ", this.hasInvitationModelCard);
+        //console.log("# response.pdf_url :: ", response.pdf_url);
+        // //console.log("# this.isDefaultPdfUrl :: ", this.isDefaultPdfUrl);
+        // //console.log("#this.invitationData :: ", this.invitationData);
+        // //console.log("#this.hasInvitationModelCard :: ", this.hasInvitationModelCard);
     },
     (error) => {
         // this.loading = false;
         console.error('❌ Erreur de recupération :', error);
-        console.log("Message :: ", error.message);
+        //console.log("Message :: ", error.message);
         this.errorMessage = error.message || 'Erreur de connexion';
     }
     );
@@ -307,11 +307,11 @@ export class EditEventComponent implements OnInit {
 
   nextStep(form: NgForm) {
     if (this.currentStep() < 5) {
-      console.log('this.currentStep():', this.currentStep()+1);
-      // console.log('this.eventData:', this.eventData);
-      // console.log("this.invitationData: ", this.invitationData);
-      console.log("this.isDefaultPdfUrl: ", this.isDefaultPdfUrl);
-      console.log("hasInvitationModelCard: ", this.invitationData.hasInvitationModelCard);
+      //console.log('this.currentStep():', this.currentStep()+1);
+      // //console.log('this.eventData:', this.eventData);
+      // //console.log("this.invitationData: ", this.invitationData);
+      //console.log("this.isDefaultPdfUrl: ", this.isDefaultPdfUrl);
+      //console.log("hasInvitationModelCard: ", this.invitationData.hasInvitationModelCard);
       if (this.eventData.type=='wedding') {
         this.showWeddingNames = true;
         this.showEngagementNames = false;
@@ -347,16 +347,16 @@ export class EditEventComponent implements OnInit {
         this.showAnniversaryNames = false;
         this.showBirthdayNames = false;
       }
-      if(this.currentStep()+1 === 4 && 
+      if(this.currentStep()+1 === 4 &&
         this.invitationData.hasInvitationModelCard && !this.isDefaultPdfUrl &&
         !this.selectedPdfFile){
           this.triggerError();
-          this.errorMessage = "Veuillez sélectionner votre modèle PDF."; 
+          this.errorMessage = "Veuillez sélectionner votre modèle PDF.";
           this.currentStep.update(step => step);
           return;
       }
       if (!this.isStepValid(this.currentStep(), form)) {
-        console.log("Form: ", form.controls);
+        //console.log("Form: ", form.controls);
         this.markStepFieldsAsTouched(form);
         return;
       }
@@ -366,11 +366,11 @@ export class EditEventComponent implements OnInit {
 
   changeStep(form: NgForm, step: number) {
     if (step < 5) {
-      console.log("Step: ", step);
-      // console.log('this.eventData:', this.eventData);
-      // console.log("this.invitationData: ", this.invitationData);
-      console.log("this.isDefaultPdfUrl: ", this.isDefaultPdfUrl);
-      console.log("hasInvitationModelCard: ", this.hasInvitationModelCard);
+      //console.log("Step: ", step);
+      // //console.log('this.eventData:', this.eventData);
+      // //console.log("this.invitationData: ", this.invitationData);
+      //console.log("this.isDefaultPdfUrl: ", this.isDefaultPdfUrl);
+      //console.log("hasInvitationModelCard: ", this.hasInvitationModelCard);
       if (this.eventData.type=='wedding') {
         this.showWeddingNames = true;
         this.showEngagementNames = false;
@@ -408,12 +408,12 @@ export class EditEventComponent implements OnInit {
       }
       if(step === 4 && this.hasInvitationModelCard && !this.isDefaultPdfUrl && !this.selectedPdfFile){
           this.triggerError();
-          this.errorMessage = "Veuillez sélectionner votre modèle PDF."; 
+          this.errorMessage = "Veuillez sélectionner votre modèle PDF.";
           this.currentStep.update(step => step);
           return;
       }
       if (!this.isStepValid(this.currentStep(), form)) {
-        console.log("Form: ", form.controls);
+        //console.log("Form: ", form.controls);
         this.markStepFieldsAsTouched(form);
         return;
       }
@@ -477,13 +477,13 @@ export class EditEventComponent implements OnInit {
 
       formData.append('eventDatas', JSON.stringify(eventDatas));
       formData.append('eventInvitationNote', JSON.stringify(eventInvitationNote));
-      // console.log('PDF Firebase URL :', formData.get('pdfFile'));
-      // console.log('eventDatas :', formData.get('eventDatas'));
-      // console.log('eventInvitationNote :', formData.get('eventInvitationNote'));
+      // //console.log('PDF Firebase URL :', formData.get('pdfFile'));
+      // //console.log('eventDatas :', formData.get('eventDatas'));
+      // //console.log('eventInvitationNote :', formData.get('eventInvitationNote'));
       this.isLoading = true;
       this.eventService.updateEventWihtFile(Number(this.eventData.id), formData).subscribe(
         (response) => {
-          console.log("Response :: ", response)
+          //console.log("Response :: ", response)
           this.isLoading = false;
           this.triggerBAction();
           this.loadEventInvitationNote();
@@ -492,12 +492,12 @@ export class EditEventComponent implements OnInit {
         (error) => {
           this.isLoading = false;
           console.error('❌ Erreur de creation :', error);
-          console.log("Message :: ", error.message);
+          //console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';
         }
       );
     }else{
-      // console.log('Event Time:', this.eventData.date+' '+ this.eventData.time+':00');
+      // //console.log('Event Time:', this.eventData.date+' '+ this.eventData.time+':00');
       const eventDatas : CreateEventRequest = {
           organizerId: this.eventData.organizerId,
           title: this.eventData.title,
@@ -539,16 +539,16 @@ export class EditEventComponent implements OnInit {
         heartIconUrl: this.invitationData.heartIconUrl,
         hasInvitationModelCard: this.invitationData.hasInvitationModelCard,
       }
-      
+
       const data = {
         eventDatas: eventDatas,
         eventInvitationNote: eventInvitationNote
       }
-      console.log('Event updated:', data);
+      //console.log('Event updated:', data);
       this.isLoading = true;
       this.eventService.updateEvent(Number(this.eventData.id), data).subscribe(
         (response) => {
-          console.log("Response :: ", response);
+          //console.log("Response :: ", response);
           this.isLoading = false;
           this.triggerBAction();
           this.loadEventInvitationNote();
@@ -557,7 +557,7 @@ export class EditEventComponent implements OnInit {
         (error) => {
           this.isLoading = false;
           console.error('❌ Erreur de creation :', error.message.split(':')[4]);
-          console.log("Message :: ", error.message);
+          //console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';
         }
       );
@@ -589,14 +589,14 @@ export class EditEventComponent implements OnInit {
   }
 
   toggleReligiousCeremony() {
-    // console.log("[Avant] this.eventData.showWeddingReligiousLocation: ", this.eventData.showWeddingReligiousLocation);
+    // //console.log("[Avant] this.eventData.showWeddingReligiousLocation: ", this.eventData.showWeddingReligiousLocation);
     if (!this.showWeddingReligiousLocation) {
       this.eventData.religiousLocation = '';
       this.eventData.religiousTime = '';
     }
   }
   toggleInvitationModelCard(){
-    console.log("[toggleInvitationModelCard] hasInvitationModelCard: ", this.invitationData.hasInvitationModelCard);
+    //console.log("[toggleInvitationModelCard] hasInvitationModelCard: ", this.invitationData.hasInvitationModelCard);
   }
   get currentPdfUrl(): string {
     if (this.newFile && this.pdfModelUrl) {
@@ -617,7 +617,7 @@ export class EditEventComponent implements OnInit {
   }
 
   showSelection() {
-    // console.log('Type d’événement sélectionné :', this.eventData.type);
+    // //console.log('Type d’événement sélectionné :', this.eventData.type);
     if(this.eventData.type == 'wedding'){
       this.showWeddingCivilLocation = true;
     }else{
@@ -687,7 +687,7 @@ export class EditEventComponent implements OnInit {
     this.isLoading = false;
     this.eventService.deleteEvent(Number(this.eventId)).subscribe(
         (response) => {
-            console.log("[deleteEvent] response :: ", response);
+            //console.log("[deleteEvent] response :: ", response);
             this.isLoading = false;
             this.triggerBAction();
             this.router.navigate(['/evenements']);
@@ -696,9 +696,9 @@ export class EditEventComponent implements OnInit {
             this.isLoading = false;
             if (error.status === 409) {
             // afficher le message venant du backend
-            console.log("error.error.error :: ", error.error.error); 
+            //console.log("error.error.error :: ", error.error.error);
             this.triggerError();
-            this.errorMessage = error.error.error; 
+            this.errorMessage = error.error.error;
             console.warn(this.errorMessage);
             } else {
             this.errorMessage = "Une erreur est survenue.";
@@ -726,7 +726,7 @@ export class EditEventComponent implements OnInit {
   }
 
   triggerBAction() {
-    // console.log("AddEventComponent → Je demande à DashboardCmp d’exécuter une action !");
+    // //console.log("AddEventComponent → Je demande à DashboardCmp d’exécuter une action !");
     this.communicationService.triggerSenderAction('refresh');
   }
 

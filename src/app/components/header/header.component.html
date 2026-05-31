@@ -34,7 +34,7 @@
         </ng-container>
 
         <!-- Plan Indicator (Visible when logged in) -->
-        <div *ngIf="isAuthenticated && currentUser?.plan === 'professionnel'" class="plan-indicator" (click)="navigateToPricing()"
+        <div *ngIf="isAuthenticated && currentUser?.plan === 'gratuit'" class="plan-indicator" (click)="navigateToPricing()"
           [class.plan-pro]="currentUser?.plan === 'gratuit'">
           <span class="plan-badge">
             GRATUIT
@@ -127,7 +127,7 @@
         </div>
         <div class="user-details" (click)="goToProfile(); toggleMobileMenu(false)">
           <span class="user-name">{{ currentUser?.name }}</span>
-                  <div *ngIf="isAuthenticated && currentUser?.plan === 'professionnel'" class="plan-indicator" (click)="navigateToPricing()"
+                  <div *ngIf="isAuthenticated && currentUser?.plan === 'gratuit'" class="plan-indicator" (click)="navigateToPricing()"
           [class.plan-pro]="currentUser?.plan === 'gratuit'">
           <span class="plan-badge">
             GRATUIT

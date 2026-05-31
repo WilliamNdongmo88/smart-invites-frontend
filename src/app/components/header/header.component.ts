@@ -69,16 +69,16 @@ export class HeaderComponent implements OnInit {
     // On écoute l’état d’authentification
     this.authSub = this.authService.isAuthenticated$.subscribe(status => {
       this.isAuthenticated = status;
-      console.log('[HeaderComponent] isAuthenticated ? ', this.isAuthenticated);
+      //console.log('[HeaderComponent] isAuthenticated ? ', this.isAuthenticated);
     });
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
-      console.log("---this.currentUser :: ", this.currentUser)
+      //console.log("---this.currentUser :: ", this.currentUser)
     });
     this.communicationService.message$.subscribe(msg => {
-      console.log("msg = ", localStorage.getItem('variable'));
+      //console.log("msg = ", localStorage.getItem('variable'));
       if (msg && msg!==null && msg!==undefined) {
-        console.log("[msg] :: ", msg);
+        //console.log("[msg] :: ", msg);
         this.isScanning = true;
         this.eventId = msg;
       }else{
@@ -86,11 +86,11 @@ export class HeaderComponent implements OnInit {
       }
     });
     this.communicationService.triggerAction$.subscribe(() => {
-      console.log("HeaderCmp → Trigger reçu ! Exécution de la méthode loadNotifications()");
+      //console.log("HeaderCmp → Trigger reçu ! Exécution de la méthode loadNotifications()");
       this.loadNotifications();
     });
     this.communicationService.triggerAction$.subscribe((action) => {
-      console.log('Action reçue:', action);
+      //console.log('Action reçue:', action);
 
       if (action) {
         this.isAuthenticated = action;
@@ -110,8 +110,8 @@ export class HeaderComponent implements OnInit {
     if (this.currentUser?.id) {
       this.authService.getUserInfoForfait(this.currentUser.id).subscribe(
         (response) => {
-          console.log("[getUserInfoForfait] Response :: ", response.user);
-          console.log("[getUserInfoForfait] currentUser :: ", this.currentUser);
+          //console.log("[getUserInfoForfait] Response :: ", response.user);
+          //console.log("[getUserInfoForfait] currentUser :: ", this.currentUser);
           this.currentUser = {
               id: response.user.id,
               email: response.user.email,
@@ -121,7 +121,7 @@ export class HeaderComponent implements OnInit {
             }
         },
         (error) => {
-          console.log("Message :: ", error.message);
+          //console.log("Message :: ", error.message);
           this.errorMessage = error.message || 'Erreur de connexion';
         }
       );
@@ -137,7 +137,7 @@ export class HeaderComponent implements OnInit {
           .filter(n => n.organizer_id === this.currentUser?.id)
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-        //console.log('[loadNotifications] notifications filtrées ::', this.notifications);
+        ////console.log('[loadNotifications] notifications filtrées ::', this.notifications);
       },
       error: (err) => {
         this.errorMessage = err?.error?.error || 'Erreur lors du chargement des notifications.';
@@ -201,7 +201,7 @@ export class HeaderComponent implements OnInit {
   }
 
   scrollTo(sectionId: string) {
-    console.log('Scroll vers la section :', sectionId);
+    //console.log('Scroll vers la section :', sectionId);
     const element = document.getElementById(sectionId);
 
     if (element) {
@@ -232,7 +232,7 @@ export class HeaderComponent implements OnInit {
   }
 
   navigateToScanner() {
-    console.log('isAuthenticated:', this.isAuthenticated);
+    //console.log('isAuthenticated:', this.isAuthenticated);
 
     if (!this.isAuthenticated) {
       this.router.navigate(
@@ -247,7 +247,7 @@ export class HeaderComponent implements OnInit {
   }
 
   navigateToPricing(){
-    console.log('isAuthenticated:', this.isAuthenticated);
+    //console.log('isAuthenticated:', this.isAuthenticated);
 
     // if (!this.isAuthenticated) {
     //   this.router.navigate(
@@ -263,11 +263,11 @@ export class HeaderComponent implements OnInit {
 
   scanQrCode(){
     const currentUrl = this.router.url;
-    //console.log('Current path :', currentUrl);
+    ////console.log('Current path :', currentUrl);
     const segments = currentUrl.split('/').filter(Boolean);
 
     const basePath = `${segments[0]}/${segments[1]}`;
-    //console.log('Base path :', basePath);
+    ////console.log('Base path :', basePath);
 
     if(currentUrl.includes('guests')){
       this.send(this.eventId);
@@ -316,7 +316,7 @@ export class HeaderComponent implements OnInit {
     notification.is_read = true;
     this.notificationService.updateNotificationReading(notification.id, notification.is_read).subscribe({
       next: (response: any) => {
-        console.log('[markAsRead] response :: ', response);
+        //console.log('[markAsRead] response :: ', response);
       },
       error: (err) => {
         this.errorMessage = err.error.error || 'Erreur lors de la mise a jour.';
@@ -329,7 +329,7 @@ export class HeaderComponent implements OnInit {
     notification.is_read = true;
     this.notificationService.deleteNotificationReading(notification.id).subscribe({
       next: (response: any) => {
-        console.log('[markAsReadAndDelete] response :: ', response);
+        //console.log('[markAsReadAndDelete] response :: ', response);
         this.notifications = this.notifications.filter(n => n.id != notification.id);
       },
       error: (err) => {
@@ -357,7 +357,7 @@ moveTouch(event: TouchEvent, notification: any) {
   if (Math.abs(deltaX) > 150) {
     this.isSwiping = true;
   }
-  
+
   this.touchEndX = event.touches[0].clientX;
 }
 
@@ -371,10 +371,10 @@ endTouch(event: TouchEvent, notification: any) {
   }
 
   // On supprime seulement si c'est un vrai swipe
-  console.log("this.touchStartX ::", this.touchStartX);
-  console.log("this.touchEndX ::", this.touchEndX);
-  console.log("Math.abs(deltaX) ::", Math.abs(deltaX));
-  console.log("this.swipeThreshold ::", this.swipeThreshold);
+  //console.log("this.touchStartX ::", this.touchStartX);
+  //console.log("this.touchEndX ::", this.touchEndX);
+  //console.log("Math.abs(deltaX) ::", Math.abs(deltaX));
+  //console.log("this.swipeThreshold ::", this.swipeThreshold);
   if (this.touchEndX != 0 && Math.abs(deltaX) > this.swipeThreshold) {
     this.markAsReadAndDelete(notification);
     this.touchEndX = 0;
@@ -390,7 +390,7 @@ endTouch(event: TouchEvent, notification: any) {
   }
 
   loadAlertModal() {
-    console.log("### Message :: ", this.errorMessage);
+    //console.log("### Message :: ", this.errorMessage);
     // Notification si token expiré
     if (this.errorMessage.includes(`Token invalide ou expiré`)) {
       this.alertConfig = {

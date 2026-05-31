@@ -201,7 +201,7 @@ export class AdminDashboardComponent implements OnInit {
   loadRecentFeedback() {
     this.feedbackService.getRecentFeedback().subscribe({
       next: datas => {
-        // console.log('Feedbacks récents chargés:', datas);
+        // //console.log('Feedbacks récents chargés:', datas);
         const feedbacks: Feedback[] = [];
         const userEmails: { email: string }[] = [];
         for (const data of datas) {
@@ -221,7 +221,7 @@ export class AdminDashboardComponent implements OnInit {
           userEmails.push({ email: data.email });
         }
         this.feedbacks = feedbacks;
-        // console.log('Feedbacks récents formatés:', this.feedbacks);
+        // //console.log('Feedbacks récents formatés:', this.feedbacks);
         this.getAllUsers(userEmails);
       },
       error: err => console.error(err)
@@ -229,23 +229,23 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   viewFeedbackDetails(feedback: Feedback) {
-    console.log('Détails du feedback:', feedback);
+    //console.log('Détails du feedback:', feedback);
     this.selectedFeedback = feedback;
   }
 
   viewPaymentProof(user: User) {
-    console.log('Proof:', user);
+    //console.log('Proof:', user);
     this.selectedPaymentProof = user;
   }
 
   updateFeedbackStatus(feedback: Feedback) {
-    console.log('Statut mis à jour:', feedback);
+    //console.log('Statut mis à jour:', feedback);
     const data = {
         status: feedback.status
     }
     this.feedbackService.putRecentFeedback(feedback.id, data).subscribe({
       next: data => {
-        console.log('Feedbacks récents rechargés après mise à jour du statut:', data);
+        //console.log('Feedbacks récents rechargés après mise à jour du statut:', data);
         this.loadRecentFeedback();
       },
       error: err => console.error(err)
@@ -255,7 +255,7 @@ export class AdminDashboardComponent implements OnInit {
   getAllUsers(dataEmails: any) {
     this.feedbackService.getAllUsers(dataEmails).subscribe({
       next: (datas: any) => {
-        console.log('[allUsers 1]:', datas);
+        //console.log('[allUsers 1]:', datas);
 
         // 1️⃣ Extraire les emails abonnés
         const subscriberEmails = new Set(datas);
@@ -268,7 +268,7 @@ export class AdminDashboardComponent implements OnInit {
               : 'unsbscribed'
       }));
 
-        console.log('[feedbacks enriched]:', this.feedbacks);
+        //console.log('[feedbacks enriched]:', this.feedbacks);
       },
       error: err => console.error(err)
     });
@@ -276,10 +276,10 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   getUsers(){
-    console.log('----[getUsers]-----');
+    //console.log('----[getUsers]-----');
     this.authService.getAllUsers().subscribe({
       next: (res: any) => {
-        console.log('[getUsers]:', res);
+        //console.log('[getUsers]:', res);
         const response = []
         for (const data of res.users) {
           let expirationDate = '';
@@ -303,14 +303,14 @@ export class AdminDashboardComponent implements OnInit {
         this.users = response;
         this.getAllEvent(res.events);
         this.getAllGuests(res.guests);
-        console.log('[getUsers]:', this.users);
+        //console.log('[getUsers]:', this.users);
       },
       error: err => console.error(err)
     });
   }
 
   getAllEvent(events: any){
-    console.log("getAllEvent Response :: ", events);
+    //console.log("getAllEvent Response :: ", events);
     events.map((elt:any) => {
       const h = elt.banquet_time.split(':')[0];
       const m = elt.banquet_time.split(':')[1].split(':')[0];
@@ -329,11 +329,11 @@ export class AdminDashboardComponent implements OnInit {
       }
       this.events.push(data);
     });
-    // console.log("this.events :: ", this.events);
+    // //console.log("this.events :: ", this.events);
   }
 
   getAllGuests(guests: any){
-    console.log("getAllGuests Response :: ", guests);
+    //console.log("getAllGuests Response :: ", guests);
     guests.map((elt:any) => {
       const data = {
         id: elt.id,
@@ -349,7 +349,7 @@ export class AdminDashboardComponent implements OnInit {
       }
       this.guests.push(data);
     });
-    // console.log("this.guests :: ", this.guests);
+    // //console.log("this.guests :: ", this.guests);
   }
 
   addOneMonthAndFormat(dateString: string): string {
@@ -371,7 +371,7 @@ export class AdminDashboardComponent implements OnInit {
   loadMaintenanceData() {
     this.maintenanceService.getMaintenance().subscribe({
       next: (data) => {
-        console.log('Données de maintenance chargées:', data);
+        //console.log('Données de maintenance chargées:', data);
           this.maintenance = data; // On récupère la première configuration
       },
       error: (err) => console.error('Erreur chargement maintenance:', err)
@@ -380,7 +380,7 @@ export class AdminDashboardComponent implements OnInit {
 
   saveMaintenance() {
     if (this.maintenance.id) {
-      // console.log('Sauvegarde de la maintenance:', this.maintenance);
+      // //console.log('Sauvegarde de la maintenance:', this.maintenance);
       const data = {
         maintenanceProgress: this.maintenance.maintenance_progress,
         subscribed: this.maintenance.subscribed,
@@ -403,13 +403,13 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   restartScheduler(): void {
-    console.log('Relance du schedule des événements...');
+    //console.log('Relance du schedule des événements...');
     const confirmation = confirm('La planification des événements va être relancé. Continuer ? ');
     if(!confirmation) return;
     this.loading = true;
     this.maintenanceService.restart().subscribe({
       next: (response) => {
-        console.log('🔄 Scheduler redémarré avec succès', response);
+        //console.log('🔄 Scheduler redémarré avec succès', response);
         // éventuellement un toast / message UI ici
         this.loading = false;
       },
@@ -419,13 +419,13 @@ export class AdminDashboardComponent implements OnInit {
         this.loading = false;
       },
       complete: () => {
-        console.log('✅ Action restart terminée');
+        //console.log('✅ Action restart terminée');
       }
     });
   }
 
   clearCache(): void {
-    console.log("Vidage du cache de l'application...");
+    //console.log("Vidage du cache de l'application...");
     alert("Le cache de l'application a été vidé.");
     // Logique pour appeler votre service de gestion du cache
     // this.cacheService.clear().subscribe(...);
@@ -436,13 +436,13 @@ export class AdminDashboardComponent implements OnInit {
       alert('Veuillez remplir le titre et le message de la notification.');
       return;
     }
-    console.log('Envoi de la notification :', this.notification);
+    //console.log('Envoi de la notification :', this.notification);
     alert('Notification envoyée aux utilisateurs.');
     // Logique pour appeler votre service de notification
     this.loading = true;
     this.maintenanceService.send(this.notification).subscribe({
       next: (response) => {
-        console.log('✅ Notification envoyée :', response);
+        //console.log('✅ Notification envoyée :', response);
         this.loading = false;
 
         // Réinitialiser le formulaire
@@ -457,7 +457,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   exportData(): void {
-    console.log(`Export des données de type : ${this.exportType}`);
+    //console.log(`Export des données de type : ${this.exportType}`);
     alert(`Le téléchargement des données "${this.exportType}" va commencer.`);
     // Logique pour appeler votre service d'export
     // this.dataExportService.export(this.exportType).subscribe(blob => {
@@ -466,13 +466,14 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   saveFeedbackNotes() {
-    console.log('Notes enregistrées');
+    //console.log('Notes enregistrées');
     alert('Notes enregistrées avec succès');
   }
 
   changeUserPlan(user: User, bool: boolean) {
     let confirmation = false;
     let cancelation = false;
+    this.loading = true;
 
     if(bool) confirmation = confirm(
       `Vous êtes sur le point d'activer le plan ${user.userPaymentPlanName} de cet utilisateur. Continuer ?`
@@ -485,7 +486,7 @@ export class AdminDashboardComponent implements OnInit {
       const data = { plan: user.userPaymentPlanName};
       this.paymentService.changeUserPlan(Number(user.id), data).subscribe({
         next: (data) => {
-          console.log('[changeUserPlan]:', data);
+          //console.log('[changeUserPlan]:', data);
           this.getUsers();
           this.closeModal();
         },
@@ -495,7 +496,7 @@ export class AdminDashboardComponent implements OnInit {
       const data = { plan: 'gratuit'};
       this.paymentService.changeUserPlan(Number(user.id), data).subscribe({
         next: (data) => {
-          console.log('[changeUserPlan]:', data);
+          //console.log('[changeUserPlan]:', data);
           this.getUsers();
           this.closeModal();
         },
@@ -506,6 +507,7 @@ export class AdminDashboardComponent implements OnInit {
 
   closeModal() {
     this.selectedPaymentProof = null;
+    this.loading = false;
   }
 
   // VISITOR METHODS
@@ -546,28 +548,28 @@ export class AdminDashboardComponent implements OnInit {
 
   viewUserEvents(user: User) {
     this.showDetail = false;
-    console.log("events: ", this.events);
+    //console.log("events: ", this.events);
     this.selectedUser = user;
     this.selectedUserEvents = this.events.filter(e => e.organizerId === user.id);
-    console.log("selectedUserEvents: ", this.selectedUserEvents);
+    //console.log("selectedUserEvents: ", this.selectedUserEvents);
     this.activeTab = 'events';
   }
 
   viewUserDetails(user: User) {
     this.selectedUser = user;
     this.showDetail = true;
-    console.log("User: ", this.selectedUser);
+    //console.log("User: ", this.selectedUser);
   }
 
   toggleBlockUser(user: User) {
     user.isBlocked = !user.isBlocked;
-    console.log(`Utilisateur ${user.isBlocked ? 'bloqué' : 'débloqué'}`);
+    //console.log(`Utilisateur ${user.isBlocked ? 'bloqué' : 'débloqué'}`);
   }
 
   deleteUser(user: User) {
     if (confirm(`Êtes-vous sûr de vouloir supprimer ${user.name} ?`)) {
       this.users = this.users.filter(u => u.id !== user.id);
-      console.log('Utilisateur supprimé');
+      //console.log('Utilisateur supprimé');
     }
   }
 
@@ -581,7 +583,7 @@ export class AdminDashboardComponent implements OnInit {
   deleteEvent(event: Event) {
     if (confirm(`Êtes-vous sûr de vouloir supprimer ${event.title} ?`)) {
       this.events = this.events.filter(e => e.id !== event.id);
-      console.log('Événement supprimé');
+      //console.log('Événement supprimé');
     }
   }
 
@@ -599,7 +601,7 @@ export class AdminDashboardComponent implements OnInit {
   deleteGuest(guest: Guest) {
     if (confirm(`Êtes-vous sûr de vouloir supprimer ${guest.name} ?`)) {
       this.selectedEventGuests = this.selectedEventGuests.filter(g => g.id !== guest.id);
-      console.log('Invité supprimé');
+      //console.log('Invité supprimé');
     }
   }
 
@@ -607,7 +609,7 @@ export class AdminDashboardComponent implements OnInit {
     guest.qrCodeGenerated = false;
     guest.qrCodeUrl = undefined;
     this.selectedGuest = null;
-    console.log('QR Code supprimé');
+    //console.log('QR Code supprimé');
   }
 
   toggleSelectAllGuests(event: any) {
@@ -619,7 +621,7 @@ export class AdminDashboardComponent implements OnInit {
     const selectedGuests = this.selectedEventGuests.filter(g => g.selected);
     if (selectedGuests.length > 0 && confirm(`Supprimer ${selectedGuests.length} invité(s) ?`)) {
       this.selectedEventGuests = this.selectedEventGuests.filter(g => !g.selected);
-      console.log('Invités supprimés');
+      //console.log('Invités supprimés');
     }
   }
 
@@ -630,7 +632,7 @@ export class AdminDashboardComponent implements OnInit {
         g.qrCodeGenerated = false;
         g.qrCodeUrl = undefined;
       });
-      console.log('QR Codes supprimés');
+      //console.log('QR Codes supprimés');
     }
   }
 

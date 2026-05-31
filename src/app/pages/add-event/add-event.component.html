@@ -274,7 +274,7 @@
               </div>
 
               <div class="form-actions">
-                <button type="button" class="btn btn-primary btn-text" (click)="nextStep(eventForm)">
+                <button type="button" class="btn btn-primary btn-text-right" (click)="nextStep(eventForm)">
                   Suivant →
                 </button>
               </div>
@@ -286,9 +286,9 @@
 
               <div *ngIf="showWeddingNames || showEngagementNames || showAnniversaryNames" class="form-row">
                 <div class="form-group">
-                  <label *ngIf="showWeddingNames">Prénom du futur marié</label>
-                  <label *ngIf="showEngagementNames">Prénom du fiancé</label>
-                  <label *ngIf="showAnniversaryNames">Nom du marié</label>
+                  <label *ngIf="showWeddingNames">Prénom du futur marié *</label>
+                  <label *ngIf="showEngagementNames">Prénom du fiancé *</label>
+                  <label *ngIf="showAnniversaryNames">Nom du marié *</label>
                   <input
                     type="text"
                     name="name1"
@@ -301,9 +301,9 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label *ngIf="showWeddingNames">Prénom de la future mariée</label>
-                  <label *ngIf="showEngagementNames">Prénom de la fiancée</label>
-                  <label *ngIf="showAnniversaryNames">Nom de la mariée</label>
+                  <label *ngIf="showWeddingNames">Prénom de la future mariée *</label>
+                  <label *ngIf="showEngagementNames">Prénom de la fiancée *</label>
+                  <label *ngIf="showAnniversaryNames">Nom de la mariée *</label>
                   <input type="text" name="name2" [(ngModel)]="eventData.eventNameConcerned2" class="form-input"
                     required
                     #eventNameConcerned2="ngModel" />
@@ -370,8 +370,8 @@
               </div>
 
               <div class="form-actions">
-                <button type="button" class="btn btn-outline" (click)="previousStep()">← Précédent</button>
-                <button type="button" class="btn btn-primary btn-text" (click)="nextStep(eventForm)">Suivant →</button>
+                <button type="button" class="btn btn-outline btn-text-left" (click)="previousStep()">← Précédent</button>
+                <button type="button" class="btn btn-primary btn-text-right" (click)="nextStep(eventForm)">Suivant →</button>
               </div>
             </div>
 
@@ -814,8 +814,8 @@
               </div>
 
               <div class="form-actions">
-                <button type="button" class="btn btn-outline" (click)="previousStep()">← Précédent</button>
-                <button type="button" class="btn btn-primary" (click)="nextStep(eventForm)">Suivant →</button>
+                <button type="button" class="btn btn-outline btn-text-left" (click)="previousStep()">← Précédent</button>
+                <button type="button" class="btn btn-primary btn-text-right" (click)="nextStep(eventForm)">Suivant →</button>
               </div>
             </div>
 
@@ -890,7 +890,7 @@
               </div>
 
               <div class="form-actions">
-                <button type="button" class="btn btn-outline" (click)="previousStep()">
+                <button type="button" class="btn btn-outline btn-text-left" (click)="previousStep()">
                   ← Précédent
                 </button>
                 <button type="submit" class="btn btn-primary btn-text-center" [disabled]="!eventForm.valid">

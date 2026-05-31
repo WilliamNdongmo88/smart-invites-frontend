@@ -273,7 +273,7 @@
               </div>
 
               <div class="form-actions">
-                <button type="button" class="btn btn-primary btn-text" (click)="nextStep(eventForm)">
+                <button type="button" class="btn btn-primary btn-text-right" (click)="nextStep(eventForm)">
                   Suivant →
                 </button>
               </div>
@@ -359,8 +359,8 @@
               </div>
 
               <div class="form-actions">
-                <button type="button" class="btn btn-outline" (click)="previousStep()">← Précédent</button>
-                <button type="button" class="btn btn-primary btn-text" (click)="nextStep(eventForm)">Suivant →</button>
+                <button type="button" class="btn btn-outline btn-text-left" (click)="previousStep()">← Précédent</button>
+                <button type="button" class="btn btn-primary btn-text-right" (click)="nextStep(eventForm)">Suivant →</button>
               </div>
             </div>
 
@@ -726,33 +726,6 @@
                     <h2 class="txt-title c-size">Aperçu de la carte</h2>
 
                     <!-- Affichage du PDF importé s'il existe -->
-                     <!-- <div *ngIf="invitationData.hasInvitationModelCard && invitationData.pdfUrl">
-                        <div *ngIf="!newFile" class="pdf-preview-container">
-                          <div class="pdf-header">
-                            <span>Modèle PDF importé</span>
-                            <a
-                              *ngIf="invitationData.pdfUrl"
-                              [href]="invitationData.pdfUrl"
-                              target="_blank"
-                              class="btn btn-outline c_btn"
-                              >
-                                📄 Ouvrir le PDF
-                            </a>
-                          </div>
-                          <div class="pdf-body">
-                            <iframe [src]="invitationData.pdfUrl | safe" width="100%" height="500px"></iframe>
-                          </div>
-                        </div>
-                        <div *ngIf="newFile" class="pdf-preview-container">
-                          <div class="pdf-header">
-                            <span>Modèle PDF importé</span>
-                            <button type="button" class="btn-remove" (click)="removePdfModel()">✕</button>
-                          </div>
-                          <div class="pdf-body">
-                            <iframe [src]="pdfModelUrl | safe" width="100%" height="500px"></iframe>
-                          </div>
-                        </div>
-                     </div> -->
                     <div *ngIf="invitationData.hasInvitationModelCard" class="pdf-preview-container">
                       <div class="pdf-header">
                         <span>Modèle de carte d'invitation</span>
@@ -860,8 +833,8 @@
               </div>
 
               <div class="form-actions">
-                <button type="button" class="btn btn-outline" (click)="previousStep()">← Précédent</button>
-                <button type="button" class="btn btn-primary btn-text" (click)="nextStep(eventForm)">Suivant →</button>
+                <button type="button" class="btn btn-outline btn-text-left" (click)="previousStep()">← Précédent</button>
+                <button type="button" class="btn btn-primary btn-text-right" (click)="nextStep(eventForm)">Suivant →</button>
               </div>
             </div>
 
@@ -961,7 +934,7 @@
               </div>
 
               <div class="form-actions">
-                <button type="button" class="btn btn-outline" (click)="previousStep()">
+                <button type="button" class="btn btn-outline btn-text-left" (click)="previousStep()">
                   ← Précédent
                 </button>
                 <button type="submit" class="btn btn-primary btn-text-center" [disabled]="!eventForm.valid">

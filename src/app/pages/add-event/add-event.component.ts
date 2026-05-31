@@ -165,7 +165,7 @@ export class AddEventComponent implements OnInit{
   currentUser: User | null = null;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private eventService: EventService,
     private authService: AuthService,
     private communicationService: CommunicationService
@@ -184,9 +184,15 @@ export class AddEventComponent implements OnInit{
     if (step === 1) {
       // 🟢 SI le modèle PDF est importé → on ignore les validations
       if (this.hasInvitationModelCard) {
-        return true;
+        return !!(
+        this.eventData.title &&
+        this.eventData.type &&
+        this.eventData.date &&
+        this.eventData.banquetTime &&
+        this.eventData.banquetTime
+      );
+        //return true;
       }
-
       // 🔴 SINON → validations normales
       return !!(
         this.eventData.title &&
@@ -204,7 +210,11 @@ export class AddEventComponent implements OnInit{
       );
     }else if (step === 2 && this.currentUser?.plan == 'gratuit') {
       this.eventData.totalGuests = 50;
-      console.log("totalGuests: ", this.eventData.totalGuests);
+      return !!(
+        this.eventData.eventNameConcerned1 &&
+        this.eventData.eventNameConcerned2 &&
+        this.eventData.totalGuests
+      );
     }
 
     return true;
@@ -225,9 +235,6 @@ export class AddEventComponent implements OnInit{
 
   nextStep(form: NgForm) {
     if (this.currentStep() < 5) {
-      console.log('this.currentStep():', this.currentStep()+1);
-      //console.log('this.eventData:', this.eventData);
-      //console.log("this.invitationData: ", this.invitationData);
       if (this.eventData.type=='wedding') {
         this.showWeddingNames = true;
         this.showEngagementNames = false;
@@ -263,16 +270,15 @@ export class AddEventComponent implements OnInit{
         this.showAnniversaryNames = false;
         this.showBirthdayNames = false;
       }
-      if(this.currentStep()+1 === 4 && 
+      if(this.currentStep()+1 === 4 &&
         this.hasInvitationModelCard && !this.isDefaultPdfUrl &&
         !this.selectedPdfFile){
           this.triggerError();
-          this.errorMessage = "Veuillez sélectionner votre modèle PDF."; 
+          this.errorMessage = "Veuillez sélectionner votre modèle PDF.";
           this.currentStep.update(step => step);
           return;
       }
       if (!this.isStepValid(this.currentStep(), form)) {
-        console.log("Form: ", form.controls);
         this.markStepFieldsAsTouched(form);
         return;
       }
@@ -282,11 +288,6 @@ export class AddEventComponent implements OnInit{
   }
   changeStep(form: NgForm, step: number) {
     if (step < 5) {
-      console.log("Step: ", step);
-      // console.log('this.eventData:', this.eventData);
-      // console.log("this.invitationData: ", this.invitationData);
-      console.log("this.isDefaultPdfUrl: ", this.isDefaultPdfUrl);
-      console.log("hasInvitationModelCard: ", this.hasInvitationModelCard);
       if (this.eventData.type=='wedding') {
         this.showWeddingNames = true;
         this.showEngagementNames = false;
@@ -324,12 +325,11 @@ export class AddEventComponent implements OnInit{
       }
       if(step === 4 && this.hasInvitationModelCard && !this.isDefaultPdfUrl && !this.selectedPdfFile){
           this.triggerError();
-          this.errorMessage = "Veuillez sélectionner votre modèle PDF."; 
+          this.errorMessage = "Veuillez sélectionner votre modèle PDF.";
           this.currentStep.update(step => step);
           return;
       }
       if (!this.isStepValid(this.currentStep(), form)) {
-        console.log("Form: ", form.controls);
         this.markStepFieldsAsTouched(form);
         return;
       }
@@ -363,13 +363,13 @@ export class AddEventComponent implements OnInit{
     if (this.organizerId) {
       this.authService.getUserInfoForfait(this.organizerId).subscribe(
         (response) => {
-          console.log("[getInfoForfait] Response :: ", response);
+          //console.log("[getInfoForfait] Response :: ", response);
           this.alertConfigEvent = {
             currentEvents: response.user.currentEvent,
             maxEvents: 1,
             currentPlan: response.user.plan,
           }
-          console.log("[alertConfigEvent] :: ", this.alertConfigEvent);
+          //console.log("[alertConfigEvent] :: ", this.alertConfigEvent);
         },
         (error) => {
           console.log("Message :: ", error.message);
@@ -410,7 +410,7 @@ export class AddEventComponent implements OnInit{
         hasInvitationModelCard: this.eventData.hasInvitationModelCard,
       }
       datas.push(eventDatas);
-      console.log("datas: ", datas);
+      //console.log("datas: ", datas);
       formData.append('eventDatas', JSON.stringify(datas));
       formData.append('eventInvitationNote', JSON.stringify(eventInvitationNote));
       // console.log('PDF Firebase URL :', formData.get('pdfFile'));
@@ -419,7 +419,7 @@ export class AddEventComponent implements OnInit{
       this.isLoading = true;
       this.eventService.createEventWihtFile(formData).subscribe(
         (response) => {
-          console.log("Response :: ", response)
+          ////console.log("Response :: ", response)
           this.isLoading = false;
           this.triggerBAction();
           this.router.navigate(['/evenements']);
@@ -427,7 +427,7 @@ export class AddEventComponent implements OnInit{
         (error) => {
           this.isLoading = false;
           console.error('❌ Erreur de creation :', error);
-          console.log("Message :: ", error.message);
+          //console.log("Message :: ", error.message);
           if (error.error.error === "PAYMENT_REQUIRED") {
             // Afficher l'alerte
             this.showAddGuestModal.set(false);
@@ -478,18 +478,18 @@ export class AddEventComponent implements OnInit{
         hasInvitationModelCard: this.eventData.hasInvitationModelCard,
         heartIconUrl: this.invitationData.heartIconUrl,
       }
-      
+
       datas.push(eventDatas);
       const data = {
         eventDatas: datas,
         eventInvitationNote: eventInvitationNote
       }
 
-      console.log('Event created:', data);
+      //console.log('Event created:', data);
       this.isLoading = true;
       this.eventService.createEvent(data).subscribe(
         (response) => {
-          console.log("Response :: ", response)
+          //console.log("Response :: ", response)
           this.isLoading = false;
           this.triggerBAction();
           this.router.navigate(['/evenements']);//dashboard
@@ -497,7 +497,7 @@ export class AddEventComponent implements OnInit{
         (error) => {
           this.isLoading = false;
           console.error('❌ Erreur de creation :', error.error.error);
-          console.log("Message :: ", error.message);
+          //console.log("Message :: ", error.message);
           if (error.error.error === "PAYMENT_REQUIRED") {
             // Afficher l'alerte
             this.showAddGuestModal.set(false);
@@ -520,13 +520,13 @@ export class AddEventComponent implements OnInit{
   }
   toggleInvitationModelCard(){
     this.eventData.hasInvitationModelCard = this.hasInvitationModelCard;
-    console.log("this.hasInvitationModelCard: ", this.hasInvitationModelCard)
+    //console.log("this.hasInvitationModelCard: ", this.hasInvitationModelCard)
   }
   get currentPdfUrl(): string {
     if (this.newFile && this.pdfModelUrl) {
       return this.pdfModelUrl;
     }
-    //console.log("this.defaultPdfUrl: ", this.defaultPdfUrl);
+    ////console.log("this.defaultPdfUrl: ", this.defaultPdfUrl);
     return this.pdfModelUrl ?? this.defaultPdfUrl;
   }
 
@@ -541,7 +541,7 @@ export class AddEventComponent implements OnInit{
   }
 
   showSelection() {
-    console.log('Type d’événement sélectionné :', this.eventData.type);
+    //console.log('Type d’événement sélectionné :', this.eventData.type);
     if(this.eventData.type == 'wedding'){
       this.showWeddingCivilLocation = true;
     }else{
@@ -573,7 +573,7 @@ export class AddEventComponent implements OnInit{
 
     if (file.type === 'application/pdf') {
       this.selectedPdfFile = file;
-      console.log('Fichier PDF sélectionné :', this.selectedPdfFile);
+      //console.log('Fichier PDF sélectionné :', this.selectedPdfFile);
 
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
@@ -617,11 +617,11 @@ export class AddEventComponent implements OnInit{
   }
 
   onUpgradeClicked(): void {
-    console.log('Redirection vers les tarifs');
+    //console.log('Redirection vers les tarifs');
   }
 
   onManageClicked(): void {
-    console.log('Redirection vers la gestion des invités');
+    //console.log('Redirection vers la gestion des invités');
   }
 }
 

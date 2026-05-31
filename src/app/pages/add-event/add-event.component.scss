@@ -8,7 +8,7 @@
 .add-event-header {
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
   border-bottom: 1px solid #E0E0E0;
-  padding: 1rem 0;
+  padding: 1rem 5rem;
   height: 150px;
 }
 
@@ -388,7 +388,12 @@
   .value { color: #666; }
 }
 
-.btn-text{
+.btn-text-left{
+  display: flex;
+  justify-content: start;
+}
+
+.btn-text-right{
   display: flex;
   justify-content: end;
 }

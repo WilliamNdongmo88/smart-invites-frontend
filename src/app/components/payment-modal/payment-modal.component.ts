@@ -37,7 +37,7 @@ export class PaymentModalComponent implements OnChanges {
 
   copiedOrange = false;
   copiedMtn = false;
-  
+
   mail = "support@smartinvite.com";
   owner = {
     name: 'WILLIAM NDONGMO',
@@ -117,10 +117,10 @@ export class PaymentModalComponent implements OnChanges {
   processFile(file: File) {
     // Validation
     const maxSize = 5 * 1024 * 1024; // 5 MB
-    const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+    const allowedTypes = ['image/jpeg', 'image/png'];
 
     if (!allowedTypes.includes(file.type)) {
-      this.uploadError = 'Format non accepté. Veuillez utiliser JPG, PNG ou PDF.';
+      this.uploadError = 'Format non accepté. Veuillez utiliser JPG ou PNG.';
       return;
     }
 

@@ -5,8 +5,8 @@
       <h3>Admin Panel</h3>
     </div>
     <nav class="sidebar-nav">
-      <button 
-        *ngFor="let tab of tabs" 
+      <button
+        *ngFor="let tab of tabs"
         [class.active]="activeTab === tab.id"
         (click)="activeTab = tab.id; currentPage = 1"
         class="nav-item"
@@ -43,7 +43,7 @@
     <div *ngIf="activeTab === 'feedback'" class="tab-content">
       <div class="section-card">
         <h2>Retours d'Impression</h2>
-        
+
         <div class="filters">
           <input type="text" [(ngModel)]="feedbackSearch" placeholder="Rechercher..." class="form-input" (ngModelChange)="currentPage = 1">
         </div>
@@ -74,7 +74,7 @@
                     <td>{{ feedback.title }}</td>
                     <td>{{ feedback.category }}</td>
                     <td>
-                        <select [(ngModel)]="feedback.status" class="status-select" 
+                        <select [(ngModel)]="feedback.status" class="status-select"
                         [ngClass]="feedback.status" (change)="updateFeedbackStatus(feedback)">
                         <option value="pending">En attente</option>
                         <option value="reviewed">Examiné</option>
@@ -291,8 +291,8 @@
 
             <!-- Image Preview -->
             <div class="image-container">
-            <img 
-                [src]="selectedPaymentProof.userPaymentProof" 
+            <img
+                [src]="selectedPaymentProof.userPaymentProof"
                 alt="Preuve de paiement"
             />
             </div>
@@ -300,11 +300,11 @@
             <!-- Actions -->
             <div class="modal-actions">
             <button class="btn btn-approve" (click)="changeUserPlan(selectedPaymentProof, true)">
-                ✔️ Valider le paiement
+                {{ loading ? '⏳ Chargement...' : '✔️ Valider le paiement' }}
             </button>
 
             <button class="btn btn-cancel" (click)="changeUserPlan(selectedPaymentProof, false)">
-                ❌ Annuler le plan Pro
+                {{ loading ? '⏳ Chargement...' : '❌ Annuler le plan Pro' }}
             </button>
             </div>
 
@@ -314,9 +314,9 @@
 
     <!-- USER DETAILS MODAL -->
     <div *ngIf="selectedUser && showDetail" class="modal-overlay" (click)="selectedUser = null">
-    
+
         <div class="modal-content user-modal" (click)="$event.stopPropagation()">
-            
+
             <button class="modal-close" (click)="selectedUser = null">✕</button>
 
             <h3>Détails de {{ selectedUser.name }}</h3>
@@ -495,7 +495,7 @@
         </div>
         </div>
     </div>
-    
+
     <!-- TAB: MAINTENANCE -->
     <div *ngIf="activeTab === 'maintenance'" class="tab-content">
 

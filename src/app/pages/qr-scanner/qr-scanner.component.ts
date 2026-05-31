@@ -26,6 +26,7 @@ interface Guest {
   name: string;
   email: string;
   phone: string;
+  notification_mode: 'email' | 'whatsapp'
   status: 'confirmed' | 'pending' | 'declined' | 'present';
   dietaryRestrictions?: string;
   plusOnedietaryRestrictions?: string;
@@ -153,19 +154,6 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         }
     );
   }
-  // getEventAndInvitationRelateds(){
-  //   this.eventService.getEventAndInvitationRelated(this.eventId).subscribe(
-  //       (response) => {
-  //           this.datas = response
-  //           console.log("###this.datas :: ", this.datas);
-  //           this.getListScannedGuest();
-  //       },
-  //       (error) => {
-  //           console.error('❌ [getEventAndInvitationRelated] Erreur :', error.message);
-  //           console.log("Message :: ", error.message);
-  //       }
-  //   );
-  // }
 
   startCamera() {
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
@@ -188,7 +176,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     .catch(err => {
         console.error("Erreur d'accès à la caméra:", err);
     });
- }
+  }
 
   stopCamera() {
     this.isScanning = false;   // Empêche toute nouvelle frame
@@ -233,7 +221,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   //       cancelAnimationFrame(this.animationFrameId!);
 
   //       this.processQRCode(qrCode.data);      // Un seul appel
-  //       return;                               
+  //       return;
   //   }
 
   //   this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
@@ -259,11 +247,11 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     }
 
     // OPTIMISATION : Réduction de la résolution pour jsQR
-    // Un QR code n'a pas besoin de 1080p pour être lu. 
+    // Un QR code n'a pas besoin de 1080p pour être lu.
     // Réduire la taille divise drastiquement le nombre de pixels à analyser.
     const scanWidth = video.videoWidth * this.SCAN_SCALE;
     const scanHeight = video.videoHeight * this.SCAN_SCALE;
-    
+
     if (canvas.width !== scanWidth) {
         canvas.width = scanWidth;
         canvas.height = scanHeight;
@@ -271,8 +259,8 @@ export class QRScannerComponent implements OnInit, OnDestroy {
 
     context.drawImage(video, 0, 0, scanWidth, scanHeight);
     const imageData = context.getImageData(0, 0, scanWidth, scanHeight);
-    
-    // jsQR est synchrone et gourmand en CPU. 
+
+    // jsQR est synchrone et gourmand en CPU.
     // En réduisant imageData, on accélère cette ligne :
     const qrCode = jsQR(imageData.data, scanWidth, scanHeight, {
         inversionAttempts: "dontInvert", // Gain de performance si les QR ne sont pas inversés
@@ -283,7 +271,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         this.isEffetScanning = true;
         cancelAnimationFrame(this.animationFrameId!);
         this.processQRCode(qrCode.data);
-        return;                               
+        return;
     }
 
     this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
@@ -318,7 +306,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         cancelAnimationFrame(this.animationFrameId!);
 
         this.processQRCode(qrCode.data);      // Un seul appel
-        return;                               
+        return;
     }
 
     this.animationFrameId = requestAnimationFrame(() => this.scanQRCode());
@@ -363,10 +351,10 @@ export class QRScannerComponent implements OnInit, OnDestroy {
   addCheckIn(){
     const now = new Date().toISOString();
     const checkinTime = now.split('.')[0].replace('T', ' ');
-    
+
     // Utilisation de la Map au lieu de la boucle 'for...of' sur this.datas
     const elt = this.dataMap.get(this.guestId);
-    
+
     if (elt) {
         const data = {
             eventId: elt.eventId,
@@ -377,7 +365,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
             scanStatus: 'VALID',
             checkinTime: checkinTime
         };
-        
+
         // Mise à jour des données locales pour l'affichage
         this.data.eventTitle = elt.title;
         this.data.guestName = elt.guestName;
@@ -469,6 +457,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
           name: res.guestName,
           email: res.email,
           phone: res.phone_number,
+          notification_mode: res.notification_mode,
           eventDate: res.event_date,
           plusOne: res.has_plus_one,
           plusOneName: res.plus_one_name,
@@ -479,7 +468,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
         guests.push(guest);
       }
       this.guests = guests;
-      // console.log("[getListScannedGuests] this.guests :: ", this.guests);
+      //console.log("[getListScannedGuests] this.guests :: ", this.guests);
       this.filterGuests();
     },
     (error) => {
@@ -714,7 +703,9 @@ export class QRScannerComponent implements OnInit, OnDestroy {
       eventId = g.eventId;
       const guest = {
         full_name: g.name,
-        email: g.email
+        phone_number: g.phone,
+        email: g.email,
+        notification_mode: g.notification_mode,
       }
       guests.push(guest);
     }
@@ -749,7 +740,7 @@ export class QRScannerComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Logique pagination 
+  // Logique pagination
   get totalPages() {
     return Math.ceil(this.filteredGuests.length / this.itemsPerPage);
   }

@@ -5,11 +5,19 @@
   background-color: #FFFFFF;
 }
 
-.add-event-header {
+.edit-event-header {
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
   border-bottom: 1px solid #E0E0E0;
-  padding: 1rem 0;
+  padding: 1rem 5rem;
   height: 150px;
+}
+
+.edit-event-header h1 {
+    margin-bottom: 0.5rem;
+}
+
+.edit-event-header p {
+    color: #666666;
 }
 
 .c-container{
@@ -27,14 +35,6 @@
   &:hover {
     color: color.adjust(#D4AF37, $lightness: -10%);
   }
-}
-
-.add-event-header h1 {
-  margin-bottom: 0.5rem;
-}
-
-.add-event-header p {
-  color: #666666;
 }
 
 .form-wrapper {
@@ -429,28 +429,19 @@
     }
 }
 
-    .btn-text{
-      display: flex;
-      justify-content: end;
-    }
-
-    .btn-text-center{
-      display: flex;
-      justify-content: center;
-    }
-
-    .edit-event-header {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
-    border-bottom: 1px solid #E0E0E0;
-    padding: 1rem 0;
+.btn-text-left{
+  display: flex;
+  justify-content: start;
 }
 
-.edit-event-header h1 {
-    margin-bottom: 0.5rem;
+.btn-text-right{
+  display: flex;
+  justify-content: end;
 }
 
-.edit-event-header p {
-    color: #666666;
+.btn-text-center{
+  display: flex;
+  justify-content: center;
 }
 
 .step.completed span {
@@ -564,7 +555,7 @@
   .editor-wrapper { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .step p { display: none; }
-  .add-event-header { height: auto; padding: 2rem 0; }
+  .edit-event-header { height: auto; padding: 2rem 0; }
 
     .step-indicator {
         margin-bottom: 2rem;
@@ -592,10 +583,6 @@
 
     .confirmation-item .value {
         text-align: left;
-    }
-
-    .edit-event-header {
-        padding: 0.5rem 0;
     }
 
     .form-group {

@@ -8,26 +8,28 @@
 
     <!-- Header eventId, eventTitle-->
     <div [class]="guest_list_header_extended">
+      <div class="guest-list-header">
         <div id="guest-management-header" class="container">
             <a (click)="navigateToEventPage()" class="back-link">← Retour a l'événement</a>
             <div id="guest-management-header" class="header-content">
-            <div>
-                <h1>Gestion des invités</h1>
-                <p>{{ eventTitle }} - {{ totalGuests }} invités</p>
-            </div>
-            <div class="header-actions">
-                <button id="add-guest-btn" class="btn btn-outline" (click)="openAddGuestModal()">
-                ➕  Nouveau
-                </button>
-                <button id="import-guests-btn" class="btn btn-outline" (click)="openImportModal()">
-                📥 Importer
-                </button>
-                <button id="send-reminder-btn" class="btn btn-primary" (click)="openDeleteModal(guestIdList, 'resend')">
-                    {{ loading ? '⏳ Renvoie...' : '✉️ Envoyer rappel' }}
-                </button>
-            </div>
+              <div>
+                  <h1>Gestion des invités</h1>
+                  <p>{{ eventTitle }} - {{ totalGuests }} invités</p>
+              </div>
+              <div class="header-actions">
+                  <button id="add-guest-btn" class="btn btn-outline" (click)="openAddGuestModal()">
+                  ➕  Nouveau
+                  </button>
+                  <button id="import-guests-btn" class="btn btn-outline" (click)="openImportModal()">
+                  📥 Importer
+                  </button>
+                  <button id="send-reminder-btn" class="btn btn-primary" (click)="openDeleteModal(guestIdList, 'resend')">
+                      {{ loading ? '⏳ Renvoie...' : '✉️ Envoyer rappel' }}
+                  </button>
+              </div>
             </div>
         </div>
+      </div>
     </div>
 
     <!-- Main content -->

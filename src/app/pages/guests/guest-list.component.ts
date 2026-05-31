@@ -9,12 +9,12 @@ import { QrCodeService } from '../../services/qr-code.service';
 import { SpinnerComponent } from "../../components/spinner/spinner";
 import { AddGuestModalComponent } from "../../components/add-guest-modal/add-guest-modal";
 import { ImportGuestsModalComponent } from "../../components/import-guests-modal/import-guests-modal";
-import { ImportedGuest } from '../../services/import-guest.service';
 import { ErrorModalComponent } from "../../components/error-modal/error-modal";
 import { ConfirmDeleteModalComponent } from "../../components/confirm-delete-modal/confirm-delete-modal";
 import { AlertConfig, ConditionalAlertComponent } from '../../components/conditional-alert/conditional-alert.component';
 import { GuestLimitAlertComponent } from "../../components/guest-limit-alert/guest-limit-alert.component";
 import { animate, style, transition, trigger } from '@angular/animations';
+import { GuestManagementTourService } from '../../../tours/services/guest-management-tour.service';
 
 interface Guest {
   id: number;
@@ -125,7 +125,8 @@ export class GuestListComponent implements OnInit{
     private authService: AuthService,
     private guestService: GuestService,
     private qrCodeService: QrCodeService,
-    private communicationService: CommunicationService
+    private communicationService: CommunicationService,
+    private guestManagementTour: GuestManagementTourService
   ) {this.loadViewModeFromStorage()}
 
   ngOnInit(): void {
@@ -165,6 +166,17 @@ export class GuestListComponent implements OnInit{
     //   console.log("⏱️ Polling pour les mises à jour...");
     //   this.loadCurrentUserData();
     // }, 25000);
+  }
+
+  ngAfterViewInit() {
+    const alreadySeen = localStorage.getItem('guest-list-tour');
+    if (!alreadySeen) {
+      this.guestManagementTour.initTour();
+      setTimeout(() => {
+        this.guestManagementTour.start();
+      }, 500);
+      localStorage.setItem('guest-list-tour', 'true');
+    }
   }
 
   ngOnDestroy() {

@@ -8,6 +8,7 @@ import { CommunicationService } from '../../services/share.service';
 import { map, Observable } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { SpinnerComponent } from "../../components/spinner/spinner";
+import { DashboardTourService } from '../../../tours/services/dashboard-tour.service';
 
 interface Event {
   id: number;
@@ -37,18 +38,19 @@ export class DashboardComponent {
   isLoading = false;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private eventService: EventService,
     private authService: AuthService,
     private communicationService: CommunicationService,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private dashboardTourService: DashboardTourService
   ) {}
 
   ngOnInit(): void {
     this.send(undefined);// Pour cacher le boutoun Scanner sur la nav-bar losque le user n'est plus la page event
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
-      this.organizerId = user?.id 
+      this.organizerId = user?.id
     });
     this.triggerBAction();
     this.getAllEvent();
@@ -62,6 +64,17 @@ export class DashboardComponent {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.isMobile = this.breakpointObserver.observe(['(max-width: 768px)']).pipe(map(res => res.matches));
     console.log("this.isMobile::", this.isMobile)
+  }
+
+  ngAfterViewInit() {
+    const alreadySeen = localStorage.getItem('dashboard-tour');
+    if (!alreadySeen) {
+      this.dashboardTourService.initTour();
+      setTimeout(() => {
+        this.dashboardTourService.start();
+      }, 500);
+      localStorage.setItem('dashboard-tour', 'true');
+    }
   }
 
   getAllEvent(){
@@ -79,7 +92,7 @@ export class DashboardComponent {
               totalGuests: elt.max_guests,
               confirmedGuests: elt.confirmed_count,
               pendingGuests: elt.pending_count,
-              declinedGuests: elt.declined_count     
+              declinedGuests: elt.declined_count
             }
             this.events.push(data);
             return data;
@@ -123,7 +136,7 @@ export class DashboardComponent {
       day: 'numeric',
     });
   }
-  
+
   openEventDialog(){
     this.router.navigate(['/add-event']);
   }

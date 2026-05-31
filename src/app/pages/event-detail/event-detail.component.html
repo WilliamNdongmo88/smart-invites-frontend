@@ -1,7 +1,7 @@
 <div class="event-detail">
     <!-- Notification conditionnelle -->
     <app-conditional-alert [config]="alertConfig"></app-conditional-alert>
-    
+
     <!-- Header -->
     <div class="event-header">
         <div class="container">
@@ -20,12 +20,12 @@
     </div>
 
     <!-- Main content -->
-    <div class="container py-12 c-mgtop">
+    <div id="event-header-guide" class="container py-12 c-mgtop">
         <div class="grid grid-main">
             <!-- Left column - Event details and guests -->
             <div class="left-column">
                 <!-- Event Info Card -->
-                <div class="card">
+                <div id="event-details-card" class="card">
                     <!-- Header Section -->
                     <div class="header-section">
                         <h1 class="title">Détails de l'événement</h1>
@@ -112,10 +112,10 @@
 
                         <!-- Actions Section -->
                         <div class="btn-both">
-                            <button class="btn btn-primary" style="width: 100%;" (click)="sendInvitations()">
+                            <button id="manage-guests-btn" class="btn btn-primary" style="width: 100%;" (click)="sendInvitations()">
                                 Gérer vos invités
                             </button>
-                            <button class="btn btn-outline" style="width: 100%;" (click)="openAddLinkModal('create')">
+                            <button id="manage-links-btn" class="btn btn-outline" style="width: 100%;" (click)="openAddLinkModal('create')">
                                 Générer le lien d'invitation
                             </button>
                         </div>
@@ -123,7 +123,7 @@
                 </div>
 
                 <!-- Liens d'invitation (click)="shareEventLink(event, link)"-->
-                <div *ngIf="(isMobile | async)"  class="card mt-card">
+                <div id="invitation-links-card" *ngIf="(isMobile | async)"  class="card mt-card">
                     <h3>Liens d'invitations</h3>
                     <p class="export-desc">Partagé le lien d'invitation a vos contact</p>
                     <button
@@ -136,7 +136,7 @@
                 </div>
 
                 <!-- Guests List *ngIf="!(isMobile | async)" -->
-                <div class="card mt-card">
+                <div id="guests-list-card" class="card mt-card">
                     <h2 class="clickable-title">
                         Invités ({{ filteredGuests.length }})
                     </h2>
@@ -210,23 +210,23 @@
 
                     <!-- Pagination Controls *ngIf="!(isMobile | async)" -->
                     <div class="pagination">
-                        <button 
-                            (click)="prevPage()" 
+                        <button
+                            (click)="prevPage()"
                             [disabled]="currentPage === 1"
                             class="page-btn">
                             ◀
                         </button>
 
-                        <button 
-                            *ngFor="let page of totalPagesArray()" 
+                        <button
+                            *ngFor="let page of totalPagesArray()"
                             (click)="goToPage(page)"
                             [class.active]="page === currentPage"
                             class="page-btn">
                             {{ page }}
                         </button>
 
-                        <button 
-                            (click)="nextPage()" 
+                        <button
+                            (click)="nextPage()"
                             [disabled]="currentPage === totalPages"
                             class="page-btn">
                             ▶
@@ -239,7 +239,7 @@
             <div class="right-column">
 
                 <!-- Actions 👤-->
-                <div class="card mt-card">
+                <div id="quick-actions-card" class="card mt-card">
                     <h3>Actions rapides</h3>
                     <div class="actions-list">
                     <button class="btn btn-outline" style="width: 100%;" (click)="openAddGuestModal()">
@@ -254,7 +254,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="!(isMobile | async)"  class="card mt-card">
+                <div id="invitation-links-card" *ngIf="!(isMobile | async)"  class="card mt-card">
                     <h3>Liens d'invitations</h3>
                     <p class="export-desc">Partagé le lien d'invitation a vos contact</p>
                     <button
@@ -283,7 +283,7 @@
                 </div> -->
 
                 <!-- Quick Stats *ngIf="!(isMobile | async)" -->
-                <div class="card mt-card">
+                <div id="stats-summary-card" class="card mt-card">
                     <h3>Résumé</h3>
 
                     <div class="stats-list">

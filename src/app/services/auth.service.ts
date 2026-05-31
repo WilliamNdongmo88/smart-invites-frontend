@@ -228,6 +228,10 @@ export class AuthService {
   logout(): any {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('dashboard-tour');
+    localStorage.removeItem('event-detail-tour');
+    localStorage.removeItem('guest-list-tour');
+    localStorage.removeItem('header-tour');
     this.currentUserSubject.next(null);
     this.user=null // Pour forcer valid a false
     this.isAuthenticatedSubject.next(false);// notifie le composant (Header)
